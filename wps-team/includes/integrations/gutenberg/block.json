@@ -1,0 +1,21 @@
+{
+    "name": "wpspeedo-team/shortcodes",
+    "title": "WPS Team",
+    "category": "layout",
+    "icon": "groups",
+    "description": "Display Team Members in Grid, Carousel, Filter & List Layouts",
+    "keywords": [ "team", "team members", "team member", "team slider", "team carousel", "team filter", "team block" ],
+    "attributes": {
+        "shortcode": {
+            "type": "string",
+            "default": ""
+        },
+        "align": {
+            "type": "string",
+            "default": "wide"
+        }
+    },
+    "supports": {
+        "align": ["wide", "full"]
+    }
+}
