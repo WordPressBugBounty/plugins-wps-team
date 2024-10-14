@@ -1,0 +1,1 @@
+!function(t){var i=inlineEditTax.edit;inlineEditTax.edit=function(e){i.apply(this,arguments);var n=0;if("object"==typeof e&&(n=parseInt(this.getId(e))),n>0){var r=t("#tag-"+n).find(".column-term_order").text().trim();t('input[name="term_order"]').val(r)}}}(jQuery);

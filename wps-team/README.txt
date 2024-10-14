@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team, team plugin, team members, team showcase, team builder
 Requires at least: 5.9
 Tested up to: 6.6
-Stable tag: 3.1.5
+Stable tag: 3.1.5.2
 Requires PHP: 7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -245,6 +245,18 @@ Yes, this Team plugin supports multi-language.
 15. WPS Team Members - Settings Page
 
 == Changelog ==
+
+= 3.2.0 - 14-10-2024 =
+* Added: **Accessibility** support for dropdown filters.
+* Added: **Order** column in taxonomy for better management.
+* Added: **Order** and **Orderby** options for each taxonomy.
+* Added: **Sticky Filter** option for Filter Style 3.
+* Fixed: Resolved background overlap issue in popups with certain themes.
+* Fixed: Addressed caching issue with term updates.
+* Tweak: Improved responsive layout for Filter Style 2.
+* Tweak: Refined the UI on the Shortcode Settings page.
+* Tweak: Enhanced translations.
+* Tweak: Updated Freemius.
 
 = 3.1.5 - 06-09-2024 =
 * Added: **Filter Layout Themes** for enhanced customization.

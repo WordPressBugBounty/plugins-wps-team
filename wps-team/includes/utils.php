@@ -678,6 +678,10 @@ class Utils {
             'disabled' => true,
             'label'    => _x( 'Style 02', 'Editor', 'wpspeedo-team' ),
             'value'    => 'style-02',
+        ], [
+            'disabled' => true,
+            'label'    => _x( 'Style 03', 'Editor', 'wpspeedo-team' ),
+            'value'    => 'style-03',
         ]];
         return $options;
     }
@@ -977,7 +981,7 @@ class Utils {
                 'value' => 'ID',
             ],
             [
-                'label' => _x( 'Title', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Name', 'Editor', 'wpspeedo-team' ),
                 'value' => 'title',
             ],
             [
@@ -996,6 +1000,37 @@ class Utils {
                 'disabled' => true,
                 'label'    => _x( 'Custom Order', 'Editor', 'wpspeedo-team' ),
                 'value'    => 'menu_order',
+            ]
+        ];
+        return $options;
+    }
+
+    public static function get_options_terms_orderby() {
+        $options = [
+            [
+                'label' => _x( 'Default', 'Editor', 'wpspeedo-team' ),
+                'value' => 'none',
+            ],
+            [
+                'label' => _x( 'ID', 'Editor', 'wpspeedo-team' ),
+                'value' => 'id',
+            ],
+            [
+                'label' => _x( 'Name', 'Editor', 'wpspeedo-team' ),
+                'value' => 'name',
+            ],
+            [
+                'label' => _x( 'Slug', 'Editor', 'wpspeedo-team' ),
+                'value' => 'slug',
+            ],
+            [
+                'label' => _x( 'Count', 'Editor', 'wpspeedo-team' ),
+                'value' => 'count',
+            ],
+            [
+                'disabled' => true,
+                'label'    => _x( 'Custom Order', 'Editor', 'wpspeedo-team' ),
+                'value'    => 'term_order',
             ]
         ];
         return $options;
@@ -1040,48 +1075,12 @@ class Utils {
             return [];
         }
         // Set Cache
-        set_transient( $cache_key, $terms, HOUR_IN_SECONDS );
+        set_transient( $cache_key, $terms, 10 );
         return $terms;
     }
 
     public static function get_group_terms( $args = [] ) {
         return self::get_terms( self::get_taxonomy_name( 'group' ), $args );
-    }
-
-    public static function get_location_terms( $args = [] ) {
-        return self::get_terms( self::get_taxonomy_name( 'location' ), $args );
-    }
-
-    public static function get_language_terms( $args = [] ) {
-        return self::get_terms( self::get_taxonomy_name( 'language' ), $args );
-    }
-
-    public static function get_specialty_terms( $args = [] ) {
-        return self::get_terms( self::get_taxonomy_name( 'specialty' ), $args );
-    }
-
-    public static function get_gender_terms( $args = [] ) {
-        return self::get_terms( self::get_taxonomy_name( 'gender' ), $args );
-    }
-
-    public static function get_extra_one_terms( $args = [] ) {
-        return self::get_terms( self::get_taxonomy_name( 'extra-one' ), $args );
-    }
-
-    public static function get_extra_two_terms( $args = [] ) {
-        return self::get_terms( self::get_taxonomy_name( 'extra-two' ), $args );
-    }
-
-    public static function get_extra_three_terms( $args = [] ) {
-        return self::get_terms( self::get_taxonomy_name( 'extra-three' ), $args );
-    }
-
-    public static function get_extra_four_terms( $args = [] ) {
-        return self::get_terms( self::get_taxonomy_name( 'extra-four' ), $args );
-    }
-
-    public static function get_extra_five_terms( $args = [] ) {
-        return self::get_terms( self::get_taxonomy_name( 'extra-five' ), $args );
     }
 
     public static function get_term_options( $terms ) {
@@ -1536,35 +1535,27 @@ class Utils {
     }
 
     public static function elements_display_order() {
-        include WPS_TEAM_PATH . 'includes/editor/variables.php';
         $elements = [
-            'thumbnail'                                    => _x( 'Thumbnail', 'Editor', 'wpspeedo-team' ),
-            'divider'                                      => _x( 'Divider', 'Editor', 'wpspeedo-team' ),
-            'designation'                                  => _x( 'Designation', 'Editor', 'wpspeedo-team' ),
-            'description'                                  => _x( 'Description', 'Editor', 'wpspeedo-team' ),
-            'education'                                    => _x( 'Education', 'Editor', 'wpspeedo-team' ),
-            'social'                                       => _x( 'Social', 'Editor', 'wpspeedo-team' ),
-            'ribbon'                                       => _x( 'Ribbon/Tag', 'Editor', 'wpspeedo-team' ),
-            'email'                                        => _x( 'Email', 'Editor', 'wpspeedo-team' ),
-            'mobile'                                       => _x( 'Mobile', 'Editor', 'wpspeedo-team' ),
-            'telephone'                                    => _x( 'Telephone', 'Editor', 'wpspeedo-team' ),
-            'experience'                                   => _x( 'Experience', 'Editor', 'wpspeedo-team' ),
-            'website'                                      => _x( 'Website', 'Editor', 'wpspeedo-team' ),
-            'company'                                      => _x( 'Company', 'Editor', 'wpspeedo-team' ),
-            'skills'                                       => _x( 'Skills', 'Editor', 'wpspeedo-team' ),
-            'link_1'                                       => self::get_setting( 'link_1_label', 'Resume Link' ),
-            'link_2'                                       => self::get_setting( 'link_2_label', 'Hire Link' ),
-            self::get_taxonomy_name( 'group', true )       => $group_single_name,
-            self::get_taxonomy_name( 'location', true )    => $location_single_name,
-            self::get_taxonomy_name( 'language', true )    => $language_single_name,
-            self::get_taxonomy_name( 'specialty', true )   => $specialty_single_name,
-            self::get_taxonomy_name( 'gender', true )      => $gender_single_name,
-            self::get_taxonomy_name( 'extra-one', true )   => $extra_one_single_name,
-            self::get_taxonomy_name( 'extra-two', true )   => $extra_two_single_name,
-            self::get_taxonomy_name( 'extra-three', true ) => $extra_three_single_name,
-            self::get_taxonomy_name( 'extra-four', true )  => $extra_four_single_name,
-            self::get_taxonomy_name( 'extra-five', true )  => $extra_five_single_name,
+            'thumbnail'   => _x( 'Thumbnail', 'Editor', 'wpspeedo-team' ),
+            'divider'     => _x( 'Divider', 'Editor', 'wpspeedo-team' ),
+            'designation' => _x( 'Designation', 'Editor', 'wpspeedo-team' ),
+            'description' => _x( 'Description', 'Editor', 'wpspeedo-team' ),
+            'education'   => _x( 'Education', 'Editor', 'wpspeedo-team' ),
+            'social'      => _x( 'Social', 'Editor', 'wpspeedo-team' ),
+            'ribbon'      => _x( 'Ribbon/Tag', 'Editor', 'wpspeedo-team' ),
+            'email'       => _x( 'Email', 'Editor', 'wpspeedo-team' ),
+            'mobile'      => _x( 'Mobile', 'Editor', 'wpspeedo-team' ),
+            'telephone'   => _x( 'Telephone', 'Editor', 'wpspeedo-team' ),
+            'experience'  => _x( 'Experience', 'Editor', 'wpspeedo-team' ),
+            'website'     => _x( 'Website', 'Editor', 'wpspeedo-team' ),
+            'company'     => _x( 'Company', 'Editor', 'wpspeedo-team' ),
+            'skills'      => _x( 'Skills', 'Editor', 'wpspeedo-team' ),
+            'link_1'      => self::get_setting( 'link_1_label', 'Resume Link' ),
+            'link_2'      => self::get_setting( 'link_2_label', 'Hire Link' ),
         ];
+        foreach ( self::get_taxonomy_roots() as $tax_root ) {
+            $elements[self::get_taxonomy_name( $tax_root, true )] = Utils::get_setting( Utils::to_field_key( $tax_root ) . '_single_name' );
+        }
         return $elements;
     }
 

@@ -292,8 +292,19 @@ class API {
                 'thumbnail'  => get_the_post_thumbnail_url( $post->ID, 'thumbnail' ),
             ];
         }
-        if ( !empty( $groups = Utils::get_group_terms() ) ) {
-            $data['group_terms'] = array_map( [$this, 'map_term_for_sort'], $groups );
+        $taxonomies = Utils::get_active_taxonomies();
+        foreach ( $taxonomies as $taxonomy ) {
+            if ( $taxonomy !== 'wps-team-group' ) {
+                continue;
+            }
+            $tax_root_key = Utils::get_taxonomy_root( $taxonomy, true );
+            $terms = Utils::get_terms( $taxonomy, [
+                'orderby' => 'term_order',
+                'order'   => 'asc',
+            ] );
+            if ( !empty( $terms ) ) {
+                $data[$tax_root_key . '_terms'] = array_map( [$this, 'map_term_for_sort'], $terms );
+            }
         }
         wp_reset_query();
         wp_send_json_success( $data );

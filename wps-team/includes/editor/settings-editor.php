@@ -211,96 +211,22 @@ class Settings_Editor extends Editor_Controls {
                 'enable_multilingual' => false,
             ],
         ] );
-        $this->add_control( 'filter_all_group_text', [
-            'label'       => $group_single_name . ' ' . $filter_all_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'filter_all_location_text', [
-            'label'       => $location_single_name . ' ' . $filter_all_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'filter_all_language_text', [
-            'label'       => $language_single_name . ' ' . $filter_all_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'filter_all_specialty_text', [
-            'label'       => $specialty_single_name . ' ' . $filter_all_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'filter_all_gender_text', [
-            'label'       => $gender_single_name . ' ' . $filter_all_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'filter_all_extra_one_text', [
-            'label'       => $extra_one_single_name . ' ' . $filter_all_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'filter_all_extra_two_text', [
-            'label'       => $extra_two_single_name . ' ' . $filter_all_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'filter_all_extra_three_text', [
-            'label'       => $extra_three_single_name . ' ' . $filter_all_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'filter_all_extra_four_text', [
-            'label'       => $extra_four_single_name . ' ' . $filter_all_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'filter_all_extra_five_text', [
-            'label'       => $extra_five_single_name . ' ' . $filter_all_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
+        foreach ( Utils::get_taxonomy_roots() as $tax_root ) {
+            $tax_root_key = Utils::to_field_key( $tax_root );
+            $tax_single_name = Utils::get_setting( $tax_root_key . '_single_name' );
+            if ( !Utils::get_setting( 'enable_' . $tax_root_key . '_taxonomy' ) ) {
+                continue;
+            }
+            $this->add_control( 'filter_all_' . $tax_root_key . '_text', [
+                'label'       => $tax_single_name . ' ' . $filter_all_txt,
+                'label_block' => true,
+                'separator'   => 'none',
+                'type'        => Controls_Manager::UPGRADE_NOTICE,
+                'condition'   => [
+                    'enable_multilingual' => false,
+                ],
+            ] );
+        }
         $this->add_control( 'custom_fields_labels_title', [
             'label'       => 'Public: Custom Field Labels',
             'label_block' => false,
@@ -436,98 +362,38 @@ class Settings_Editor extends Editor_Controls {
                 'enable_multilingual' => false,
             ],
         ] );
-        $this->add_control( 'group_meta_label', [
-            'label'       => $group_single_name . ' ' . $label_txt,
-            'label_block' => false,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::TEXT,
-            'placeholder' => Utils::get_default( 'group_meta_label' ),
-            'default'     => Utils::get_default( 'group_meta_label' ),
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'location_meta_label', [
-            'label'       => $location_single_name . ' ' . $label_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'language_meta_label', [
-            'label'       => $language_single_name . ' ' . $label_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'specialty_meta_label', [
-            'label'       => $specialty_single_name . ' ' . $label_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'gender_meta_label', [
-            'label'       => $gender_single_name . ' ' . $label_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'extra_one_meta_label', [
-            'label'       => $extra_one_single_name . ' ' . $label_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'extra_two_meta_label', [
-            'label'       => $extra_two_single_name . ' ' . $label_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'extra_three_meta_label', [
-            'label'       => $extra_three_single_name . ' ' . $label_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'extra_four_meta_label', [
-            'label'       => $extra_four_single_name . ' ' . $label_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        $this->add_control( 'extra_five_meta_label', [
-            'label'       => $extra_five_single_name . ' ' . $label_txt,
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
+        if ( Utils::get_setting( 'enable_group_taxonomy' ) ) {
+            $this->add_control( 'group_meta_label', [
+                'label'       => $group_single_name . ' ' . $label_txt,
+                'label_block' => false,
+                'separator'   => 'none',
+                'type'        => Controls_Manager::TEXT,
+                'placeholder' => Utils::get_default( 'group_meta_label' ),
+                'default'     => Utils::get_default( 'group_meta_label' ),
+                'condition'   => [
+                    'enable_multilingual' => false,
+                ],
+            ] );
+        }
+        foreach ( Utils::get_taxonomy_roots() as $tax_root ) {
+            if ( $tax_root === 'group' ) {
+                continue;
+            }
+            $tax_root_key = Utils::to_field_key( $tax_root );
+            if ( !Utils::get_setting( 'enable_' . $tax_root_key . '_taxonomy' ) ) {
+                continue;
+            }
+            $tax_single_name = Utils::get_setting( $tax_root_key . '_single_name' );
+            $this->add_control( $tax_root_key . '_meta_label', [
+                'label'       => $tax_single_name . ' ' . $label_txt,
+                'label_block' => true,
+                'separator'   => 'none',
+                'type'        => Controls_Manager::UPGRADE_NOTICE,
+                'condition'   => [
+                    'enable_multilingual' => false,
+                ],
+            ] );
+        }
         $this->add_control( 'other_translations', [
             'label'       => 'Public: Others',
             'label_block' => false,

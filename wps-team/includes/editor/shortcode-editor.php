@@ -50,30 +50,30 @@ class Shortcode_Editor extends Editor_Controls {
         ] );
         $this->add_control( 'display_type', [
             'label'       => _x( 'Display Type', 'Editor', 'wpspeedo-team' ),
-            'label_block' => true,
+            'label_block' => false,
             'type'        => Controls_Manager::SELECT,
-            'placeholder' => _x( 'Display Type', 'Editor', 'wpspeedo-team' ),
             'render_type' => 'template',
             'options'     => Utils::get_control_options( 'display_type' ),
             'default'     => 'grid',
+            'class'       => 'wps-field--arrange-1',
         ] );
         $this->add_control( 'theme', [
             'label'       => _x( 'Theme', 'Editor', 'wpspeedo-team' ),
-            'label_block' => true,
+            'label_block' => false,
             'type'        => Controls_Manager::SELECT,
-            'placeholder' => _x( 'Theme', 'Editor', 'wpspeedo-team' ),
             'render_type' => 'template',
             'options'     => Utils::get_control_options( 'theme' ),
             'default'     => 'square-01',
+            'class'       => 'wps-field--arrange-1',
         ] );
         $this->add_control( 'card_action', [
             'label'       => _x( 'Card Action', 'Editor', 'wpspeedo-team' ),
-            'label_block' => true,
+            'label_block' => false,
             'type'        => Controls_Manager::SELECT,
-            'placeholder' => _x( 'Card Action', 'Editor', 'wpspeedo-team' ),
             'render_type' => 'template',
             'options'     => Utils::get_control_options( 'card_action' ),
             'default'     => 'single-page',
+            'class'       => 'wps-field--arrange-1',
         ] );
         $this->add_responsive_control( 'container_width', [
             'label'                => _x( 'Container Width', 'Editor', 'wpspeedo-team' ),
@@ -108,30 +108,25 @@ class Shortcode_Editor extends Editor_Controls {
         ] );
         $this->add_responsive_control( 'columns', [
             'label'                => _x( 'Columns', 'Editor', 'wpspeedo-team' ),
-            'label_block'          => true,
-            'type'                 => Controls_Manager::SLIDER,
-            'min'                  => 1,
-            'max'                  => 10,
+            'label_block'          => false,
+            'type'                 => Controls_Manager::NUMBER,
             'default'              => 3,
             'tablet_default'       => 3,
             'small_tablet_default' => 2,
             'mobile_default'       => 1,
+            'class'                => 'wps-field--arrange-2',
         ] );
         $this->add_responsive_control( 'gap', [
             'label'       => _x( 'Gap', 'Editor', 'wpspeedo-team' ),
-            'label_block' => true,
-            'type'        => Controls_Manager::SLIDER,
-            'min'         => 0,
-            'max'         => 100,
-            'step'        => 1,
+            'label_block' => false,
+            'type'        => Controls_Manager::NUMBER,
+            'class'       => 'wps-field--arrange-2',
         ] );
         $this->add_responsive_control( 'gap_vertical', [
             'label'       => _x( 'Gap Vertical', 'Editor', 'wpspeedo-team' ),
-            'label_block' => true,
-            'type'        => Controls_Manager::SLIDER,
-            'min'         => 0,
-            'max'         => 100,
-            'step'        => 1,
+            'label_block' => false,
+            'type'        => Controls_Manager::NUMBER,
+            'class'       => 'wps-field--arrange-2',
             'condition'   => [
                 'display_type' => ['grid', 'filter'],
             ],
@@ -256,6 +251,7 @@ class Shortcode_Editor extends Editor_Controls {
 
     // Elements Section
     protected function elements_section() {
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
         $this->start_controls_section( 'elements_section', [
             'label' => _x( 'Elements Visibility', 'Editor', 'wpspeedo-team' ),
             'tab'   => 'elements',
@@ -270,11 +266,11 @@ class Shortcode_Editor extends Editor_Controls {
                     'type'        => Controls_Manager::CHOOSE,
                     'options'     => [
                         'true'  => [
-                            'title' => _x( 'Show', 'Editor', 'wpspeedo-team' ),
+                            'title' => $show_txt,
                             'icon'  => 'fas fa-eye',
                         ],
                         'false' => [
-                            'title' => _x( 'Hide', 'Editor', 'wpspeedo-team' ),
+                            'title' => $hide_txt,
                             'icon'  => 'fas fa-eye-slash',
                         ],
                     ],
@@ -294,6 +290,7 @@ class Shortcode_Editor extends Editor_Controls {
 
     // Details Elements Section
     protected function details_elements_section() {
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
         $this->start_controls_section( 'details_elements_section', [
             'label' => _x( 'Details Elements Visibility', 'Editor', 'wpspeedo-team' ),
             'tab'   => 'elements',
@@ -308,11 +305,11 @@ class Shortcode_Editor extends Editor_Controls {
                     'type'        => Controls_Manager::CHOOSE,
                     'options'     => [
                         'true'  => [
-                            'title' => _x( 'Show', 'Editor', 'wpspeedo-team' ),
+                            'title' => $show_txt,
                             'icon'  => 'fas fa-eye',
                         ],
                         'false' => [
-                            'title' => _x( 'Hide', 'Editor', 'wpspeedo-team' ),
+                            'title' => $hide_txt,
                             'icon'  => 'fas fa-eye-slash',
                         ],
                     ],
@@ -417,24 +414,23 @@ class Shortcode_Editor extends Editor_Controls {
 
     // Single Item
     protected function style_item_styling_controls() {
-        $padding = _x( 'Padding', 'Editor', 'wpspeedo-team' );
-        $border_radius = _x( 'Border Radius', 'Editor', 'wpspeedo-team' );
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
         $this->start_controls_section( 'single_item_style', [
             'label' => _x( 'Single Item Style', 'Editor', 'wpspeedo-team' ),
             'tab'   => 'style',
         ] );
         $this->add_group_control( Group_Control_Background::get_type(), [
             'name'  => 'item_background',
-            'label' => _x( 'Background', 'Editor', 'wpspeedo-team' ),
+            'label' => $background_txt,
             'types' => ['classic', 'gradient'],
         ] );
         $this->add_control( 'item_padding', [
-            'label'       => $padding,
+            'label'       => $padding_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->add_control( 'item_border_radius', [
-            'label'       => $border_radius,
+            'label'       => $border_radius_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
@@ -443,43 +439,38 @@ class Shortcode_Editor extends Editor_Controls {
 
     // Custom Spacing
     protected function style_custom_spacing_controls() {
-        $title_spacing = _x( 'Title Spacing', 'Editor', 'wpspeedo-team' );
-        $designation_spacing = _x( 'Designation Spacing', 'Editor', 'wpspeedo-team' );
-        $desc_spacing = _x( 'Description Spacing', 'Editor', 'wpspeedo-team' );
-        $devider_spacing = _x( 'Devider Spacing', 'Editor', 'wpspeedo-team' );
-        $social_icons_spacing = _x( 'Social Icons Spacing', 'Editor', 'wpspeedo-team' );
-        $meta_info_spacing = _x( 'Meta Info Spacing', 'Editor', 'wpspeedo-team' );
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
         $this->start_controls_section( 'custom_spacing_styling', [
             'label' => _x( 'Space Customization', 'Editor', 'wpspeedo-team' ),
             'tab'   => 'style',
         ] );
         $this->add_control( 'title_spacing', [
-            'label'       => $title_spacing,
+            'label'       => $title_spacing_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->add_control( 'desig_spacing', [
-            'label'       => $designation_spacing,
+            'label'       => $designation_spacing_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->add_control( 'desc_spacing', [
-            'label'       => $desc_spacing,
+            'label'       => $desc_spacing_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->add_control( 'devider_spacing', [
-            'label'       => $devider_spacing,
+            'label'       => $devider_spacing_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->add_control( 'social_spacing', [
-            'label'       => $social_icons_spacing,
+            'label'       => $social_icons_spacing_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->add_control( 'info_spacing', [
-            'label'       => $meta_info_spacing,
+            'label'       => $meta_info_spacing_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
@@ -488,20 +479,18 @@ class Shortcode_Editor extends Editor_Controls {
 
     // Buttons
     protected function style_buttons_controls() {
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
         $this->start_controls_section( 'buttons_styling', [
             'label' => _x( 'Resume & Hire Buttons', 'Editor', 'wpspeedo-team' ),
             'tab'   => 'style',
         ] );
-        $resume_button_style = _x( 'Resume Button Style', 'Editor', 'wpspeedo-team' );
-        $hire_button_style = _x( 'Hire Button Style', 'Editor', 'wpspeedo-team' );
-        $border_radius = _x( 'Border Radius', 'Editor', 'wpspeedo-team' );
         $this->add_control( 'heading_resume_button_style', [
-            'label'       => $resume_button_style,
+            'label'       => $resume_button_style_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->add_control( 'heading_hire_button_style', [
-            'label'       => $hire_button_style,
+            'label'       => $hire_button_style_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
@@ -510,6 +499,10 @@ class Shortcode_Editor extends Editor_Controls {
 
     // Carousel
     protected function style_carousel_color_controls() {
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
+        $nav_icon_color_txt = _x( 'Nav Icon Color', 'Editor', 'wpspeedo-team' );
+        $nav_bg_color_txt = _x( 'Nav BG Color', 'Editor', 'wpspeedo-team' );
+        $nav_border_color_txt = _x( 'Nav Border Color', 'Editor', 'wpspeedo-team' );
         $this->start_controls_section( 'carousel_styling', [
             'label'     => _x( 'Carousel Style', 'Editor', 'wpspeedo-team' ),
             'tab'       => 'style',
@@ -524,44 +517,44 @@ class Shortcode_Editor extends Editor_Controls {
         ] );
         $this->start_controls_tabs( 'carousel_nav_color_tabs' );
         $this->start_controls_tab( 'tab_carousel_nav_colors_normal', [
-            'label' => _x( 'Normal', 'Editor', 'wpspeedo-team' ),
+            'label' => $normal_txt,
         ] );
         $this->add_control( 'carousel_nav_normal_icon_color', [
-            'label'       => _x( 'Nav Icon Color', 'Editor', 'wpspeedo-team' ),
+            'label'       => $nav_icon_color_txt,
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::COLOR,
         ] );
         $this->add_control( 'carousel_nav_normal_bg_color', [
-            'label'       => _x( 'Nav BG Color', 'Editor', 'wpspeedo-team' ),
+            'label'       => $nav_bg_color_txt,
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::COLOR,
         ] );
         $this->add_control( 'carousel_nav_normal_br_color', [
-            'label'       => _x( 'Nav Border Color', 'Editor', 'wpspeedo-team' ),
+            'label'       => $nav_border_color_txt,
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::COLOR,
         ] );
         $this->end_controls_tab();
         $this->start_controls_tab( 'tab_carousel_nav_colors_hover', [
-            'label' => _x( 'Hover', 'Editor', 'wpspeedo-team' ),
+            'label' => $hover_txt,
         ] );
         $this->add_control( 'carousel_nav_hover_icon_color', [
-            'label'       => _x( 'Nav Icon Color', 'Editor', 'wpspeedo-team' ),
+            'label'       => $nav_icon_color_txt,
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::COLOR,
         ] );
         $this->add_control( 'carousel_nav_hover_bg_color', [
-            'label'       => _x( 'Nav BG Color', 'Editor', 'wpspeedo-team' ),
+            'label'       => $nav_bg_color_txt,
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::COLOR,
         ] );
         $this->add_control( 'carousel_nav_hover_br_color', [
-            'label'       => _x( 'Nav Border Color', 'Editor', 'wpspeedo-team' ),
+            'label'       => $nav_border_color_txt,
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::COLOR,
@@ -575,48 +568,48 @@ class Shortcode_Editor extends Editor_Controls {
         ] );
         $this->start_controls_tabs( 'carousel_dot_color_tabs' );
         $this->start_controls_tab( 'tab_carousel_dot_colors_normal', [
-            'label' => _x( 'Normal', 'Editor', 'wpspeedo-team' ),
+            'label' => $normal_txt,
         ] );
         $this->add_control( 'carousel_dot_normal_bg_color', [
-            'label'       => _x( 'Dot BG Color', 'Editor', 'wpspeedo-team' ),
+            'label'       => $dot_bg_color_txt,
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::COLOR,
         ] );
         $this->add_control( 'carousel_dot_normal_br_color', [
-            'label'       => _x( 'Dot Border Color', 'Editor', 'wpspeedo-team' ),
+            'label'       => $dot_border_color_txt,
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::COLOR,
         ] );
         $this->end_controls_tab();
         $this->start_controls_tab( 'tab_carousel_dot_colors_hover', [
-            'label' => _x( 'Hover', 'Editor', 'wpspeedo-team' ),
+            'label' => $hover_txt,
         ] );
         $this->add_control( 'carousel_dot_hover_bg_color', [
-            'label'       => _x( 'Dot BG Color', 'Editor', 'wpspeedo-team' ),
+            'label'       => $dot_bg_color_txt,
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::COLOR,
         ] );
         $this->add_control( 'carousel_dot_hover_br_color', [
-            'label'       => _x( 'Dot Border Color', 'Editor', 'wpspeedo-team' ),
+            'label'       => $dot_border_color_txt,
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::COLOR,
         ] );
         $this->end_controls_tab();
         $this->start_controls_tab( 'tab_carousel_dot_colors_active', [
-            'label' => _x( 'Active', 'Editor', 'wpspeedo-team' ),
+            'label' => $active_txt,
         ] );
         $this->add_control( 'carousel_dot_active_bg_color', [
-            'label'       => _x( 'Dot BG Color', 'Editor', 'wpspeedo-team' ),
+            'label'       => $dot_bg_color_txt,
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::COLOR,
         ] );
         $this->add_control( 'carousel_dot_active_br_color', [
-            'label'       => _x( 'Dot Border Color', 'Editor', 'wpspeedo-team' ),
+            'label'       => $dot_border_color_txt,
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::COLOR,
@@ -628,6 +621,10 @@ class Shortcode_Editor extends Editor_Controls {
 
     // Filters
     protected function style_filter_color_controls() {
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
+        $filter_text_color_txt = _x( 'Filter Text Color', 'Editor', 'wpspeedo-team' );
+        $filter_bg_color_txt = _x( 'Filter BG Color', 'Editor', 'wpspeedo-team' );
+        $filter_border_color_txt = _x( 'Filter Border Color', 'Editor', 'wpspeedo-team' );
         $this->start_controls_section( 'filters_styling', [
             'label'     => _x( 'Filters Style', 'Editor', 'wpspeedo-team' ),
             'tab'       => 'style',
@@ -645,6 +642,7 @@ class Shortcode_Editor extends Editor_Controls {
 
     // Social Links
     protected function style_social_links_controls() {
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
         $this->start_controls_section( 'social_links_styling', [
             'label' => _x( 'Social Links', 'Editor', 'wpspeedo-team' ),
             'tab'   => 'style',
@@ -675,6 +673,7 @@ class Shortcode_Editor extends Editor_Controls {
 
     // Query
     protected function query_section() {
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
         $this->start_controls_section( 'query_section', [
             'label' => _x( 'Query', 'Editor', 'wpspeedo-team' ),
             'tab'   => 'query',
@@ -688,14 +687,15 @@ class Shortcode_Editor extends Editor_Controls {
             'default'     => true,
         ] );
         $this->add_control( 'limit', [
-            'label'       => _x( 'Members to Display', 'Editor', 'wpspeedo-team' ),
-            'label_block' => true,
+            'label'       => _x( 'Display Limit', 'Editor', 'wpspeedo-team' ),
+            'label_block' => false,
             'type'        => Controls_Manager::NUMBER,
             'default'     => 12,
             'min'         => 1,
             'max'         => 999,
             'render_type' => 'template',
             'separator'   => 'before',
+            'class'       => 'wps-field--arrange-1',
             'condition'   => [
                 'show_all' => false,
             ],
@@ -712,29 +712,78 @@ class Shortcode_Editor extends Editor_Controls {
             ],
         ] );
         $this->add_control( 'orderby', [
-            'label'       => _x( 'Order By', 'Editor', 'wpspeedo-team' ),
-            'label_block' => true,
+            'label'       => $order_by_txt,
+            'label_block' => false,
             'type'        => Controls_Manager::SELECT,
             'render_type' => 'template',
             'options'     => Utils::get_control_options( 'orderby' ),
             'default'     => 'date',
             'separator'   => 'before',
+            'class'       => 'wps-field--arrange-1',
         ] );
         $this->add_control( 'order', [
-            'label'       => _x( 'Order', 'Editor', 'wpspeedo-team' ),
-            'label_block' => true,
+            'label'       => $order_txt,
+            'label_block' => false,
             'type'        => Controls_Manager::SELECT,
             'render_type' => 'template',
             'options'     => [[
-                'label' => _x( 'Ascending', 'Editor', 'wpspeedo-team' ),
+                'label' => $ascending_txt,
                 'value' => 'ASC',
             ], [
-                'label' => _x( 'Descending', 'Editor', 'wpspeedo-team' ),
+                'label' => $descending_txt,
                 'value' => 'DESC',
             ]],
             'default'     => 'DESC',
-            'separator'   => 'before',
+            'class'       => 'wps-field--arrange-1',
         ] );
+        $this->end_controls_section();
+    }
+
+    // Filters Order
+    protected function filters_order_section() {
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
+        $this->start_controls_section( 'filters_order_section', [
+            'label'     => _x( 'Filters Order', 'Editor', 'wpspeedo-team' ),
+            'tab'       => 'query',
+            'condition' => [
+                'display_type' => 'filter',
+            ],
+        ] );
+        foreach ( Utils::get_taxonomy_roots() as $tax_root ) {
+            $tax_root_key = Utils::to_field_key( $tax_root );
+            if ( Utils::get_setting( 'enable_' . $tax_root_key . '_taxonomy' ) ) {
+                $this->add_control( 'heading_' . $tax_root_key . '_order', [
+                    'label' => Utils::get_setting( $tax_root_key . '_single_name' ),
+                    'type'  => Controls_Manager::HEADING,
+                ] );
+                $this->add_control( $tax_root_key . '_orderby', [
+                    'label'       => $order_by_txt,
+                    'label_block' => false,
+                    'type'        => Controls_Manager::SELECT,
+                    'render_type' => 'template',
+                    'options'     => Utils::get_control_options( 'terms_orderby' ),
+                    'default'     => 'none',
+                    'separator'   => 'none',
+                    'class'       => 'wps-field--arrange-1',
+                ] );
+                $this->add_control( $tax_root_key . '_order', [
+                    'label'       => $order_txt,
+                    'label_block' => false,
+                    'type'        => Controls_Manager::SELECT,
+                    'render_type' => 'template',
+                    'options'     => [[
+                        'label' => $ascending_txt,
+                        'value' => 'ASC',
+                    ], [
+                        'label' => $descending_txt,
+                        'value' => 'DESC',
+                    ]],
+                    'default'     => 'DESC',
+                    'separator'   => 'none',
+                    'class'       => 'wps-field--arrange-1',
+                ] );
+            }
+        }
         $this->end_controls_section();
     }
 
@@ -743,7 +792,7 @@ class Shortcode_Editor extends Editor_Controls {
         $enable_paging = _x( 'Enable Paging', 'Editor', 'wpspeedo-team' );
         $paging_type = _x( 'Paging Type', 'Editor', 'wpspeedo-team' );
         $ajax_paging_limit = _x( 'Lore More Limit', 'Editor', 'wpspeedo-team' );
-        $edge_page_links = _x( 'Pagination Edge Links', 'Editor', 'wpspeedo-team' );
+        $edge_page_links = _x( 'Page Spread Range', 'Editor', 'wpspeedo-team' );
         $enable_ajax_loading = _x( 'Enable AJAX Loading', 'Editor', 'wpspeedo-team' );
         $this->start_controls_section( 'query_paging_section', [
             'label'     => _x( 'Paging / Loading', 'Editor', 'wpspeedo-team' ),
@@ -796,72 +845,32 @@ class Shortcode_Editor extends Editor_Controls {
             'label' => _x( 'Include', 'Editor', 'wpspeedo-team' ),
             'tab'   => 'query',
         ] );
-        if ( Utils::get_setting( 'enable_group_taxonomy' ) ) {
-            $this->add_control( 'include_by_group', [
-                'label'       => $include_by_txt . ' ' . $group_single_name,
-                'label_block' => true,
-                'type'        => Controls_Manager::SELECT,
-                'render_type' => 'template',
-                'options'     => Utils::get_term_options( Utils::get_group_terms() ),
-                'placeholder' => $select_txt . ' ' . $group_single_name,
-                'multiple'    => true,
-                'separator'   => 'none',
-            ] );
+        foreach ( Utils::get_taxonomy_roots( true ) as $tax_root ) {
+            $tax_root_key = Utils::to_field_key( $tax_root );
+            $tax_single_name = Utils::get_setting( $tax_root_key . '_single_name' );
+            if ( $tax_root_key === 'group' || wps_team_fs()->can_use_premium_code() ) {
+                if ( Utils::get_setting( 'enable_' . $tax_root_key . '_taxonomy' ) ) {
+                    $terms = Utils::get_terms( Utils::get_taxonomy_name( $tax_root ) );
+                    $this->add_control( 'include_by_' . $tax_root_key, [
+                        'label'       => $include_by_txt . ' ' . $tax_single_name,
+                        'label_block' => true,
+                        'type'        => Controls_Manager::SELECT,
+                        'render_type' => 'template',
+                        'options'     => Utils::get_term_options( $terms ),
+                        'placeholder' => $select_txt . ' ' . $tax_single_name,
+                        'multiple'    => true,
+                        'separator'   => 'none',
+                    ] );
+                }
+            } else {
+                $this->add_control( 'include_by_' . $tax_root_key, [
+                    'label'       => $include_by_txt . ' ' . $tax_single_name,
+                    'label_block' => true,
+                    'type'        => Controls_Manager::UPGRADE_NOTICE,
+                    'separator'   => 'none',
+                ] );
+            }
         }
-        $this->add_control( 'include_by_location', [
-            'label'       => $include_by_txt . ' ' . $location_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'none',
-        ] );
-        $this->add_control( 'include_by_language', [
-            'label'       => $include_by_txt . ' ' . $language_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'include_by_specialty', [
-            'label'       => $include_by_txt . ' ' . $specialty_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'include_by_gender', [
-            'label'       => $include_by_txt . ' ' . $gender_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'include_by_extra_one', [
-            'label'       => $include_by_txt . ' ' . $extra_one_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'include_by_extra_two', [
-            'label'       => $include_by_txt . ' ' . $extra_two_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'include_by_extra_three', [
-            'label'       => $include_by_txt . ' ' . $extra_three_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'include_by_extra_four', [
-            'label'       => $include_by_txt . ' ' . $extra_four_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'include_by_extra_five', [
-            'label'       => $include_by_txt . ' ' . $extra_five_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
         $this->end_controls_section();
     }
 
@@ -872,72 +881,32 @@ class Shortcode_Editor extends Editor_Controls {
             'label' => _x( 'Exclude', 'Editor', 'wpspeedo-team' ),
             'tab'   => 'query',
         ] );
-        if ( Utils::get_setting( 'enable_group_taxonomy' ) ) {
-            $this->add_control( 'exclude_by_group', [
-                'label'       => $exclude_by_txt . ' ' . $group_single_name,
-                'label_block' => true,
-                'type'        => Controls_Manager::SELECT,
-                'render_type' => 'template',
-                'options'     => Utils::get_term_options( Utils::get_group_terms() ),
-                'placeholder' => $select_txt . ' ' . $group_single_name,
-                'multiple'    => true,
-                'separator'   => 'none',
-            ] );
+        foreach ( Utils::get_taxonomy_roots( true ) as $tax_root ) {
+            $tax_root_key = Utils::to_field_key( $tax_root );
+            $tax_single_name = Utils::get_setting( $tax_root_key . '_single_name' );
+            if ( $tax_root_key === 'group' || wps_team_fs()->can_use_premium_code() ) {
+                if ( Utils::get_setting( 'enable_' . $tax_root_key . '_taxonomy' ) ) {
+                    $terms = Utils::get_terms( Utils::get_taxonomy_name( $tax_root ) );
+                    $this->add_control( 'exclude_by_' . $tax_root_key, [
+                        'label'       => $exclude_by_txt . ' ' . $tax_single_name,
+                        'label_block' => true,
+                        'type'        => Controls_Manager::SELECT,
+                        'render_type' => 'template',
+                        'options'     => Utils::get_term_options( $terms ),
+                        'placeholder' => $select_txt . ' ' . $tax_single_name,
+                        'multiple'    => true,
+                        'separator'   => 'none',
+                    ] );
+                }
+            } else {
+                $this->add_control( 'exclude_by_' . $tax_root_key, [
+                    'label'       => $exclude_by_txt . ' ' . $tax_single_name,
+                    'label_block' => true,
+                    'type'        => Controls_Manager::UPGRADE_NOTICE,
+                    'separator'   => 'none',
+                ] );
+            }
         }
-        $this->add_control( 'exclude_by_location', [
-            'label'       => $exclude_by_txt . ' ' . $location_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'none',
-        ] );
-        $this->add_control( 'exclude_by_language', [
-            'label'       => $exclude_by_txt . ' ' . $language_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'exclude_by_specialty', [
-            'label'       => $exclude_by_txt . ' ' . $specialty_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'exclude_by_gender', [
-            'label'       => $exclude_by_txt . ' ' . $gender_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'exclude_by_extra_one', [
-            'label'       => $exclude_by_txt . ' ' . $extra_one_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'exclude_by_extra_two', [
-            'label'       => $exclude_by_txt . ' ' . $extra_two_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'exclude_by_extra_three', [
-            'label'       => $exclude_by_txt . ' ' . $extra_three_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'exclude_by_extra_four', [
-            'label'       => $exclude_by_txt . ' ' . $extra_four_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
-        $this->add_control( 'exclude_by_extra_five', [
-            'label'       => $exclude_by_txt . ' ' . $extra_five_single_name,
-            'label_block' => true,
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
-            'separator'   => 'before',
-        ] );
         $this->end_controls_section();
     }
 
@@ -945,31 +914,28 @@ class Shortcode_Editor extends Editor_Controls {
      * Typography Section
      */
     protected function typo_section_group() {
-        $typo_name = _x( 'Typo: Name', 'Editor', 'wpspeedo-team' );
-        $typo_desig = _x( 'Typo: Designation', 'Editor', 'wpspeedo-team' );
-        $typo_content = _x( 'Typo: Content', 'Editor', 'wpspeedo-team' );
-        $typo_meta = _x( 'Typo: Meta', 'Editor', 'wpspeedo-team' );
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
         $this->start_controls_section( 'typo_section', [
             'label' => _x( 'Typography', 'Editor', 'wpspeedo-team' ),
             'tab'   => 'typo',
         ] );
         $this->add_control( 'typo_name', [
-            'label'       => $typo_name,
+            'label'       => $typo_name_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->add_control( 'typo_desig', [
-            'label'       => $typo_desig,
+            'label'       => $typo_designation_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->add_control( 'typo_content', [
-            'label'       => $typo_content,
+            'label'       => $typo_content_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->add_control( 'typo_meta', [
-            'label'       => $typo_meta,
+            'label'       => $typo_meta_txt,
             'label_block' => true,
             'separator'   => 'none',
             'type'        => Controls_Manager::UPGRADE_NOTICE,
@@ -989,6 +955,7 @@ class Shortcode_Editor extends Editor_Controls {
 
     // Thumbnail
     protected function thumbnail_section() {
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
         $set_custom_size_label = _x( 'Set Custom Size', 'Editor', 'wpspeedo-team' );
         $set_custom_size_desc = _x( 'Enable the Crop Option to crop the image to exact dimensions', 'Editor', 'wpspeedo-team' );
         $this->start_controls_section( 'advance_section', [
@@ -999,7 +966,6 @@ class Shortcode_Editor extends Editor_Controls {
             'label'       => _x( 'Thumbnail Type', 'Editor', 'wpspeedo-team' ),
             'label_block' => true,
             'type'        => Controls_Manager::SELECT,
-            'placeholder' => _x( 'Thumbnail Type', 'Editor', 'wpspeedo-team' ),
             'render_type' => 'template',
             'options'     => Utils::get_control_options( 'thumbnail_type', ['carousel'] ),
             'default'     => 'image',
@@ -1008,7 +974,6 @@ class Shortcode_Editor extends Editor_Controls {
             'label'       => _x( 'Details Thumbnail Type', 'Editor', 'wpspeedo-team' ),
             'label_block' => true,
             'type'        => Controls_Manager::SELECT,
-            'placeholder' => _x( 'Details Thumbnail Type', 'Editor', 'wpspeedo-team' ),
             'render_type' => 'template',
             'options'     => Utils::get_control_options( 'thumbnail_type' ),
             'default'     => 'image',
@@ -1017,7 +982,6 @@ class Shortcode_Editor extends Editor_Controls {
             'label'       => _x( 'Thumbnail Aspect Ratio', 'Editor', 'wpspeedo-team' ),
             'label_block' => true,
             'type'        => Controls_Manager::SELECT,
-            'placeholder' => _x( 'Thumbnail Aspect Ratio', 'Editor', 'wpspeedo-team' ),
             'options'     => Utils::get_control_options( 'aspect_ratio' ),
             'default'     => 'default',
         ] );
@@ -1028,7 +992,7 @@ class Shortcode_Editor extends Editor_Controls {
             'type'        => Controls_Manager::SELECT,
             'render_type' => 'template',
             'options'     => Utils::get_registered_image_sizes(),
-            'placeholder' => _x( 'Select Size', 'Editor', 'wpspeedo-team' ),
+            'placeholder' => $select_size_txt,
         ] );
         $this->add_control( 'thumbnail_size_custom', [
             'label'       => $set_custom_size_label,
@@ -1045,7 +1009,7 @@ class Shortcode_Editor extends Editor_Controls {
             'type'        => Controls_Manager::SELECT,
             'render_type' => 'template',
             'options'     => Utils::get_registered_image_sizes(),
-            'placeholder' => _x( 'Select Size', 'Editor', 'wpspeedo-team' ),
+            'placeholder' => $select_size_txt,
         ] );
         $this->add_control( 'detail_thumbnail_size_custom', [
             'label'       => $set_custom_size_label,
@@ -1061,7 +1025,6 @@ class Shortcode_Editor extends Editor_Controls {
             'label_block' => true,
             'type'        => Controls_Manager::SELECT,
             'options'     => Utils::get_thumbnail_position(),
-            'placeholder' => _x( 'Thumbnail Position', 'Editor', 'wpspeedo-team' ),
             'default'     => 'center center',
         ] );
         $this->end_controls_section();
@@ -1069,17 +1032,15 @@ class Shortcode_Editor extends Editor_Controls {
 
     // Container
     protected function container_section() {
-        $container_bg_color = _x( 'Background Color', 'Editor', 'wpspeedo-team' );
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
         $container_custom_class = _x( 'Custom Class', 'Editor', 'wpspeedo-team' );
-        $container_padding = _x( 'Padding', 'Editor', 'wpspeedo-team' );
         $container_z_index = _x( 'Z Index', 'Editor', 'wpspeedo-team' );
-        $container_border_radius = _x( 'Border Radius', 'Editor', 'wpspeedo-team' );
         $this->start_controls_section( 'container_settings_section', [
             'label' => _x( 'Container Settings', 'Editor', 'wpspeedo-team' ),
             'tab'   => 'advance',
         ] );
         $this->add_control( 'container_background', [
-            'label'       => $container_bg_color,
+            'label'       => $background_color_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
@@ -1089,7 +1050,7 @@ class Shortcode_Editor extends Editor_Controls {
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->add_control( 'container_padding', [
-            'label'       => $container_padding,
+            'label'       => $padding_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
@@ -1099,7 +1060,7 @@ class Shortcode_Editor extends Editor_Controls {
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->add_control( 'container_border_radius', [
-            'label'       => $container_border_radius,
+            'label'       => $border_radius_txt,
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );

@@ -63,7 +63,7 @@ class Group_Control_Box_Shadow extends Group_Base_Control {
 			],
 			'placeholder' => _x( 'Outline', 'Editor: Box Shadow Control', 'wpspeedo-team' ),
 			'render_type' => 'ui',
-			'view_type' => 'arrange-1'
+			'class' => 'wps-field--arrange-1'
 		];
 
 		return $controls;

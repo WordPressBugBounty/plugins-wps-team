@@ -23,7 +23,7 @@ trait Taxonomy
         if ( empty( Utils::get_active_taxonomies() ) ) {
             return;
         }
-        $taxonomy_menu_title = _x( 'Taxonomies', 'Menu Label', 'wpspeedo-team' );
+        $taxonomy_menu_title = esc_html_x( 'Taxonomies', 'Menu Label', 'wpspeedo-team' );
         add_submenu_page(
             Utils::get_top_label_menu(),
             $taxonomy_menu_title,
@@ -506,6 +506,33 @@ trait Taxonomy
             }
             register_taxonomy( $taxonomy, array(Utils::post_type_name()), $args );
         }
+    }
+
+    /*
+     * Add Term Order Field to Edit Page
+     */
+    public function add_term_order_field_to_edit_page( $term ) {
+        global $wpdb;
+        $term_order = $wpdb->get_var( $wpdb->prepare( "SELECT term_order FROM {$wpdb->terms} WHERE term_id = %d", $term->term_id ) );
+        ?>
+
+        <tr class="form-field term-order-wrap">
+            <th scope="row">
+                <label for="term_order"><?php 
+        echo $this->get_order_title__premium_only();
+        ?></label>
+            </th>
+            <td>
+                <input type="number" name="term_order" id="term_order" value="<?php 
+        echo esc_attr( $term_order );
+        ?>" />
+                <p class="description"><?php 
+        _e( 'Set the order for this term.', 'wpspeedo-team' );
+        ?></p>
+            </td>
+        </tr>
+        
+        <?php 
     }
 
 }

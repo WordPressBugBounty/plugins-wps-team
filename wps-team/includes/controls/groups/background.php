@@ -64,6 +64,8 @@ class Group_Control_Background extends Group_Base_Control {
 			'condition' => [
 				'type' => [ 'gradient' ],
 			],
+			'class' => 'wps-field--arrange-3',
+			'label_block' => false,
 		];
 
 		$fields['color_b'] = [
@@ -87,13 +89,15 @@ class Group_Control_Background extends Group_Base_Control {
 				'type' => [ 'gradient' ],
 			],
 			'of_type' => 'gradient',
+			'class' => 'wps-field--arrange-3',
+			'label_block' => false,
 		];
 
 		$fields['gradient_type'] = [
 			'label' => _x( 'Type', 'Editor: BG Control', 'wpspeedo-team' ),
 			'type' => Controls_Manager::SELECT,
 			'separator' => '',
-			'label_block' => true,
+			'label_block' => false,
 			'options' => [
 				[ 'label' => _x( 'Linear', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'linear' ],
 				[ 'label' => _x( 'Radial', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'radial' ],
@@ -103,6 +107,7 @@ class Group_Control_Background extends Group_Base_Control {
 				'type' => [ 'gradient' ],
 			],
 			'of_type' => 'gradient',
+			'class' => 'wps-field--arrange-1'
 		];
 
 		$fields['gradient_angle'] = [
@@ -124,7 +129,8 @@ class Group_Control_Background extends Group_Base_Control {
 			'label' => _x( 'Position', 'Editor: BG Control', 'wpspeedo-team' ),
 			'type' => Controls_Manager::SELECT,
 			'separator' => '',
-			'label_block' => true,
+			'class' => 'wps-field--arrange-3',
+			'label_block' => false,
 			'options' => [
 				[ 'label' => _x( 'Center Center', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'center center' ],
 				[ 'label' => _x( 'Center Left', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'center left' ],

@@ -45,20 +45,21 @@ class Elementor_Widget extends \Elementor\Widget_Base {
 
     }
 
-    public static function get_shortcode_list( $reverse = false ) {
+    public static function get_shortcode_list() {
 
         $shortcodes = Integration::get_shortcodes();
         
-        if ( !empty($shortcodes) ) {
+        if ( empty($shortcodes) ) return [];
 
-            $shortcodes = [ Integration::shortcode_default_option() ] + wp_list_pluck( $shortcodes, 'name', 'id' );
+        $shortcodes = [ Integration::shortcode_default_option() ] + wp_list_pluck( $shortcodes, 'name', 'id' );
 
-            if ( ! $reverse ) return $shortcodes;
+        $_shortcodes = [];
 
-            return array_flip( $shortcodes );
+        foreach ( $shortcodes as $key => $value ) {
+            $_shortcodes['shortcode-' . $key] = esc_html( $value );
         }
 
-        return [];
+        return $_shortcodes;
 
     }
 
@@ -70,11 +71,15 @@ class Elementor_Widget extends \Elementor\Widget_Base {
 
         $shortcode_id = $this->get_settings_for_display( 'shortcode_id' );
 
-        if ( empty($shortcode_id) || ! is_numeric($shortcode_id) ) {
-            echo Integration::display_empty_message();
-        } else {
-            echo Integration::render_shortcode( $shortcode_id );
+        if ( ! empty($shortcode_id) ) {
+            $shortcode_id = str_replace( 'shortcode-', '', $shortcode_id );
+            if ( is_numeric($shortcode_id) ) {
+                echo Integration::render_shortcode( (int) $shortcode_id );
+                return;
+            }
         }
+        
+        echo Integration::display_empty_message();
 
     }
 

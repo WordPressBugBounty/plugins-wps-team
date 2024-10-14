@@ -2,6 +2,8 @@
 
 namespace WPSpeedo_Team;
 
+use WP_Query;
+
 if ( ! defined('ABSPATH') ) exit;
 
 class Upgrader {
@@ -24,7 +26,7 @@ class Upgrader {
     }
 
     public function upgrade_paths() {
-        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0' ];
+        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.0' ];
     }
 
     public function run() {
@@ -274,6 +276,68 @@ class Upgrader {
 
             if ( $changed ) {
                 update_post_meta( $team_member_id, '_social_links', $social_links );
+            }
+
+        }
+
+    }
+
+    public function _v_3_2_0() {
+
+        $args = [
+            'post_type' => 'any',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'meta_query' => [
+                [
+                    'key' => '_elementor_data',
+                    'compare' => 'EXISTS'
+                ]
+            ]
+        ];
+    
+        $query = new WP_Query($args);
+    
+        foreach ($query->posts as $post_id) {
+
+            $elementor_data = get_post_meta($post_id, '_elementor_data', true);
+
+            if ( ! str_contains( $elementor_data, 'wpspeedo_team' ) ) continue;
+    
+            // Decode the Elementor content
+            $elementor_data_array = json_decode($elementor_data, true);
+
+            // Flag to check if the post was updated
+            $updated = false;
+    
+            // Loop through the Elementor sections and elements
+            $this->_v_3_2_0_update_elementor_shortcode_id( $elementor_data_array, $updated );
+    
+            // Only update the post meta if changes were made
+            if ( $updated ) {
+                update_post_meta( $post_id, '_elementor_data', json_encode($elementor_data_array) );
+            }
+
+        }
+    
+        wp_reset_postdata();
+    }
+
+    public function _v_3_2_0_update_elementor_shortcode_id( &$widgets, &$updated ) {
+
+        foreach ($widgets as &$widget) {
+    
+            if ( isset($widget['widgetType']) && $widget['widgetType'] === 'wpspeedo_team' ) {
+                if ( isset($widget['settings']['shortcode_id']) && is_numeric($widget['settings']['shortcode_id']) ) {
+                    $widget['settings']['shortcode_id'] = 'shortcode-' . $widget['settings']['shortcode_id'];
+                    $updated = true;
+                }
+                continue;
+            }
+    
+            // Recursively check for nested sections
+            if (!empty($widget['elements'])) {
+                $this->_v_3_2_0_update_elementor_shortcode_id( $widget['elements'], $updated );
             }
 
         }

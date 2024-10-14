@@ -21,7 +21,7 @@ class Group_Control_Border extends Group_Base_Control {
 			'label' => _x( 'Border Type', 'Editor: Border', 'wpspeedo-team' ),
 			'type' => Controls_Manager::SELECT,
 			'separator' => '',
-			'view_type' => 'arrange-1',
+			'class' => 'wps-field--arrange-1',
 			'placeholder' => $none,
 			'options' => [
 				[ 'label' => $none, 'value' => '' ],

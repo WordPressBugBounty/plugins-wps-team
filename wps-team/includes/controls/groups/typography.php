@@ -24,11 +24,11 @@ class Group_Control_Typography extends Group_Base_Control {
 		$fields['font_family'] = [
 			'label' => _x( 'Family', 'Editor: Typography', 'wpspeedo-team' ),
 			'type' => Controls_Manager::FONT,
-			'view_type' => 'arrange-1',
+			'class' => 'wps-field--arrange-1',
 			'placeholder' => 'Default',
 			'render_type' => 'template',
 			'default' => '',
-			'separator' => '',
+			'separator' => ''
 		];
 
 		$fields['font_size'] = [
@@ -61,17 +61,17 @@ class Group_Control_Typography extends Group_Base_Control {
 			'label' => _x( 'Weight', 'Editor: Typography', 'wpspeedo-team' ),
 			'type' => Controls_Manager::SELECT,
 			'separator' => '',
-			'view_type' => 'arrange-1',
+			'class' => 'wps-field--arrange-1',
 			'placeholder' => 'Default',
 			'default' => '',
-			'options' => $typo_weight_options,
+			'options' => $typo_weight_options
 		];
 
 		$fields['text_transform'] = [
 			'label' => _x( 'Transform', 'Editor: Typography', 'wpspeedo-team' ),
 			'type' => Controls_Manager::SELECT,
 			'separator' => '',
-			'view_type' => 'arrange-1',
+			'class' => 'wps-field--arrange-1',
 			'placeholder' => 'Default',
 			'default' => '',
 			'options' => [
@@ -101,7 +101,7 @@ class Group_Control_Typography extends Group_Base_Control {
 		$fields['font_style'] = [
 			'label' => _x( 'Style', 'Editor: Typography', 'wpspeedo-team' ),
 			'type' => Controls_Manager::SELECT,
-			'view_type' => 'arrange-1',
+			'class' => 'wps-field--arrange-1',
 			'separator' => '',
 			'placeholder' => 'Default',
 			'default' => '',
@@ -124,7 +124,7 @@ class Group_Control_Typography extends Group_Base_Control {
 		$fields['text_decoration'] = [
 			'label' => _x( 'Decoration', 'Editor: Typography', 'wpspeedo-team' ),
 			'type' => Controls_Manager::SELECT,
-			'view_type' => 'arrange-1',
+			'class' => 'wps-field--arrange-1',
 			'separator' => '',
 			'placeholder' => 'Default',
 			'default' => '',
