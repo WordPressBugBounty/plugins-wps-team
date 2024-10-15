@@ -26,7 +26,7 @@ class Upgrader {
     }
 
     public function upgrade_paths() {
-        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.0' ];
+        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.0', '3.2.1' ];
     }
 
     public function run() {
@@ -302,6 +302,11 @@ class Upgrader {
 
             $elementor_data = get_post_meta($post_id, '_elementor_data', true);
 
+            // Convert $elementor_data to a string if it's not already
+            if ( !is_string($elementor_data) ) {
+                $elementor_data = json_encode($elementor_data);
+            }
+
             if ( ! str_contains( $elementor_data, 'wpspeedo_team' ) ) continue;
     
             // Decode the Elementor content
@@ -329,8 +334,10 @@ class Upgrader {
     
             if ( isset($widget['widgetType']) && $widget['widgetType'] === 'wpspeedo_team' ) {
                 if ( isset($widget['settings']['shortcode_id']) && is_numeric($widget['settings']['shortcode_id']) ) {
-                    $widget['settings']['shortcode_id'] = 'shortcode-' . $widget['settings']['shortcode_id'];
-                    $updated = true;
+                    if ( ! str_contains( $widget['settings']['shortcode_id'], 'shortcode-' ) ) {
+                        $widget['settings']['shortcode_id'] = 'shortcode-' . $widget['settings']['shortcode_id'];
+                        $updated = true;
+                    }
                 }
                 continue;
             }
@@ -342,6 +349,10 @@ class Upgrader {
 
         }
 
+    }
+
+    public function _v_3_2_1() {
+        $this->_v_3_2_0();
     }
 
 }
