@@ -26,7 +26,7 @@ class Upgrader {
     }
 
     public function upgrade_paths() {
-        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.0', '3.2.1' ];
+        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.1' ];
     }
 
     public function run() {
@@ -282,7 +282,7 @@ class Upgrader {
 
     }
 
-    public function _v_3_2_0() {
+    public function _v_3_2_1() {
 
         $args = [
             'post_type' => 'any',
@@ -316,7 +316,7 @@ class Upgrader {
             $updated = false;
     
             // Loop through the Elementor sections and elements
-            $this->_v_3_2_0_update_elementor_shortcode_id( $elementor_data_array, $updated );
+            $this->_v_3_2_1_update_elementor_shortcode_id( $elementor_data_array, $updated );
     
             // Only update the post meta if changes were made
             if ( $updated ) {
@@ -328,7 +328,7 @@ class Upgrader {
         wp_reset_postdata();
     }
 
-    public function _v_3_2_0_update_elementor_shortcode_id( &$widgets, &$updated ) {
+    public function _v_3_2_1_update_elementor_shortcode_id( &$widgets, &$updated ) {
 
         foreach ($widgets as &$widget) {
     
@@ -344,15 +344,11 @@ class Upgrader {
     
             // Recursively check for nested sections
             if (!empty($widget['elements'])) {
-                $this->_v_3_2_0_update_elementor_shortcode_id( $widget['elements'], $updated );
+                $this->_v_3_2_1_update_elementor_shortcode_id( $widget['elements'], $updated );
             }
 
         }
 
-    }
-
-    public function _v_3_2_1() {
-        $this->_v_3_2_0();
     }
 
 }

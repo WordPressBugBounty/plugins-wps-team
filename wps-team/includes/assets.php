@@ -175,13 +175,8 @@ class Assets extends Assets_Manager {
         );
         $this->add_responsive_style( $selector, '--wps-item-col-gap-alt: calc(-{{value}}px)', 'gap' );
         $this->add_responsive_style( $selector, '--wps-item-col-gap: calc({{value}}px)', 'gap' );
-        $this->add_responsive_style(
-            $selector,
-            '--wps-item-col-gap-vert: calc({{value}}px)',
-            'gap_vertical',
-            'value',
-            'gap'
-        );
+        $this->add_responsive_style( $selector, '--wps-item-col-gap-vert: calc({{value}}px)', 'gap_vertical' );
+        $this->add_responsive_style( $selector, '--wps-item-col-gap-vert-alt: calc(-{{value}}px)', 'gap_vertical' );
         $this->add_responsive_style( $selector, '--wps-item-col-width: calc(100%/{{value}}*0.9999999)', 'columns' );
         $this->add_background_style( $selector, 'item_background_', '--wps-item-bg-color' );
         $this->add_style( $selector, '--wps-title-color: {{value}}', 'title_color' );

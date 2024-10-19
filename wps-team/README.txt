@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team, team plugin, team members, team showcase, team builder
 Requires at least: 5.9
 Tested up to: 6.6
-Stable tag: 3.2.1
+Stable tag: 3.2.2
 Requires PHP: 7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -245,6 +245,12 @@ Yes, this Team plugin supports multi-language.
 15. WPS Team Members - Settings Page
 
 == Changelog ==
+
+= 3.2.2 - 19-10-2024 =
+* Fixed: Group filter disappearing issue
+* Fixed: Spacing issue in filter style 2
+* Fixed: Enable and disable functionality for sticky filter
+* Fixed: Vertical gap issue
 
 = 3.2.1 - 15-10-2024 =
 * Fixed: Data Upgrader Error.
