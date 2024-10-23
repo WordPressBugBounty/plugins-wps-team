@@ -7,6 +7,26 @@ if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
 class Utils {
+    static function elementor_get_post_meta( $post_id ) {
+        $meta = get_post_meta( $post_id, '_elementor_data', true );
+        if ( is_string( $meta ) && !empty( $meta ) ) {
+            $meta = json_decode( $meta, true );
+        }
+        if ( empty( $meta ) ) {
+            $meta = [];
+        }
+        return $meta;
+    }
+
+    static function elementor_update_post_meta( $post_id, $value ) {
+        update_metadata(
+            'post',
+            $post_id,
+            '_elementor_data',
+            wp_slash( wp_json_encode( $value ) )
+        );
+    }
+
     static function get_posts_meta_cache_key( $meta_key, $post_type = null ) {
         if ( empty( $post_type ) ) {
             $post_type = self::post_type_name();

@@ -284,6 +284,8 @@ class Upgrader {
 
     public function _v_3_2_1() {
 
+        if ( ! class_exists( '\Elementor\Plugin' ) ) return;
+
         $args = [
             'post_type' => 'any',
             'posts_per_page' => -1,
@@ -299,28 +301,21 @@ class Upgrader {
         $query = new WP_Query($args);
     
         foreach ($query->posts as $post_id) {
+            $elementor_data = Utils::elementor_get_post_meta( $post_id );
 
-            $elementor_data = get_post_meta($post_id, '_elementor_data', true);
-
-            // Convert $elementor_data to a string if it's not already
-            if ( !is_string($elementor_data) ) {
-                $elementor_data = json_encode($elementor_data);
-            }
-
-            if ( ! str_contains( $elementor_data, 'wpspeedo_team' ) ) continue;
-    
-            // Decode the Elementor content
-            $elementor_data_array = json_decode($elementor_data, true);
+            if ( ! str_contains( json_encode($elementor_data), 'wpspeedo_team' ) ) continue;
 
             // Flag to check if the post was updated
             $updated = false;
     
             // Loop through the Elementor sections and elements
-            $this->_v_3_2_1_update_elementor_shortcode_id( $elementor_data_array, $updated );
+            $this->_v_3_2_1_update_elementor_shortcode_id( $elementor_data, $updated );
     
             // Only update the post meta if changes were made
             if ( $updated ) {
-                update_post_meta( $post_id, '_elementor_data', json_encode($elementor_data_array) );
+
+                // Save as array if it was originally an array
+                Utils::elementor_update_post_meta( $post_id, $elementor_data );
             }
 
         }
