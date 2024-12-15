@@ -68,6 +68,12 @@ class Meta_Box_Editor extends Editor_Controls {
             'separator'   => 'none',
             'type'        => Controls_Manager::TEXT,
         ] );
+        $this->add_control( '_address', [
+            'label'       => plugin()->translations->get( 'address_label', _x( 'Address', 'Admin Metabox', 'wpspeedo-team' ) ),
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::TEXT,
+        ] );
         $this->add_control( '_ribbon', [
             'label'       => plugin()->translations->get( 'ribbon_label', _x( 'Ribbon / Tag', 'Admin Metabox', 'wpspeedo-team' ) ),
             'label_block' => false,

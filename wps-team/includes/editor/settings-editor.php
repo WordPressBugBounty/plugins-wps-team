@@ -157,6 +157,15 @@ class Settings_Editor extends Editor_Controls {
                 'enable_multilingual' => false,
             ],
         ] );
+        $this->add_control( 'address_label', [
+            'label'       => 'Address',
+            'label_block' => true,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
         $this->add_control( 'ribbon_label', [
             'label'       => 'Ribbon / Tag',
             'label_block' => true,
@@ -349,6 +358,17 @@ class Settings_Editor extends Editor_Controls {
             'type'        => Controls_Manager::TEXT,
             'placeholder' => Utils::get_default( 'company_meta_label' ),
             'default'     => Utils::get_default( 'company_meta_label' ),
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
+        $this->add_control( 'address_meta_label', [
+            'label'       => 'Address: Text',
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::TEXT,
+            'placeholder' => Utils::get_default( 'address_meta_label' ),
+            'default'     => Utils::get_default( 'address_meta_label' ),
             'condition'   => [
                 'enable_multilingual' => false,
             ],

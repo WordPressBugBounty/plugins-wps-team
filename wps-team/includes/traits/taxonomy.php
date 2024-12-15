@@ -198,7 +198,7 @@ trait Taxonomy
                             <p><?php 
             echo esc_html_x( 'If you love our work please support us by purchasing our Premium plugin.', 'Settings: Taxonomy', 'wpspeedo-team' );
             ?></p>
-                            <a href="https://wpspeedo.com/products/wps-team-pro/" class="button button-primary" target="_blank">
+                            <a href="https://wpspeedo.com/wps-team-pro/" class="button button-primary" target="_blank">
                                 <?php 
             echo esc_html_x( 'Upgrade to Pro', 'Settings: Taxonomy', 'wpspeedo-team' );
             ?>

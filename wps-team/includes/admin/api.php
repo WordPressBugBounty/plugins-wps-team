@@ -36,12 +36,16 @@ class API {
         return $settings_editor->get_display_formated_values();
     }
 
-    public function ajax_save_settings() {
-        $settings = $this->sanitize_settings( $_REQUEST['settings'] );
+    public function save_settings( $settings ) {
+        $settings = $this->sanitize_settings( $settings );
         // Sanitization & Validation done manually.
         update_option( Utils::get_option_name(), $settings );
         do_action( 'wps_preference_update' );
         Utils::flush_rewrite_rules();
+    }
+
+    public function ajax_save_settings() {
+        $this->save_settings( $_REQUEST['settings'] );
         wp_send_json_success( [
             'message' => _x( 'Settings saved successfully', 'Settings', 'wpspeedo-team' ),
             'data'    => get_option( Utils::get_option_name() ),

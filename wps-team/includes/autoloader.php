@@ -76,7 +76,8 @@ class Autoloader {
 			'Style_Manager' => 'includes/managers/style-manager.php',
 			'Assets_Manager' => 'includes/managers/assets-manager.php',
 			'Notification_Manager' => 'includes/managers/notification-manager.php',
-			'Import_Export_Manager' => 'includes/managers/import-export-manager.php',
+			'Bulk_Import_Manager' => 'includes/managers/bulk-import-manager.php',
+			'Export_Import_Manager' => 'includes/managers/export-import-manager.php',
 
 			'Notifications' => 'includes/notifications/notifications.php',
 			'Notification' => 'includes/notifications/model/notification.php',

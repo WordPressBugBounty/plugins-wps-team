@@ -167,6 +167,8 @@ class Utils {
 
     static function get_meta_field_keys() {
         $field_keys = [
+            '_first_name',
+            '_last_name',
             '_experience',
             '_company',
             '_skills',
@@ -294,6 +296,7 @@ class Utils {
             'experience_label'             => 'Years of Experience',
             'website_label'                => 'Website',
             'company_label'                => 'Company',
+            'address_label'                => 'Address',
             'ribbon_label'                 => 'Ribbon / Tag',
             'link_1_label'                 => 'Resume Link',
             'link_2_label'                 => 'Hire Link',
@@ -321,6 +324,7 @@ class Utils {
             'website_meta_label'           => 'Website:',
             'experience_meta_label'        => 'Experience:',
             'company_meta_label'           => 'Company:',
+            'address_meta_label'           => 'Address:',
             'group_meta_label'             => 'Group:',
             'location_meta_label'          => 'Location:',
             'language_meta_label'          => 'Language:',
@@ -500,14 +504,11 @@ class Utils {
         return $options;
     }
 
-    public static function get_settings() {
+    public static function get_general_settings() {
         // Settings
         $defaults = self::default_settings();
         $settings = (array) get_option( self::get_option_name(), $defaults );
         $settings = array_merge( $defaults, $settings );
-        // Taxonomy Settings
-        $taxonomy_settings = self::get_taxonomies_settings();
-        $settings = array_merge( $settings, $taxonomy_settings );
         // Set Essential Settings
         $fields = ['post_type_slug', 'member_plural_name', 'member_single_name'];
         foreach ( $fields as $field ) {
@@ -516,6 +517,15 @@ class Utils {
             }
         }
         return $settings;
+    }
+
+    public static function get_settings() {
+        // General Settings
+        $settings = self::get_general_settings();
+        // Taxonomy Settings
+        $taxonomy_settings = self::get_taxonomies_settings();
+        // Merge Settings and Taxonomy Settings
+        return array_merge( $settings, $taxonomy_settings );
     }
 
     public static function get_setting( $key, $default = '' ) {
@@ -1569,6 +1579,7 @@ class Utils {
             'experience'  => _x( 'Experience', 'Editor', 'wpspeedo-team' ),
             'website'     => _x( 'Website', 'Editor', 'wpspeedo-team' ),
             'company'     => _x( 'Company', 'Editor', 'wpspeedo-team' ),
+            'address'     => _x( 'Address', 'Editor', 'wpspeedo-team' ),
             'skills'      => _x( 'Skills', 'Editor', 'wpspeedo-team' ),
             'link_1'      => self::get_setting( 'link_1_label', 'Resume Link' ),
             'link_2'      => self::get_setting( 'link_2_label', 'Hire Link' ),
@@ -2128,6 +2139,9 @@ class Utils {
                 case '_company':
                     $field_label = '<i class="fas fa-building"></i>';
                     break;
+                case '_address':
+                    $field_label = '<i class="fas fa-map-marker-alt"></i>';
+                    break;
                 case Utils::get_taxonomy_name( 'group', true ):
                     $field_label = '<i class="fas fa-tags"></i>';
                     break;
@@ -2155,6 +2169,9 @@ class Utils {
                 case '_company':
                     $field_label = plugin()->translations->get( 'company_meta_label', _x( 'Company:', 'Public', 'wpspeedo-team' ) );
                     break;
+                case '_address':
+                    $field_label = plugin()->translations->get( 'address_meta_label', _x( 'Address:', 'Public', 'wpspeedo-team' ) );
+                    break;
                 case Utils::get_taxonomy_name( 'group', true ):
                     $field_label = plugin()->translations->get( 'group_meta_label', _x( 'Group:', 'Public', 'wpspeedo-team' ) );
                     break;
@@ -2180,7 +2197,8 @@ class Utils {
             '_website',
             '_experience',
             '_company',
-            '_mobile'
+            '_mobile',
+            '_address'
         ], Utils::get_active_taxonomies( true ) ) );
         $supported_sorted_fields = array_values( $supported_sorted_fields );
         foreach ( $supported_sorted_fields as $s_field ) {
@@ -2253,6 +2271,10 @@ class Utils {
                 continue;
             }
             if ( $field === '_company' ) {
+                $fields_html .= '<li>' . $field_label . sprintf( '<span class="wps--info-text">%s</span>', sanitize_text_field( $val ) ) . '</li>';
+                continue;
+            }
+            if ( $field === '_address' ) {
                 $fields_html .= '<li>' . $field_label . sprintf( '<span class="wps--info-text">%s</span>', sanitize_text_field( $val ) ) . '</li>';
                 continue;
             }
@@ -2345,6 +2367,12 @@ class Utils {
                 $fields_html .= '{{?}}';
                 continue;
             }
+            if ( $field === '_address' ) {
+                $fields_html .= "{{? it.{$field}}}";
+                $fields_html .= '<li>' . $field_label . sprintf( '<span class="wps--info-text">%s</span>', sanitize_text_field( $val ) ) . '</li>';
+                $fields_html .= '{{?}}';
+                continue;
+            }
             $tax_roots = self::get_taxonomy_roots();
             foreach ( $tax_roots as $taxonomy ) {
                 if ( $field === Utils::get_taxonomy_name( $taxonomy, true ) ) {
@@ -2387,6 +2415,24 @@ class Utils {
         }
         // Set the headers to prevent caching for the different browsers.
         nocache_headers();
+    }
+
+    public static function delete_directory_recursive( $dir ) {
+        if ( !file_exists( $dir ) ) {
+            return false;
+        }
+        if ( !is_dir( $dir ) ) {
+            return unlink( $dir );
+        }
+        foreach ( scandir( $dir ) as $item ) {
+            if ( $item == '.' || $item == '..' ) {
+                continue;
+            }
+            if ( !self::delete_directory_recursive( $dir . DIRECTORY_SEPARATOR . $item ) ) {
+                return false;
+            }
+        }
+        return @rmdir( $dir );
     }
 
 }

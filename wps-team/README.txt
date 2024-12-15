@@ -3,8 +3,8 @@
 Contributors: wpspeedo, freemius
 Tags: team, team plugin, team members, team showcase, team builder
 Requires at least: 5.9
-Tested up to: 6.6
-Stable tag: 3.2.3
+Tested up to: 6.7
+Stable tag: 3.3.0
 Requires PHP: 7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -245,6 +245,16 @@ Yes, this Team plugin supports multi-language.
 15. WPS Team Members - Settings Page
 
 == Changelog ==
+
+= 3.3.0 - 15-12-2024 =
+* Added: Export/Import feature added for seamless data management.
+* Added: Responsive filters toggle button for better user experience on mobile devices.
+* Fixed: Custom typography issue.
+* Fixed: Popup arrow icon misalignment on certain themes.
+* Fixed: Upgrader conflict with Elementor builder.
+* Tweak: Refined input placeholder UI for improved clarity.
+* Tweak: Optimized Tools UI for better usability.
+* Tweak: Updated Freemius.
 
 = 3.2.3 - 24-10-2024 =
 * Fixed: Horiz theme responsive issue.

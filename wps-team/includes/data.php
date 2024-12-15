@@ -263,13 +263,16 @@ class Data {
                 continue;
             }
             if ( in_array( $meta_key, [
+                '_first_name',
+                '_last_name',
                 '_designation',
                 '_company',
                 '_ribbon',
                 '_color',
                 '_experience',
                 '_mobile',
-                '_telephone'
+                '_telephone',
+                '_address'
             ] ) ) {
                 $data[$meta_key] = sanitize_text_field( $meta_val );
                 continue;

@@ -61,6 +61,7 @@ class Shortcode_Loader extends Attribute_Manager {
         $card_action = $this->get_setting( 'card_action' );
         $layout_mode = $this->get_setting( 'layout_mode' );
         $enable_sticky_filter = $this->get_setting( 'enable_sticky_filter' );
+        $enable_mobile_sticky_filter = $this->get_setting( 'enable_mobile_sticky_filter' );
         $sticky_top_gap = $this->get_setting( 'filter_sticky_top_gap' );
         $sticky_top_gap_tablet = $this->get_setting( 'filter_sticky_top_gap_tablet' );
         $sticky_top_gap_small_tablet = $this->get_setting( 'filter_sticky_top_gap_small_tablet' );

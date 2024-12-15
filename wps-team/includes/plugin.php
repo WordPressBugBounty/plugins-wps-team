@@ -50,6 +50,7 @@ class Plugin {
         new Data();
         new Shortcode();
         new Demo_Import();
+        new Export_Import_Manager();
         do_action( 'wpspeedo_team/loaded', $this );
     }
 

@@ -118,47 +118,56 @@ abstract class Style_Manager extends Attribute_Manager {
         }
     }
 
-    public function add_typography_style( $selector, $setting_base, $device = '' ) {
+    public function add_typography_style( $selector, $setting_base ) {
 
-        $font_family =      $this->get_setting( $setting_base . 'font_family' );
-        $font_size =        $this->get_setting( $setting_base . 'font_size', 'all' );
-        $font_weight =      $this->get_setting( $setting_base . 'font_weight' );
-        $text_transform =   $this->get_setting( $setting_base . 'text_transform' );
-        $font_style =       $this->get_setting( $setting_base . 'font_style' );
-        $text_decoration =  $this->get_setting( $setting_base . 'text_decoration' );
-        $line_height =      $this->get_setting( $setting_base . 'line_height', 'all' );
-        $letter_spacing =   $this->get_setting( $setting_base . 'letter_spacing' );
+        $devices            = ['', 'tablet', 'small_tablet', 'mobile'];
+        $font_family        = $this->get_setting( $setting_base . 'font_family' );
+        $font_weight        = $this->get_setting( $setting_base . 'font_weight' );
+        $text_transform     = $this->get_setting( $setting_base . 'text_transform' );
+        $font_style         = $this->get_setting( $setting_base . 'font_style' );
+        $text_decoration    = $this->get_setting( $setting_base . 'text_decoration' );
+        $line_height        = $this->get_setting( $setting_base . 'line_height', 'all' );
+        $letter_spacing     = $this->get_setting( $setting_base . 'letter_spacing' );
 
         if ( !empty( $font_family ) ) {
-            $this->add_style_row( $selector, sprintf( '%s:%s', 'font-family', $font_family ), $device );
-        }
-
-        if ( !empty( $font_size ) && !empty( $font_size['unit'] ) && ( !empty($font_size['value']) || $font_size['value'] == 0 ) ) {
-            $this->add_style_row( $selector, sprintf( '%s:%s%s', 'font-size', $font_size['value'], $font_size['unit'] ), $device );
+            $this->add_style_row( $selector, sprintf( '%s:%s', 'font-family', $font_family ) );
         }
 
         if ( !empty( $font_weight ) ) {
-            $this->add_style_row( $selector, sprintf( '%s:%s', 'font-weight', $font_weight ), $device );
+            $this->add_style_row( $selector, sprintf( '%s:%s', 'font-weight', $font_weight ) );
         }
 
         if ( !empty( $text_transform ) ) {
-            $this->add_style_row( $selector, sprintf( '%s:%s', 'text-transform', $text_transform ), $device );
+            $this->add_style_row( $selector, sprintf( '%s:%s', 'text-transform', $text_transform ) );
         }
 
         if ( !empty( $font_style ) ) {
-            $this->add_style_row( $selector, sprintf( '%s:%s', 'font-style', $font_style ), $device );
+            $this->add_style_row( $selector, sprintf( '%s:%s', 'font-style', $font_style ) );
         }
 
         if ( !empty( $text_decoration ) ) {
-            $this->add_style_row( $selector, sprintf( '%s:%s', 'text-decoration', $text_decoration ), $device );
+            $this->add_style_row( $selector, sprintf( '%s:%s', 'text-decoration', $text_decoration ) );
         }
 
-        if ( !empty( $line_height ) && !empty( $line_height['unit'] ) && ( !empty($line_height['value']) || $line_height['value'] == 0 ) ) {
-            $this->add_style_row( $selector, sprintf( '%s:%s%s', 'line-height', $line_height['value'], $line_height['unit'] ), $device );
-        }
+        foreach ( $devices as $device ) {
 
-        if ( !empty( $letter_spacing ) ) {
-            $this->add_style_row( $selector, sprintf( '%s:%spx', 'letter-spacing', $letter_spacing ), $device );
+            $_device = $device ? '_' . $device : '';
+
+            $font_size = $this->get_setting( $setting_base . 'font_size' . $_device, 'all' );
+            if ( !empty( $font_size ) && !empty( $font_size['unit'] ) && ( !empty($font_size['value']) || $font_size['value'] == 0 ) ) {
+                $this->add_style_row( $selector, sprintf( '%s:%s%s', 'font-size', $font_size['value'], $font_size['unit'] ), $device );
+            }
+
+            $line_height = $this->get_setting( $setting_base . 'line_height' . $_device, 'all' );
+            if ( !empty( $line_height ) && !empty( $line_height['unit'] ) && ( !empty($line_height['value']) || $line_height['value'] == 0 ) ) {
+                $this->add_style_row( $selector, sprintf( '%s:%s%s', 'line-height', $line_height['value'], $line_height['unit'] ), $device );
+            }
+
+            $letter_spacing = $this->get_setting( $setting_base . 'letter_spacing' . $_device );
+            if ( !empty( $letter_spacing ) ) {
+                $this->add_style_row( $selector, sprintf( '%s:%spx', 'letter-spacing', $letter_spacing ), $device );
+            }
+
         }
 
     }
