@@ -354,13 +354,13 @@ class Shortcode_Editor extends Editor_Controls {
             'tab'   => 'style',
         ] );
         $this->add_control( 'title_color', [
-            'label'       => _x( 'Title Color', 'Editor', 'wpspeedo-team' ),
+            'label'       => _x( 'Name Color', 'Editor', 'wpspeedo-team' ),
             'label_block' => false,
             'type'        => Controls_Manager::COLOR,
             'separator'   => 'after',
         ] );
         $this->add_control( 'title_color_hover', [
-            'label'       => _x( 'Title Color Hover', 'Editor', 'wpspeedo-team' ),
+            'label'       => _x( 'Name Color Hover', 'Editor', 'wpspeedo-team' ),
             'label_block' => false,
             'type'        => Controls_Manager::COLOR,
         ] );
@@ -406,6 +406,16 @@ class Shortcode_Editor extends Editor_Controls {
         ] );
         $this->add_control( 'info_link_hover_color', [
             'label'       => _x( 'Info Link Hover Color', 'Editor', 'wpspeedo-team' ),
+            'label_block' => false,
+            'type'        => Controls_Manager::COLOR,
+        ] );
+        $this->add_control( 'read_more_text_color', [
+            'label'       => _x( 'Read More Color', 'Editor', 'wpspeedo-team' ),
+            'label_block' => false,
+            'type'        => Controls_Manager::COLOR,
+        ] );
+        $this->add_control( 'read_more_text_hover_color', [
+            'label'       => _x( 'Read More Hover Color', 'Editor', 'wpspeedo-team' ),
             'label_block' => false,
             'type'        => Controls_Manager::COLOR,
         ] );

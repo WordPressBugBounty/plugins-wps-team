@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team, team plugin, team members, team showcase, team builder
 Requires at least: 5.9
 Tested up to: 6.7
-Stable tag: 3.3.0
+Stable tag: 3.3.1
 Requires PHP: 7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -109,10 +109,12 @@ This Team Showcase plugin is fully customizable. So you can create unique team s
 * 99.99% of browsers are compatible.
 
 == 🏆 This Free Team Plugin Offers Important Fields ==
-* Member’s name
+* Member’s first name
+* Member’s last name
 * Member’s short bio
 * Member’s detailed bio
 * Team member’s photo
+* Team member’s gallery images
 * Team member’s designation
 * Team member’s email
 * Member’s mobile number
@@ -120,20 +122,27 @@ This Team Showcase plugin is fully customizable. So you can create unique team s
 * Years of Experience
 * Member’s Website
 * Member’s Company
+* Member’s Education
 * Ribbon / Tag
 * Personalized Color
 * Social Links
 * Team Member’s Skills
-* Gallery Images
 * Custom Link 1
 * Custom Link 2
 
 == 👉 Taxonomies / Groups for Our Team Plugin WordPress ==
-* Group Taxonomy – You can enable & disable it.
-* Location Taxonomy – You can enable & disable it.
-* Language Taxonomy – You can enable & disable it.
-* Specialty Taxonomy – You can enable & disable it.
-* Gender Taxonomy – You can enable & disable it.
+* Group Taxonomy.
+* Location Taxonomy.
+* Language Taxonomy.
+* Specialty Taxonomy.
+* Gender Taxonomy.
+* Extra One Taxonomy.
+* Extra Two Taxonomy.
+* Extra Three Taxonomy.
+* Extra Four Taxonomy.
+* Extra Five Taxonomy.
+
+Extended customization feature: You can enable, disable, rename, and set custom slugs for each of them.
 
 == 👉 Available Themes Of This Team Showcase Plugin ==
 * 12+ Square Themes
@@ -245,6 +254,15 @@ Yes, this Team plugin supports multi-language.
 15. WPS Team Members - Settings Page
 
 == Changelog ==
+
+= 3.3.1 - 15-12-2024 =
+* Added: First Name & Last Name Fields.
+* Added: Ascending and descending order with first & last name.
+* Added: First Name, Last Name & Education fields in Bulk Import.
+* Added: Color & Hover Color settings for the Read More link.
+* Fixed: fixed overflow shadow issue.
+* Fixed: fixed description length empty issue.
+* Fixed: Placeholder color issue.
 
 = 3.3.0 - 15-12-2024 =
 * Added: Export/Import feature added for seamless data management.
@@ -735,7 +753,7 @@ Yes, this Team plugin supports multi-language.
 * Tweak: Improved compatibility with the Team Members Pro plugin.
 
 = 1.6 - 15-03-2022 =
-* Add: Team Filter display type added.
+* Added: Team Filter display type added.
 * Fixed: Few internal bugs.
 * Tweak: Added ability to disable default Google Fonts.
 * Tweak: Improved compatibility with the Team Members Pro plugin.
@@ -754,7 +772,7 @@ Yes, this Team plugin supports multi-language.
 = 1.3 - 07-03-2022 =
 * Fixed: PHP Code not working issue.
 * Fixed: Page broken issue when the widget is deleted but used on any page.
-* New: Added version to the CSS & JS assets to improve browser caching.
+* Added: Version to the CSS & JS assets to improve browser caching.
 * Tweak: Added code copy button in the widget editor.
 * Tweak: Added admin columns on the Team Members list page.
 * Tweak: Improved compatibility with the WPS Team Pro plugin.

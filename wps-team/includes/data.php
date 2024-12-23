@@ -18,6 +18,14 @@ class Data {
          * Register Custom Taxonomies
          */
         add_action( 'init', array($this, 'register_taxonomies'), 0 );
+        // Update First Name & Last Name from Quick Edit
+        $post_type = Utils::post_type_name();
+        add_action(
+            "edit_post_{$post_type}",
+            array($this, 'save_name_fields_quick_edit'),
+            10,
+            2
+        );
         /*
          * Register Custom Metaboxes
          */
@@ -37,6 +45,13 @@ class Data {
             10,
             2
         );
+    }
+
+    /*
+     * Add order column to Taxonomies
+     */
+    public function save_name_fields_quick_edit( $post_id, $post ) {
+        Utils::update_name_fields_from_title( $post_id, $post->post_title );
     }
 
     /*
@@ -245,6 +260,11 @@ class Data {
             $meta_data = json_decode( stripslashes( $_POST['_wps_member_meta_data'] ), true );
             $meta_data = $this->get_validated_meta_data( $post_id, $meta_data );
             // Sanitization & Validation Done
+            // First Name & Last Name
+            if ( array_key_exists( '_first_name', $_POST ) && array_key_exists( '_last_name', $_POST ) ) {
+                $meta_data['_first_name'] = sanitize_text_field( $_POST['_first_name'] );
+                $meta_data['_last_name'] = sanitize_text_field( $_POST['_last_name'] );
+            }
             foreach ( $meta_data as $meta_key => $meta_value ) {
                 update_post_meta( $post_id, $meta_key, $meta_value );
                 Utils::update_all_posts_meta_vals();

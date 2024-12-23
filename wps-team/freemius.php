@@ -2,6 +2,9 @@
 
 namespace WPSpeedo_Team;
 
+if ( !defined( 'ABSPATH' ) ) {
+    exit;
+}
 if ( !function_exists( 'wps_team_fs' ) ) {
     // Create a helper function for easy SDK access.
     function wps_team_fs() {

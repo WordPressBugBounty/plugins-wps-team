@@ -289,6 +289,8 @@ class Utils {
 
     public static function default_settings() {
         return [
+            'first_name_label'             => 'First Name',
+            'last_name_label'              => 'Last Name',
             'desig_label'                  => 'Designation',
             'email_label'                  => 'Email Address',
             'mobile_label'                 => 'Mobile (Personal)',
@@ -1011,8 +1013,12 @@ class Utils {
                 'value' => 'ID',
             ],
             [
-                'label' => _x( 'Name', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'First Name', 'Editor', 'wpspeedo-team' ),
                 'value' => 'title',
+            ],
+            [
+                'label' => _x( 'Last Name', 'Editor', 'wpspeedo-team' ),
+                'value' => 'last_name',
             ],
             [
                 'label' => _x( 'Date', 'Editor', 'wpspeedo-team' ),
@@ -1640,8 +1646,8 @@ class Utils {
         if ( $length == null ) {
             $length = self::shortcode_loader()->get_setting( 'description_length' );
         }
-        if ( $length == 0 ) {
-            $length = PHP_INT_MAX - 500;
+        if ( !$length || $length < 1 ) {
+            return PHP_INT_MAX - 500;
         }
         return $length;
     }
@@ -1669,6 +1675,7 @@ class Utils {
             }
             if ( $action !== 'none' ) {
                 $attrs = self::get_post_link_attrs( $post_id, self::shortcode_loader()->id, $action );
+                $attrs['class'] = 'wps-team--read-more-link ' . $attrs['class'];
                 $read_more_link = sprintf(
                     '<a href="%s" class="%s" %s %s>%s</a>',
                     esc_attr( $attrs['href'] ),
@@ -1706,6 +1713,7 @@ class Utils {
             }
             if ( $action !== 'none' ) {
                 $attrs = self::get_post_link_attrs_template( self::shortcode_loader()->id, $action );
+                $attrs['class'] = 'wps-team--read-more-link ' . $attrs['class'];
                 $read_more_link = sprintf(
                     '<a href="%s" class="%s" %s %s>%s</a>',
                     esc_attr( $attrs['href'] ),
@@ -2433,6 +2441,31 @@ class Utils {
             }
         }
         return @rmdir( $dir );
+    }
+
+    public static function get_title_from_name_fields( $first_name = '', $last_name = '' ) {
+        return trim( $first_name . ' ' . $last_name );
+    }
+
+    public static function update_name_fields_from_title( $post_id, $post_title ) {
+        $name_parts = explode( ' ', $post_title );
+        $first_name = '';
+        $last_name = '';
+        // Generate the name parts
+        if ( count( $name_parts ) === 1 ) {
+            $first_name = $name_parts[0];
+        } else {
+            $first_name = array_shift( $name_parts );
+            $last_name = implode( ' ', $name_parts );
+        }
+        // Update the First Name
+        if ( !empty( $first_name ) ) {
+            update_post_meta( $post_id, '_first_name', $first_name );
+        }
+        // Update the Last Name
+        if ( !empty( $last_name ) ) {
+            update_post_meta( $post_id, '_last_name', $last_name );
+        }
     }
 
 }

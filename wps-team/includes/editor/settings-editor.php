@@ -601,7 +601,7 @@ class Settings_Editor extends Editor_Controls {
             'type'        => Controls_Manager::HEADING,
         ] );
         $this->add_control( 'title_color', [
-            'label'       => _x( 'Title Color', 'Settings: Single Page', 'wpspeedo-team' ),
+            'label'       => _x( 'Name Color', 'Settings: Single Page', 'wpspeedo-team' ),
             'label_block' => false,
             'type'        => Controls_Manager::COLOR,
             'separator'   => 'after',

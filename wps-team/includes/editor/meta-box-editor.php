@@ -9,6 +9,41 @@ class Meta_Box_Editor extends Editor_Controls {
     public function __construct( array $data = [], array $args = null ) {
         parent::__construct( $data, $args );
         do_action( 'wpspeedo_team/metabox_editor/init', $this );
+        add_action( 'edit_form_before_permalink', [$this, 'add_name_fields'] );
+    }
+
+    public function add_name_fields() {
+        $_first_name = get_post_meta( get_the_ID(), '_first_name', true );
+        $_last_name = get_post_meta( get_the_ID(), '_last_name', true );
+        ?>
+
+		<div class="wps-team--member-name-fields">
+
+			<div class="wps-team--member-first-name">
+				<label for="wps_member_first_name">
+					<?php 
+        echo plugin()->translations->get( 'first_name_label', _x( 'First Name', 'Admin Metabox', 'wpspeedo-team' ) );
+        ?>
+				</label>
+				<input type="text" name="_first_name" size="30" value="<?php 
+        echo esc_attr( $_first_name );
+        ?>" id="wps_member_first_name" autocomplete="off">
+			</div>
+
+			<div class="wps-team--member-last-name">
+				<label for="wps_member_last_name">
+					<?php 
+        echo plugin()->translations->get( 'last_name_label', _x( 'Last Name', 'Admin Metabox', 'wpspeedo-team' ) );
+        ?>
+				</label>
+				<input type="text" name="_last_name" size="30" value="<?php 
+        echo esc_attr( $_last_name );
+        ?>" id="wps_member_last_name" autocomplete="off">
+			</div>
+
+		</div>
+
+		<?php 
     }
 
     public function get_name() {

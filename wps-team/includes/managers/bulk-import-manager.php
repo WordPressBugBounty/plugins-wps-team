@@ -28,7 +28,7 @@ class Bulk_Import_Manager {
         
         set_transient( 'wps_team_csv_rows', $rows, DAY_IN_SECONDS );
 
-        $allowed = array( 'name', 'designation', 'email', 'company' );
+        $allowed = array( 'first_name', 'last_name', 'designation', 'email', 'company' );
 
         $rows = array_map(function( $row ) use ($allowed) {
             return array_intersect_key( $row, array_flip($allowed) );
@@ -48,10 +48,10 @@ class Bulk_Import_Manager {
 
         $row = $this->map_row_data( $rows[$index] );
 
-        if ( empty($row['name']) ) wp_send_json_error( _x( 'Row name not found', 'Bulk Import', 'wpspeedo-team' ), 400 );
+        if ( empty($row['first_name']) || empty($row['last_name']) ) wp_send_json_error( _x( 'Row name not found', 'Bulk Import', 'wpspeedo-team' ), 400 );
 
         $item = [
-            'post_title'    => $row['name'],
+            'post_title'    => Utils::get_title_from_name_fields( $row['first_name'], $row['last_name'] ),
             'post_content'  => empty($row['description']) ? '' : $row['description'],
             'post_status'   => 'publish',
             'post_type'     => Utils::post_type_name(),
@@ -170,22 +170,25 @@ class Bulk_Import_Manager {
 
         $meta_input = [];
 
-        if ( !empty($row['experience']) )   $meta_input['_experience']      = sanitize_text_field( $row['experience'] );
-        if ( !empty($row['company']) )      $meta_input['_company']         = sanitize_text_field( $row['company'] );
+        if ( !empty($row['first_name']) )   $meta_input['_first_name']      = sanitize_text_field( $row['first_name'] );
+        if ( !empty($row['last_name']) )    $meta_input['_last_name']       = sanitize_text_field( $row['last_name'] );
         if ( !empty($row['designation']) )  $meta_input['_designation']     = sanitize_text_field( $row['designation'] );
-        if ( !empty($row['telephone']) )    $meta_input['_telephone']       = sanitize_text_field( $row['telephone'] );
         if ( !empty($row['email']) )        $meta_input['_email']           = sanitize_email( $row['email'] );
-        if ( !empty($row['website']) )      $meta_input['_website']         = esc_url_raw( $row['website'] );
-        if ( !empty($row['ribbon']) )       $meta_input['_ribbon']          = sanitize_text_field( $row['ribbon'] );
         if ( !empty($row['mobile']) )       $meta_input['_mobile']          = sanitize_text_field( $row['mobile'] );
-        if ( !empty($row['color']) )        $meta_input['_color']           = sanitize_text_field( $row['color'] );
-        if ( !empty($row['education']) )    $meta_input['_education']       = wp_kses_post( $row['education'] );
+        if ( !empty($row['telephone']) )    $meta_input['_telephone']       = sanitize_text_field( $row['telephone'] );
+        if ( !empty($row['experience']) )   $meta_input['_experience']      = sanitize_text_field( $row['experience'] );
+        if ( !empty($row['website']) )      $meta_input['_website']         = esc_url_raw( $row['website'] );
+        if ( !empty($row['company']) )      $meta_input['_company']         = sanitize_text_field( $row['company'] );
+        if ( !empty($row['address']) )      $meta_input['_address']         = sanitize_text_field( $row['address'] );
+        if ( !empty($row['ribbon']) )       $meta_input['_ribbon']          = sanitize_text_field( $row['ribbon'] );
         if ( !empty($row['link_one']) )     $meta_input['_link_1']          = esc_url_raw( $row['link_one'] );
         if ( !empty($row['link_two']) )     $meta_input['_link_2']          = esc_url_raw( $row['link_two'] );
-        if ( !empty($row['skills']) )       $meta_input['_skills']          = (array) $row['skills'];
-        if ( !empty($row['social_links']) ) $meta_input['_social_links']    = (array) $row['social_links'];
+        if ( !empty($row['color']) )        $meta_input['_color']           = sanitize_text_field( $row['color'] );
+        if ( !empty($row['education']) )    $meta_input['_education']       = wp_kses_post( $row['education'] );
         if ( !empty($row['thumbnail']) )    $meta_input['_thumbnail_id']    = (int) $this->get_thumbnail_id( $row['thumbnail'] );
         if ( !empty($row['gallery']) )      $meta_input['_gallery']         = (array) $this->get_gallery_ids( $row['gallery'] );
+        if ( !empty($row['social_links']) ) $meta_input['_social_links']    = (array) $row['social_links'];
+        if ( !empty($row['skills']) )       $meta_input['_skills']          = (array) $row['skills'];
 
         $meta_input['_wps_member_meta_keys'] = Utils::get_meta_field_keys();
 
@@ -211,12 +214,12 @@ class Bulk_Import_Manager {
 
             $header_row = array_map( [ $this, 'sanitize_header_row' ], $header_row );
 
-            if ( count($header_row) !== 28 ) return new WP_Error('invalid_file', _x('Invalid File Content', 'Bulk Import', 'wpspeedo-team') );
+            if ( count($header_row) !== 30 ) return new WP_Error('invalid_file', _x('Invalid File Content', 'Bulk Import', 'wpspeedo-team') );
     
             // Read file
             while ( ( $csv_data = fgetcsv($csv_file) ) !== false ) {
 
-                if ( count($csv_data) !== 28 ) return new WP_Error('invalid_file', _x('Invalid File Content', 'Bulk Import', 'wpspeedo-team') );
+                if ( count($csv_data) !== 30 ) return new WP_Error('invalid_file', _x('Invalid File Content', 'Bulk Import', 'wpspeedo-team') );
 
                 $csv_data = array_map( function( $column ) {
                     return _wp_json_convert_string( trim($column) );

@@ -26,7 +26,7 @@ class Upgrader {
     }
 
     public function upgrade_paths() {
-        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.1' ];
+        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.1', '3.3.1' ];
     }
 
     public function run() {
@@ -342,6 +342,21 @@ class Upgrader {
                 $this->_v_3_2_1_update_elementor_shortcode_id( $widget['elements'], $updated );
             }
 
+        }
+
+    }
+
+    public function _v_3_3_1() {
+        
+        $team_members = get_posts([
+            'fields'         => 'ids',
+            'post_type'      => Utils::post_type_name(),
+            'posts_per_page' => -1,
+            'post_status'    => 'any',
+        ]);
+
+        foreach ( $team_members as $team_member_id ) {
+            Utils::update_name_fields_from_title( $team_member_id, get_the_title( $team_member_id ) );
         }
 
     }
