@@ -1,4 +1,4 @@
-# Copyright (C) 2024 WPSpeedo_Team_Members
+# Copyright (C) 2025 WPSpeedo_Team_Members
 # This file is distributed under the same license as the WPSpeedo_Team_Members package.
 msgid ""
 msgstr ""
