@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team, team plugin, team members, team showcase, team builder
 Requires at least: 5.9
 Tested up to: 6.7
-Stable tag: 3.3.2
+Stable tag: 3.3.4
 Requires PHP: 7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -29,7 +29,7 @@ With our **Team Member Plugin**, you can showcase your team member profiles in *
 
 This plugin has many themes like Square, Circle, Horiz & Table. Almost every theme comes with Grid, Slider & Filter functionalities, which help you to display a modern “About The Team” section on your website with various possibilities.
 
-This Team Showcase plugin is fully customizable. So you can create unique team showcases for your site. Its shortcode generator gives you an additional customization option and easy control over your layouts.
+This Team Showcase plugin is fully customizable. So you can create unique team showcases for your site. Its shortcode generator gives you an additional customization option and easy control over your layouts. It will be your **best staff directory plugin** to arrange your every **employee** conveniently.
 
 
 == 🏆 Exclusive Feature of WPS Team Plugin ==
@@ -129,6 +129,7 @@ This Team Showcase plugin is fully customizable. So you can create unique team s
 * Team Member’s Skills
 * Custom Link 1
 * Custom Link 2
+* Read More Button
 
 == 👉 Taxonomies / Groups for Our Team Plugin WordPress ==
 * Group Taxonomy.
@@ -254,6 +255,15 @@ Yes, this Team plugin supports multi-language.
 15. WPS Team Members - Settings Page
 
 == Changelog ==
+
+= 3.3.4 - 09-02-2025 =
+* Added: Read more button element.
+* Added: Read more button text change option.
+* Added: Read more button enable/disable option.
+* Added: Bluesky icon support.
+* Fixed: Widget display issue until click on body.
+* Fixed: Equal height issue on resize.
+* Fixed: Loading Issue on iOS (Tab Switching).
 
 = 3.3.2 - 27-01-2025 =
 * Tweak: Updated Freemius.

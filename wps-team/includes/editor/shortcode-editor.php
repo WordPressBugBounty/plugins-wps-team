@@ -295,8 +295,8 @@ class Shortcode_Editor extends Editor_Controls {
             'label' => _x( 'Details Elements Visibility', 'Editor', 'wpspeedo-team' ),
             'tab'   => 'elements',
         ] );
-        $elements = Utils::allowed_elements_display_order();
-        foreach ( Utils::elements_display_order() as $element_key => $element_title ) {
+        $elements = Utils::allowed_elements_display_order( 'details' );
+        foreach ( Utils::elements_display_order( 'details' ) as $element_key => $element_title ) {
             if ( in_array( $element_key, $elements ) ) {
                 $element_key = 'show_details_' . $element_key;
                 $this->add_control( $element_key, [

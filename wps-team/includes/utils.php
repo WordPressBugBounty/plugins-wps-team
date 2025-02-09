@@ -315,6 +315,7 @@ class Utils {
             'filter_all_extra_three_text'  => 'All Extra Three',
             'filter_all_extra_four_text'   => 'All Extra Four',
             'filter_all_extra_five_text'   => 'All Extra Five',
+            'read_more_link_text'          => 'Read More',
             'link_1_text'                  => 'My Resume',
             'link_2_text'                  => 'Hire Me',
             'social_links_title'           => 'Connect With Me:',
@@ -1570,7 +1571,7 @@ class Utils {
         );
     }
 
-    public static function elements_display_order() {
+    public static function elements_display_order( $context = 'general' ) {
         $elements = [
             'thumbnail'   => _x( 'Thumbnail', 'Editor', 'wpspeedo-team' ),
             'divider'     => _x( 'Divider', 'Editor', 'wpspeedo-team' ),
@@ -1590,13 +1591,16 @@ class Utils {
             'link_1'      => self::get_setting( 'link_1_label', 'Resume Link' ),
             'link_2'      => self::get_setting( 'link_2_label', 'Hire Link' ),
         ];
+        if ( $context == 'general' ) {
+            $elements['read_more'] = _x( 'Read More Button', 'Editor', 'wpspeedo-team' );
+        }
         foreach ( self::get_taxonomy_roots() as $tax_root ) {
             $elements[self::get_taxonomy_name( $tax_root, true )] = Utils::get_setting( Utils::to_field_key( $tax_root ) . '_single_name' );
         }
         return $elements;
     }
 
-    public static function allowed_elements_display_order() {
+    public static function allowed_elements_display_order( $context = 'general' ) {
         return [
             'thumbnail',
             'divider',
@@ -1925,6 +1929,10 @@ class Utils {
 		<?php 
     }
 
+    public static function get_the_read_more_title() {
+        return plugin()->translations->get( 'read_more_link_text', _x( 'Read More', 'Public', 'wpspeedo-team' ) );
+    }
+
     public static function get_the_link_1_title() {
         return plugin()->translations->get( 'link_1_btn_text', _x( 'My Resume', 'Public', 'wpspeedo-team' ) );
     }
@@ -1935,10 +1943,13 @@ class Utils {
 
     public static function get_the_action_links( $post_id, $args = [] ) {
         $args = shortcode_atts( [
-            'link_1'  => false,
-            'link_2'  => false,
-            'context' => 'general',
+            'link_1'         => false,
+            'link_2'         => false,
+            'show_read_more' => false,
+            'card_action'    => 'single-page',
+            'context'        => 'general',
         ], $args );
+        $show_read_more = false;
         if ( $args['context'] == 'details' ) {
             $show_link_1 = self::shortcode_loader()->get_setting( 'show_details_link_1' );
             $show_link_2 = self::shortcode_loader()->get_setting( 'show_details_link_2' );
@@ -1949,11 +1960,13 @@ class Utils {
             } else {
                 $show_link_1 = self::shortcode_loader()->get_setting( 'show_link_1' );
                 $show_link_2 = self::shortcode_loader()->get_setting( 'show_link_2' );
+                $show_read_more = self::shortcode_loader()->get_setting( 'show_read_more' );
             }
         }
         $show_link_1 = ( $show_link_1 == '' ? $args['link_1'] : wp_validate_boolean( $show_link_1 ) );
         $show_link_2 = ( $show_link_2 == '' ? $args['link_2'] : wp_validate_boolean( $show_link_2 ) );
-        if ( !$show_link_1 && !$show_link_2 ) {
+        $show_read_more = ( $show_read_more == '' ? $args['show_read_more'] : wp_validate_boolean( $show_read_more ) );
+        if ( !$show_link_1 && !$show_link_2 && !$show_read_more ) {
             return '';
         }
         $link_1 = self::get_item_data( '_link_1' );
@@ -1978,16 +1991,31 @@ class Utils {
                 esc_html( self::get_the_link_2_title() )
             );
         }
+        if ( $show_read_more && (Utils::has_archive() || $args['card_action'] !== 'single-page') ) {
+            $attrs = self::get_post_link_attrs( $post_id, self::shortcode_loader()->id, $args['card_action'] );
+            $attrs['class'] = trim( 'wps-team--btn wps-team--read-more-btn ' . ($attrs['class'] ?? '') );
+            $html .= sprintf(
+                '<a href="%s" class="%s" %s %s>%s</a>',
+                esc_attr( $attrs['href'] ),
+                esc_attr( $attrs['class'] ),
+                ( empty( $attrs['target'] ) ? '' : sprintf( 'target="%s"', esc_attr( $attrs['target'] ) ) ),
+                ( empty( $attrs['rel'] ) ? '' : sprintf( 'rel="%s"', esc_attr( $attrs['rel'] ) ) ),
+                esc_html( self::get_the_read_more_title() )
+            );
+        }
         $html .= '</div>';
         return $html;
     }
 
     public static function get_the_action_links_template( $args = [] ) {
         $args = shortcode_atts( [
-            'link_1'  => false,
-            'link_2'  => false,
-            'context' => 'general',
+            'link_1'         => false,
+            'link_2'         => false,
+            'show_read_more' => false,
+            'card_action'    => 'single-page',
+            'context'        => 'general',
         ], $args );
+        $show_read_more = false;
         if ( $args['context'] == 'details' ) {
             $show_link_1 = self::shortcode_loader()->get_setting( 'show_details_link_1' );
             $show_link_2 = self::shortcode_loader()->get_setting( 'show_details_link_2' );
@@ -1998,16 +2026,18 @@ class Utils {
             } else {
                 $show_link_1 = self::shortcode_loader()->get_setting( 'show_link_1' );
                 $show_link_2 = self::shortcode_loader()->get_setting( 'show_link_2' );
+                $show_read_more = self::shortcode_loader()->get_setting( 'show_read_more' );
             }
         }
         $show_link_1 = ( $show_link_1 == '' ? $args['link_1'] : wp_validate_boolean( $show_link_1 ) );
         $show_link_2 = ( $show_link_2 == '' ? $args['link_2'] : wp_validate_boolean( $show_link_2 ) );
-        if ( !$show_link_1 && !$show_link_2 ) {
+        $show_read_more = ( $show_read_more == '' ? $args['show_read_more'] : wp_validate_boolean( $show_read_more ) );
+        if ( !$show_link_1 && !$show_link_2 && !$show_read_more ) {
             return '';
         }
         ?>
 
-		{{? it.link_1 || it.link_2 }}
+		{{? it.link_1 || it.link_2 || it.read_more_btn }}
 
 		<div class="wps-team--action-links wps-team--member-element">
 
@@ -2032,6 +2062,21 @@ class Utils {
             ?>
 				{{?}}
 			<?php 
+        }
+        ?>
+
+			<?php 
+        if ( $show_read_more && (Utils::has_archive() || $args['card_action'] !== 'single-page') ) {
+            $attrs = self::get_post_link_attrs_template( self::shortcode_loader()->id, $args['card_action'] );
+            $attrs['class'] = trim( 'wps-team--btn wps-team--read-more-btn ' . ($attrs['class'] ?? '') );
+            printf(
+                '<a href="%s" class="%s" %s %s>%s</a>',
+                esc_attr( $attrs['href'] ),
+                esc_attr( $attrs['class'] ),
+                ( empty( $attrs['target'] ) ? '' : sprintf( 'target="%s"', esc_attr( $attrs['target'] ) ) ),
+                ( empty( $attrs['rel'] ) ? '' : sprintf( 'rel="%s"', esc_attr( $attrs['rel'] ) ) ),
+                esc_html( self::get_the_read_more_title() )
+            );
         }
         ?>
 

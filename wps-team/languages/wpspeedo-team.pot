@@ -197,637 +197,647 @@ msgctxt "Dashboard"
 msgid "Template file is not found"
 msgstr ""
 
-#: ../includes/utils.php:449
+#: ../includes/utils.php:450
 msgctxt "Editor"
 msgid "Full"
 msgstr ""
 
-#: ../includes/utils.php:455
+#: ../includes/utils.php:456
 msgctxt "Editor"
 msgid "Custom"
 msgstr ""
 
-#: ../includes/utils.php:472
+#: ../includes/utils.php:473
 msgctxt "Editor"
 msgid "Top Left"
 msgstr ""
 
-#: ../includes/utils.php:475
+#: ../includes/utils.php:476
 msgctxt "Editor"
 msgid "Top Center"
 msgstr ""
 
-#: ../includes/utils.php:478
+#: ../includes/utils.php:479
 msgctxt "Editor"
 msgid "Top Right"
 msgstr ""
 
-#: ../includes/utils.php:481
+#: ../includes/utils.php:482
 msgctxt "Editor"
 msgid "Middle Left"
 msgstr ""
 
-#: ../includes/utils.php:484
+#: ../includes/utils.php:485
 msgctxt "Editor"
 msgid "Middle Center"
 msgstr ""
 
-#: ../includes/utils.php:487
+#: ../includes/utils.php:488
 msgctxt "Editor"
 msgid "Middle Right"
 msgstr ""
 
-#: ../includes/utils.php:490
+#: ../includes/utils.php:491
 msgctxt "Editor"
 msgid "Bottom Left"
 msgstr ""
 
-#: ../includes/utils.php:493
+#: ../includes/utils.php:494
 msgctxt "Editor"
 msgid "Bottom Center"
 msgstr ""
 
-#: ../includes/utils.php:496
+#: ../includes/utils.php:497
 msgctxt "Editor"
 msgid "Bottom Right"
 msgstr ""
 
-#: ../includes/utils.php:505
+#: ../includes/utils.php:506
 msgctxt "Editor"
 msgid "Image"
 msgstr ""
 
-#: ../includes/utils.php:508, ../includes/utils.php:700
+#: ../includes/utils.php:509, ../includes/utils.php:701
 msgctxt "Editor"
 msgid "Carousel"
 msgstr ""
 
-#: ../includes/utils.php:512
+#: ../includes/utils.php:513
 msgctxt "Editor"
 msgid "Flip Image"
 msgstr ""
 
-#: ../includes/utils.php:694
+#: ../includes/utils.php:695
 msgctxt "Editor"
 msgid "(Pro) - "
 msgstr ""
 
-#: ../includes/utils.php:699
+#: ../includes/utils.php:700
 msgctxt "Editor"
 msgid "Grid"
 msgstr ""
 
-#: ../includes/utils.php:701
+#: ../includes/utils.php:702
 msgctxt "Editor"
 msgid "Filter"
 msgstr ""
 
-#: ../includes/utils.php:713
+#: ../includes/utils.php:714
 msgctxt "Editor"
 msgid "Style 01"
 msgstr ""
 
-#: ../includes/utils.php:714
+#: ../includes/utils.php:715
 msgctxt "Editor"
 msgid "Style 02"
 msgstr ""
 
-#: ../includes/utils.php:715
+#: ../includes/utils.php:716
 msgctxt "Editor"
 msgid "Style 03"
 msgstr ""
 
-#: ../includes/utils.php:727, ../includes/utils.php:857
+#: ../includes/utils.php:728, ../includes/utils.php:858
 msgctxt "Editor"
 msgid "Default"
 msgstr ""
 
-#: ../includes/utils.php:728
+#: ../includes/utils.php:729
 msgctxt "Editor"
 msgid "Square - 1:1"
 msgstr ""
 
-#: ../includes/utils.php:729
+#: ../includes/utils.php:730
 msgctxt "Editor"
 msgid "Portrait - 6:7"
 msgstr ""
 
-#: ../includes/utils.php:730
+#: ../includes/utils.php:731
 msgctxt "Editor"
 msgid "Portrait - 5:6"
 msgstr ""
 
-#: ../includes/utils.php:731
+#: ../includes/utils.php:732
 msgctxt "Editor"
 msgid "Portrait - 4:5"
 msgstr ""
 
-#: ../includes/utils.php:732
+#: ../includes/utils.php:733
 msgctxt "Editor"
 msgid "Portrait - 8.5:11"
 msgstr ""
 
-#: ../includes/utils.php:733
+#: ../includes/utils.php:734
 msgctxt "Editor"
 msgid "Portrait - 3:4"
 msgstr ""
 
-#: ../includes/utils.php:734
+#: ../includes/utils.php:735
 msgctxt "Editor"
 msgid "Portrait - 5:7"
 msgstr ""
 
-#: ../includes/utils.php:735
+#: ../includes/utils.php:736
 msgctxt "Editor"
 msgid "Portrait - 2:3"
 msgstr ""
 
-#: ../includes/utils.php:736
+#: ../includes/utils.php:737
 msgctxt "Editor"
 msgid "Portrait - 9:16"
 msgstr ""
 
-#: ../includes/utils.php:738
+#: ../includes/utils.php:739
 msgctxt "Editor"
 msgid "Landscape - 5:4"
 msgstr ""
 
-#: ../includes/utils.php:739
+#: ../includes/utils.php:740
 msgctxt "Editor"
 msgid "Landscape - 4:3"
 msgstr ""
 
-#: ../includes/utils.php:740
+#: ../includes/utils.php:741
 msgctxt "Editor"
 msgid "Landscape - 3:2"
 msgstr ""
 
-#: ../includes/utils.php:741
+#: ../includes/utils.php:742
 msgctxt "Editor"
 msgid "Landscape - 14:9"
 msgstr ""
 
-#: ../includes/utils.php:742
+#: ../includes/utils.php:743
 msgctxt "Editor"
 msgid "Landscape - 16:10"
 msgstr ""
 
-#: ../includes/utils.php:743
+#: ../includes/utils.php:744
 msgctxt "Editor"
 msgid "Landscape - 1.66:1"
 msgstr ""
 
-#: ../includes/utils.php:744
+#: ../includes/utils.php:745
 msgctxt "Editor"
 msgid "Landscape - 1.75:1"
 msgstr ""
 
-#: ../includes/utils.php:745
+#: ../includes/utils.php:746
 msgctxt "Editor"
 msgid "Landscape - 16:9"
 msgstr ""
 
-#: ../includes/utils.php:746
+#: ../includes/utils.php:747
 msgctxt "Editor"
 msgid "Landscape - 1.91:1"
 msgstr ""
 
-#: ../includes/utils.php:747
+#: ../includes/utils.php:748
 msgctxt "Editor"
 msgid "Landscape - 2:1"
 msgstr ""
 
-#: ../includes/utils.php:748
+#: ../includes/utils.php:749
 msgctxt "Editor"
 msgid "Landscape - 21:9"
 msgstr ""
 
-#: ../includes/utils.php:756
+#: ../includes/utils.php:757
 msgctxt "Editor"
 msgid "Masonry"
 msgstr ""
 
-#: ../includes/utils.php:757
+#: ../includes/utils.php:758
 msgctxt "Editor"
 msgid "Fit Rows"
 msgstr ""
 
-#: ../includes/utils.php:765
+#: ../includes/utils.php:766
 msgctxt "Editor"
 msgid "Circle"
 msgstr ""
 
-#: ../includes/utils.php:766
+#: ../includes/utils.php:767
 msgctxt "Editor"
 msgid "Square"
 msgstr ""
 
-#: ../includes/utils.php:767
+#: ../includes/utils.php:768
 msgctxt "Editor"
 msgid "Radius"
 msgstr ""
 
-#: ../includes/utils.php:775
+#: ../includes/utils.php:776
 msgctxt "Editor"
 msgid "Custom Color"
 msgstr ""
 
-#: ../includes/utils.php:776
+#: ../includes/utils.php:777
 msgctxt "Editor"
 msgid "Dynamic Brand Color"
 msgstr ""
 
-#: ../includes/utils.php:784
+#: ../includes/utils.php:785
 msgctxt "Editor"
 msgid "Square One"
 msgstr ""
 
-#: ../includes/utils.php:785
+#: ../includes/utils.php:786
 msgctxt "Editor"
 msgid "Square Two"
 msgstr ""
 
-#: ../includes/utils.php:786
+#: ../includes/utils.php:787
 msgctxt "Editor"
 msgid "Square Three"
 msgstr ""
 
-#: ../includes/utils.php:787
+#: ../includes/utils.php:788
 msgctxt "Editor"
 msgid "Square Four"
 msgstr ""
 
-#: ../includes/utils.php:788
+#: ../includes/utils.php:789
 msgctxt "Editor"
 msgid "Square Five"
 msgstr ""
 
-#: ../includes/utils.php:789
+#: ../includes/utils.php:790
 msgctxt "Editor"
 msgid "Square Six"
 msgstr ""
 
-#: ../includes/utils.php:790
+#: ../includes/utils.php:791
 msgctxt "Editor"
 msgid "Square Seven"
 msgstr ""
 
-#: ../includes/utils.php:791
+#: ../includes/utils.php:792
 msgctxt "Editor"
 msgid "Square Eight"
 msgstr ""
 
-#: ../includes/utils.php:792
+#: ../includes/utils.php:793
 msgctxt "Editor"
 msgid "Square Nine"
 msgstr ""
 
-#: ../includes/utils.php:793
+#: ../includes/utils.php:794
 msgctxt "Editor"
 msgid "Square Ten"
 msgstr ""
 
-#: ../includes/utils.php:794
+#: ../includes/utils.php:795
 msgctxt "Editor"
 msgid "Square Eleven"
 msgstr ""
 
-#: ../includes/utils.php:795
+#: ../includes/utils.php:796
 msgctxt "Editor"
 msgid "Square Twelve"
 msgstr ""
 
-#: ../includes/utils.php:796
+#: ../includes/utils.php:797
 msgctxt "Editor"
 msgid "Circle One"
 msgstr ""
 
-#: ../includes/utils.php:797
+#: ../includes/utils.php:798
 msgctxt "Editor"
 msgid "Circle Two"
 msgstr ""
 
-#: ../includes/utils.php:798
+#: ../includes/utils.php:799
 msgctxt "Editor"
 msgid "Circle Three"
 msgstr ""
 
-#: ../includes/utils.php:799
+#: ../includes/utils.php:800
 msgctxt "Editor"
 msgid "Circle Four"
 msgstr ""
 
-#: ../includes/utils.php:800
+#: ../includes/utils.php:801
 msgctxt "Editor"
 msgid "Circle Five"
 msgstr ""
 
-#: ../includes/utils.php:801
+#: ../includes/utils.php:802
 msgctxt "Editor"
 msgid "Circle Six"
 msgstr ""
 
-#: ../includes/utils.php:802
+#: ../includes/utils.php:803
 msgctxt "Editor"
 msgid "Horiz One"
 msgstr ""
 
-#: ../includes/utils.php:803
+#: ../includes/utils.php:804
 msgctxt "Editor"
 msgid "Horiz Two"
 msgstr ""
 
-#: ../includes/utils.php:804
+#: ../includes/utils.php:805
 msgctxt "Editor"
 msgid "Horiz Three"
 msgstr ""
 
-#: ../includes/utils.php:805
+#: ../includes/utils.php:806
 msgctxt "Editor"
 msgid "Horiz Four"
 msgstr ""
 
-#: ../includes/utils.php:806
+#: ../includes/utils.php:807
 msgctxt "Editor"
 msgid "Table One"
 msgstr ""
 
-#: ../includes/utils.php:807
+#: ../includes/utils.php:808
 msgctxt "Editor"
 msgid "Table Two"
 msgstr ""
 
-#: ../includes/utils.php:808
+#: ../includes/utils.php:809
 msgctxt "Editor"
 msgid "Table Three"
 msgstr ""
 
-#: ../includes/utils.php:809
+#: ../includes/utils.php:810
 msgctxt "Editor"
 msgid "Table Four"
 msgstr ""
 
-#: ../includes/utils.php:821
+#: ../includes/utils.php:822
 msgctxt "Editor"
 msgid "None"
 msgstr ""
 
-#: ../includes/utils.php:822
+#: ../includes/utils.php:823
 msgctxt "Editor"
 msgid "Single Page"
 msgstr ""
 
-#: ../includes/utils.php:823
+#: ../includes/utils.php:824
 msgctxt "Editor"
 msgid "Modal"
 msgstr ""
 
-#: ../includes/utils.php:824
+#: ../includes/utils.php:825
 msgctxt "Editor"
 msgid "Side Panel"
 msgstr ""
 
-#: ../includes/utils.php:825
+#: ../includes/utils.php:826
 msgctxt "Editor"
 msgid "Expand"
 msgstr ""
 
-#: ../includes/utils.php:839, ../includes/utils.php:858
+#: ../includes/utils.php:840, ../includes/utils.php:859
 msgctxt "Editor"
 msgid "ID"
 msgstr ""
 
-#: ../includes/utils.php:840
+#: ../includes/utils.php:841
 msgctxt "Editor"
 msgid "First Name"
 msgstr ""
 
-#: ../includes/utils.php:841
+#: ../includes/utils.php:842
 msgctxt "Editor"
 msgid "Last Name"
 msgstr ""
 
-#: ../includes/utils.php:842
+#: ../includes/utils.php:843
 msgctxt "Editor"
 msgid "Date"
 msgstr ""
 
-#: ../includes/utils.php:843
+#: ../includes/utils.php:844
 msgctxt "Editor"
 msgid "Random"
 msgstr ""
 
-#: ../includes/utils.php:844
+#: ../includes/utils.php:845
 msgctxt "Editor"
 msgid "Modified"
 msgstr ""
 
-#: ../includes/utils.php:845, ../includes/utils.php:862
+#: ../includes/utils.php:846, ../includes/utils.php:863
 msgctxt "Editor"
 msgid "Custom Order"
 msgstr ""
 
-#: ../includes/utils.php:859, ../includes/editor/strings.php:30
+#: ../includes/utils.php:860, ../includes/editor/strings.php:30
 msgctxt "Editor"
 msgid "Name"
 msgstr ""
 
-#: ../includes/utils.php:860
+#: ../includes/utils.php:861
 msgctxt "Editor"
 msgid "Slug"
 msgstr ""
 
-#: ../includes/utils.php:861
+#: ../includes/utils.php:862
 msgctxt "Editor"
 msgid "Count"
 msgstr ""
 
-#: ../includes/utils.php:1376, ../includes/utils.php:1451
+#: ../includes/utils.php:1377, ../includes/utils.php:1452
 msgctxt "Public"
 msgid "Read More about %s."
 msgstr ""
 
-#: ../includes/utils.php:1550, ../includes/editor/shortcode-editor.php:2006
+#: ../includes/utils.php:1551, ../includes/editor/shortcode-editor.php:2006
 msgctxt "Editor"
 msgid "Thumbnail"
 msgstr ""
 
-#: ../includes/utils.php:1551
+#: ../includes/utils.php:1552
 msgctxt "Editor"
 msgid "Divider"
 msgstr ""
 
-#: ../includes/utils.php:1552
+#: ../includes/utils.php:1553
 msgctxt "Editor"
 msgid "Designation"
 msgstr ""
 
-#: ../includes/utils.php:1553
+#: ../includes/utils.php:1554
 msgctxt "Editor"
 msgid "Description"
 msgstr ""
 
-#: ../includes/utils.php:1554
+#: ../includes/utils.php:1555
 msgctxt "Editor"
 msgid "Education"
 msgstr ""
 
-#: ../includes/utils.php:1555
+#: ../includes/utils.php:1556
 msgctxt "Editor"
 msgid "Social"
 msgstr ""
 
-#: ../includes/utils.php:1556
+#: ../includes/utils.php:1557
 msgctxt "Editor"
 msgid "Ribbon/Tag"
 msgstr ""
 
-#: ../includes/utils.php:1557
+#: ../includes/utils.php:1558
 msgctxt "Editor"
 msgid "Email"
 msgstr ""
 
-#: ../includes/utils.php:1558, ../includes/editor/strings.php:11
+#: ../includes/utils.php:1559, ../includes/editor/strings.php:11
 msgctxt "Editor"
 msgid "Mobile"
 msgstr ""
 
-#: ../includes/utils.php:1559
+#: ../includes/utils.php:1560
 msgctxt "Editor"
 msgid "Telephone"
 msgstr ""
 
-#: ../includes/utils.php:1560
+#: ../includes/utils.php:1561
 msgctxt "Editor"
 msgid "Experience"
 msgstr ""
 
-#: ../includes/utils.php:1561
+#: ../includes/utils.php:1562
 msgctxt "Editor"
 msgid "Website"
 msgstr ""
 
-#: ../includes/utils.php:1562
+#: ../includes/utils.php:1563
 msgctxt "Editor"
 msgid "Company"
 msgstr ""
 
-#: ../includes/utils.php:1563
+#: ../includes/utils.php:1564
 msgctxt "Editor"
 msgid "Address"
 msgstr ""
 
-#: ../includes/utils.php:1564
+#: ../includes/utils.php:1565
 msgctxt "Editor"
 msgid "Skills"
 msgstr ""
 
-#: ../includes/utils.php:1749
+#: ../includes/utils.php:1571
+msgctxt "Editor"
+msgid "Read More Button"
+msgstr ""
+
+#: ../includes/utils.php:1754
 msgctxt "Public"
 msgid "Education:"
 msgstr ""
 
-#: ../includes/utils.php:1836
+#: ../includes/utils.php:1841
 msgctxt "Public"
 msgid "Connect with me:"
 msgstr ""
 
-#: ../includes/utils.php:1901
+#: ../includes/utils.php:1906
+msgctxt "Public"
+msgid "Read More"
+msgstr ""
+
+#: ../includes/utils.php:1910
 msgctxt "Public"
 msgid "My Resume"
 msgstr ""
 
-#: ../includes/utils.php:1905
+#: ../includes/utils.php:1914
 msgctxt "Public"
 msgid "Hire Me"
 msgstr ""
 
-#: ../includes/utils.php:2031
+#: ../includes/utils.php:2084
 msgctxt "Public"
 msgid "Skills:"
 msgstr ""
 
-#: ../includes/utils.php:2122
+#: ../includes/utils.php:2175
 msgctxt "Public"
 msgid "Mobile:"
 msgstr ""
 
-#: ../includes/utils.php:2125
+#: ../includes/utils.php:2178
 msgctxt "Public"
 msgid "Phone:"
 msgstr ""
 
-#: ../includes/utils.php:2128
+#: ../includes/utils.php:2181
 msgctxt "Public"
 msgid "Email:"
 msgstr ""
 
-#: ../includes/utils.php:2131
+#: ../includes/utils.php:2184
 msgctxt "Public"
 msgid "Website:"
 msgstr ""
 
-#: ../includes/utils.php:2134
+#: ../includes/utils.php:2187
 msgctxt "Public"
 msgid "Experience:"
 msgstr ""
 
-#: ../includes/utils.php:2137
+#: ../includes/utils.php:2190
 msgctxt "Public"
 msgid "Company:"
 msgstr ""
 
-#: ../includes/utils.php:2140
+#: ../includes/utils.php:2193
 msgctxt "Public"
 msgid "Address:"
 msgstr ""
 
-#: ../includes/utils.php:2143
+#: ../includes/utils.php:2196
 msgctxt "Public"
 msgid "Group:"
 msgstr ""
 
-#: ../includes/utils.php:2152
+#: ../includes/utils.php:2205
 msgctxt "Public"
 msgid "Location:"
 msgstr ""
 
-#: ../includes/utils.php:2155
+#: ../includes/utils.php:2208
 msgctxt "Public"
 msgid "Language:"
 msgstr ""
 
-#: ../includes/utils.php:2158
+#: ../includes/utils.php:2211
 msgctxt "Public"
 msgid "Specialty:"
 msgstr ""
 
-#: ../includes/utils.php:2161
+#: ../includes/utils.php:2214
 msgctxt "Public"
 msgid "Gender:"
 msgstr ""
 
-#: ../includes/utils.php:2164
+#: ../includes/utils.php:2217
 msgctxt "Public"
 msgid "Extra One:"
 msgstr ""
 
-#: ../includes/utils.php:2167
+#: ../includes/utils.php:2220
 msgctxt "Public"
 msgid "Extra Two:"
 msgstr ""
 
-#: ../includes/utils.php:2170
+#: ../includes/utils.php:2223
 msgctxt "Public"
 msgid "Extra Three:"
 msgstr ""
 
-#: ../includes/utils.php:2173
+#: ../includes/utils.php:2226
 msgctxt "Public"
 msgid "Extra Four:"
 msgstr ""
 
-#: ../includes/utils.php:2176
+#: ../includes/utils.php:2229
 msgctxt "Public"
 msgid "Extra Five:"
 msgstr ""
@@ -1157,177 +1167,177 @@ msgctxt "Settings: Translation"
 msgid "For simple uses, text changes are ok, but if you want to translate with multiple languages, enable this option and use a multilingual plugin to create translations for multiple languages."
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:793
+#: ../includes/editor/settings-editor.php:815
 msgctxt "Settings: Advance"
 msgid "Set Custom Size"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:794
+#: ../includes/editor/settings-editor.php:816
 msgctxt "Settings: Advance"
 msgid "Set custom size for image, enable the Crop Option to crop the image to exact dimensions (normally proportional will be applied)"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:797
+#: ../includes/editor/settings-editor.php:819
 msgctxt "Settings: Advance"
 msgid "Advance Settings"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:798
+#: ../includes/editor/settings-editor.php:820
 msgctxt "Settings: Advance"
 msgid "Advance"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:804
+#: ../includes/editor/settings-editor.php:826
 msgctxt "Settings: Advance"
 msgid "Return/Archive Page Link"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:812
+#: ../includes/editor/settings-editor.php:834
 msgctxt "Settings: Advance"
 msgid "Disable Google Fonts Loading"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:820
+#: ../includes/editor/settings-editor.php:842
 msgctxt "Settings: Advance"
 msgid "Member Image Size"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:821
+#: ../includes/editor/settings-editor.php:843
 msgctxt "Settings: Advance"
 msgid "This image size is used for general layout globally for all shortcodes, unless it is overridden from the specific shortcode."
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:827, ../includes/editor/settings-editor.php:863
+#: ../includes/editor/settings-editor.php:849, ../includes/editor/settings-editor.php:885
 msgctxt "Settings: Advance"
 msgid "Select Size"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:856
+#: ../includes/editor/settings-editor.php:878
 msgctxt "Settings: Advance"
 msgid "Member Detail's Image Size"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:857
+#: ../includes/editor/settings-editor.php:879
 msgctxt "Settings: Advance"
 msgid "This image size is used for modal, expand, panel & single layouts globally for all shortcodes, unless it is overridden from the specific shortcode"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:898
+#: ../includes/editor/settings-editor.php:920
 msgctxt "Settings: Single Page"
 msgid "Single Page Settings"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:899
+#: ../includes/editor/settings-editor.php:921
 msgctxt "Settings: Single Page"
 msgid "Single Page"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:924
+#: ../includes/editor/settings-editor.php:946
 msgctxt "Settings: Single Page"
 msgid "Elements"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:962
+#: ../includes/editor/settings-editor.php:984
 msgctxt "Settings: Return Page"
 msgid "Return/Archive Page Link"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:975
+#: ../includes/editor/settings-editor.php:997
 msgctxt "Settings: Single Page"
 msgid "Thumbs & Carousel"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:982, ../includes/editor/settings-editor.php:988
+#: ../includes/editor/settings-editor.php:1004, ../includes/editor/settings-editor.php:1010
 msgctxt "Settings: Single Page"
 msgid "Thumbnail Type"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:997
+#: ../includes/editor/settings-editor.php:1019
 msgctxt "Settings: Single Page"
 msgid "Text & Icon Colors"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1004
+#: ../includes/editor/settings-editor.php:1026
 msgctxt "Settings: Single Page"
 msgid "Name Color"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1011
+#: ../includes/editor/settings-editor.php:1033
 msgctxt "Settings: Single Page"
 msgid "Designation Color"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1017
+#: ../includes/editor/settings-editor.php:1039
 msgctxt "Settings: Single Page"
 msgid "Description Color"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1023
+#: ../includes/editor/settings-editor.php:1045
 msgctxt "Settings: Single Page"
 msgid "Divider Color"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1029
+#: ../includes/editor/settings-editor.php:1051
 msgctxt "Settings: Single Page"
 msgid "Info Icon Color"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1035
+#: ../includes/editor/settings-editor.php:1057
 msgctxt "Settings: Single Page"
 msgid "Info Text Color"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1041
+#: ../includes/editor/settings-editor.php:1063
 msgctxt "Settings: Single Page"
 msgid "Info Link Color"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1047
+#: ../includes/editor/settings-editor.php:1069
 msgctxt "Settings: Single Page"
 msgid "Info Link Hover Color"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1182
+#: ../includes/editor/settings-editor.php:1204
 msgctxt "Settings: Single Page"
 msgid "Social Links Styling"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1067
+#: ../includes/editor/settings-editor.php:1089
 msgctxt "Settings: Single Page"
 msgid "Links Shape"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1078
+#: ../includes/editor/settings-editor.php:1100
 msgctxt "Settings: Single Page"
 msgid "Normal"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1082, ../includes/editor/settings-editor.php:1132
+#: ../includes/editor/settings-editor.php:1104, ../includes/editor/settings-editor.php:1154
 msgctxt "Settings: Single Page"
 msgid "Links Radius"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1090, ../includes/editor/settings-editor.php:1140
+#: ../includes/editor/settings-editor.php:1112, ../includes/editor/settings-editor.php:1162
 msgctxt "Settings: Single Page"
 msgid "Background Color Type"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1099, ../includes/editor/settings-editor.php:1149
+#: ../includes/editor/settings-editor.php:1121, ../includes/editor/settings-editor.php:1171
 msgctxt "Settings: Single Page"
 msgid "Background Color"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1108, ../includes/editor/settings-editor.php:1158
+#: ../includes/editor/settings-editor.php:1130, ../includes/editor/settings-editor.php:1180
 msgctxt "Settings: Single Page"
 msgid "Icon Color Type"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1117, ../includes/editor/settings-editor.php:1167
+#: ../includes/editor/settings-editor.php:1139, ../includes/editor/settings-editor.php:1189
 msgctxt "Settings: Single Page"
 msgid "Icon Color"
 msgstr ""
 
-#: ../includes/editor/settings-editor.php:1128
+#: ../includes/editor/settings-editor.php:1150
 msgctxt "Settings: Single Page"
 msgid "Hover"
 msgstr ""

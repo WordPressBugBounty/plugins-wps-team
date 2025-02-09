@@ -245,6 +245,15 @@ class Settings_Editor extends Editor_Controls {
                 'enable_multilingual' => false,
             ],
         ] );
+        $this->add_control( 'read_more_link_text', [
+            'label'       => 'Read More Link Text',
+            'label_block' => true,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
         $this->add_control( 'link_1_btn_text', [
             'label'       => 'Resume Button Text',
             'label_block' => true,
