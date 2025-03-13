@@ -218,6 +218,15 @@ class Utils {
     static function load_template( $template_name ) {
         $template_folder = (string) apply_filters( 'wpspeedo_team/template/folder', 'wpspeedo-team' );
         $template_folder = '/' . trailingslashit( ltrim( $template_folder, '/\\' ) );
+        // Load from mu-plugins if template exists
+        $template_path = WPMU_PLUGIN_DIR . $template_folder . $template_name;
+        if ( file_exists( $template_path ) ) {
+            return $template_path;
+        }
+        $template_path = WPMU_PLUGIN_DIR . $template_folder . 'pro/' . $template_name;
+        if ( file_exists( $template_path ) ) {
+            return $template_path;
+        }
         // Load from child theme if template exists
         if ( is_child_theme() ) {
             $template_path = get_template_directory() . $template_folder . $template_name;

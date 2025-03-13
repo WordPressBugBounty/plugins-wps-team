@@ -70,7 +70,7 @@ class Shortcode_Loader extends Attribute_Manager {
         $sticky_bottom_gap_tablet = $this->get_setting( 'filter_sticky_bottom_gap_tablet' );
         $sticky_bottom_gap_small_tablet = $this->get_setting( 'filter_sticky_bottom_gap_small_tablet' );
         $sticky_bottom_gap_mobile = $this->get_setting( 'filter_sticky_bottom_gap_mobile' );
-        if ( $card_action == 'expand' && in_array( $display_type, ['carousel', 'filter'] ) ) {
+        if ( $card_action == 'expand' && in_array( $display_type, ['carousel'] ) ) {
             $card_action = 'none';
             $this->set_setting( 'card_action', $card_action );
         }
@@ -268,7 +268,7 @@ class Shortcode_Loader extends Attribute_Manager {
         $add_read_more = $this->get_setting( 'add_read_more' );
         $read_more_text = $this->get_setting( 'read_more_text' );
         add_filter( 'excerpt_length', [$this, 'modify_excerpt_length'], 999 );
-        if ( $card_action == 'expand' && in_array( $display_type, ['carousel', 'filter'] ) ) {
+        if ( $card_action == 'expand' && in_array( $display_type, ['carousel'] ) ) {
             $card_action = 'none';
         }
         if ( !in_array( $theme, Utils::get_active_themes() ) ) {

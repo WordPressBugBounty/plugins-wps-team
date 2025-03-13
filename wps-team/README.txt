@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team, team plugin, team members, team showcase, team builder
 Requires at least: 5.9
 Tested up to: 6.7
-Stable tag: 3.3.4
+Stable tag: 3.4.0
 Requires PHP: 7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -129,7 +129,6 @@ This Team Showcase plugin is fully customizable. So you can create unique team s
 * Team Member’s Skills
 * Custom Link 1
 * Custom Link 2
-* Read More Button
 
 == 👉 Taxonomies / Groups for Our Team Plugin WordPress ==
 * Group Taxonomy.
@@ -255,6 +254,14 @@ Yes, this Team plugin supports multi-language.
 15. WPS Team Members - Settings Page
 
 == Changelog ==
+
+= 3.4.0 - 13-03-2025 =
+* Added: Template-override support from the mu-plugins directory.
+* Added: Drawer expands support for Filter layout.
+* Added: Offset control for Drawer expands.
+* Fixed: Fixed Avada theme swiper js conflict.
+* Fixed: Fixed the IOS image zooming issue.
+* Fixed: Fixed carousel color conflict with other themes.
 
 = 3.3.4 - 09-02-2025 =
 * Added: Read more button element.

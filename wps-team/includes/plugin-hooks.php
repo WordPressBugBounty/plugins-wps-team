@@ -50,7 +50,7 @@ class Plugin_Hooks {
     public function before_wrapper_inner( $shortcode_loader ) {
         $display_type = $shortcode_loader->get_setting( 'display_type' );
         $card_action = $shortcode_loader->get_setting( 'card_action' );
-        if ( $display_type == 'filter' && $card_action != 'expand' ) {
+        if ( $display_type == 'filter' ) {
         }
         if ( $display_type === 'carousel' && $card_action !== 'expand' ) {
             ?>

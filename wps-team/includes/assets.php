@@ -36,9 +36,9 @@ class Assets extends Assets_Manager {
         $card_action = $this->get_setting( 'card_action' );
         $this->add_item_in_asset_list( 'styles', $this->asset_handler() );
         $this->add_item_in_asset_list( 'scripts', $this->asset_handler(), ['jquery'] );
-        $this->add_item_in_asset_list( 'styles', $this->asset_handler(), ['wpspeedo-swiper'] );
-        $this->add_item_in_asset_list( 'scripts', $this->asset_handler(), ['wpspeedo-swiper'] );
         if ( $display_type == 'carousel' ) {
+            $this->add_item_in_asset_list( 'styles', $this->asset_handler(), ['wpspeedo-swiper'] );
+            $this->add_item_in_asset_list( 'scripts', $this->asset_handler(), ['wpspeedo-swiper'] );
         }
         if ( plugin()->integrations->is_divi_active() ) {
             $this->add_item_in_asset_list( 'styles', $this->asset_handler(), [$this->asset_handler() . '-divi'] );
@@ -124,18 +124,24 @@ class Assets extends Assets_Manager {
             WPS_TEAM_VERSION,
             true
         );
+        $asset_style_url = apply_filters( 'wpspeedo_team/assets/style_url', WPS_TEAM_ASSET_URL . 'css/style.min.css' );
         wp_register_style(
             $this->asset_handler(),
-            WPS_TEAM_ASSET_URL . 'css/style.min.css',
+            $asset_style_url,
             ['wpspeedo-fontawesome--all'],
             WPS_TEAM_VERSION
         );
+        $asset_style_url_divi = apply_filters( 'wpspeedo_team/assets/style_url_divi', WPS_TEAM_ASSET_URL . 'css/style-divi.min.css' );
         wp_register_style(
             $this->asset_handler() . '-divi',
-            WPS_TEAM_ASSET_URL . 'css/style-divi.min.css',
+            $asset_style_url_divi,
             [],
             WPS_TEAM_VERSION
         );
+        $data = [
+            'version' => WPS_TEAM_VERSION,
+            'is_pro'  => wps_team_fs()->can_use_premium_code__premium_only(),
+        ];
         wp_register_script(
             $this->asset_handler(),
             WPS_TEAM_ASSET_URL . 'js/script.min.js',
@@ -143,6 +149,7 @@ class Assets extends Assets_Manager {
             WPS_TEAM_VERSION,
             true
         );
+        wp_localize_script( $this->asset_handler(), '_wps_team_data', $data );
         wp_register_style(
             $this->asset_handler() . '-preview',
             WPS_TEAM_ASSET_URL . 'admin/css/preview.min.css',

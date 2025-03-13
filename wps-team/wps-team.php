@@ -7,14 +7,14 @@
  * Plugin URI: https://wpspeedo.com/wps-team-pro?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Author: WPSpeedo
  * Author URI: https://wpspeedo.com?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
- * Version: 3.3.4
+ * Version: 3.4.0
  * Domain Path: /languages
  * Text Domain: wpspeedo-team
   */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'WPS_TEAM_VERSION', '3.3.4' );
+define( 'WPS_TEAM_VERSION', '3.4.0' );
 
 define( 'WPS_TEAM_FILE', __FILE__ );
 

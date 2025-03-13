@@ -75,6 +75,20 @@ class Shortcode_Editor extends Editor_Controls {
             'default'     => 'single-page',
             'class'       => 'wps-field--arrange-1',
         ] );
+        $this->add_responsive_control( 'expand_top_space', [
+            'label'                => _x( 'Expand Top Space', 'Editor', 'wpspeedo-team' ),
+            'label_block'          => true,
+            'type'                 => Controls_Manager::SLIDER,
+            'min'                  => -500,
+            'max'                  => 500,
+            'default'              => 50,
+            'tablet_default'       => 50,
+            'small_tablet_default' => 50,
+            'mobile_default'       => 50,
+            'condition'            => [
+                'card_action' => 'expand',
+            ],
+        ] );
         $this->add_responsive_control( 'container_width', [
             'label'                => _x( 'Container Width', 'Editor', 'wpspeedo-team' ),
             'label_block'          => true,
