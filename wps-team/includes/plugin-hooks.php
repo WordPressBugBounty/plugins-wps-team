@@ -22,6 +22,7 @@ class Plugin_Hooks {
             '_mobile',
             '_telephone',
             '_email',
+            '_fax',
             '_website'
         ];
     }

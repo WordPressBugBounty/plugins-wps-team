@@ -3,8 +3,8 @@
 Contributors: wpspeedo, freemius
 Tags: team, team plugin, team members, team showcase, team builder
 Requires at least: 5.9
-Tested up to: 6.7
-Stable tag: 3.4.0
+Tested up to: 6.8
+Stable tag: 3.4.1
 Requires PHP: 7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -42,8 +42,10 @@ This Team Showcase plugin is fully customizable. So you can create unique team s
 
 👉 **Pagination (Standard / AJAX) (PRO):** This Team Plugin supports both standard & AJAX pagination, this is useful when you have many team members. Our WordPress Team Members plugin will make it easy for you.
 
-👉 **AJAX Load More (PRO):** Our Team Plugin supports **AJAX Load More** button, This team plugin offers essential configurations to dd it.
-
+👉 **AJAX Load More (PRO):** OAdded: fax field.
+Added: excerpt field.
+Fixed: unexpected notices.
+Fixed: theme conflict for filters.
 👉 **Infinite Scroll (PRO):** WPS Team Plugin supports the **Infinite Scroll** feature, users do not need to click on any button, instead when he scrolls down the AJAX event will fire, and load new team members from the server.
 
 👉 **AJAX Carousel (PRO):** This Team Members Plugin supports the **AJAX Carousel** feature, you can display a few members initially, but when the carousel reaches the end of the items, it immediately triggers the AJAX action and pull down new team members and stars carousing.
@@ -117,6 +119,7 @@ This Team Showcase plugin is fully customizable. So you can create unique team s
 * Team member’s gallery images
 * Team member’s designation
 * Team member’s email
+* Team member’s fax
 * Member’s mobile number
 * Member’s telephone number
 * Years of Experience
@@ -254,6 +257,12 @@ Yes, this Team plugin supports multi-language.
 15. WPS Team Members - Settings Page
 
 == Changelog ==
+
+= 3.4.1 - 20-04-2025 =
+* Added: Fax field.
+* Added: Excerpt field.
+* Fixed: Unexpected notices.
+* Fixed: Theme conflicts with filter.
 
 = 3.4.0 - 13-03-2025 =
 * Added: Template-override support from the mu-plugins directory.

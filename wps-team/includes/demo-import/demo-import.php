@@ -191,6 +191,7 @@ class Demo_Import {
             '_email',
             '_mobile',
             '_telephone',
+            '_fax',
             '_experience',
             '_website',
             '_company',

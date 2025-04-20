@@ -122,7 +122,16 @@ class Settings_Editor extends Editor_Controls {
             ],
         ] );
         $this->add_control( 'telephone_label', [
-            'label'       => 'Telephone (Office',
+            'label'       => 'Telephone (Office)',
+            'label_block' => true,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
+        $this->add_control( 'fax_label', [
+            'label'       => 'Fax',
             'label_block' => true,
             'separator'   => 'none',
             'type'        => Controls_Manager::UPGRADE_NOTICE,

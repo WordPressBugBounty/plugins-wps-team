@@ -176,6 +176,7 @@ class Bulk_Import_Manager {
         if ( !empty($row['email']) )        $meta_input['_email']           = sanitize_email( $row['email'] );
         if ( !empty($row['mobile']) )       $meta_input['_mobile']          = sanitize_text_field( $row['mobile'] );
         if ( !empty($row['telephone']) )    $meta_input['_telephone']       = sanitize_text_field( $row['telephone'] );
+        if ( !empty($row['fax']) )          $meta_input['_fax']             = sanitize_text_field( $row['fax'] );
         if ( !empty($row['experience']) )   $meta_input['_experience']      = sanitize_text_field( $row['experience'] );
         if ( !empty($row['website']) )      $meta_input['_website']         = esc_url_raw( $row['website'] );
         if ( !empty($row['company']) )      $meta_input['_company']         = sanitize_text_field( $row['company'] );

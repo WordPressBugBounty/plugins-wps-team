@@ -85,6 +85,12 @@ class Meta_Box_Editor extends Editor_Controls {
             'separator'   => 'none',
             'type'        => Controls_Manager::TEXT,
         ] );
+        $this->add_control( '_fax', [
+            'label'       => plugin()->translations->get( 'fax_label', _x( 'Fax', 'Admin Metabox', 'wpspeedo-team' ) ),
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::TEXT,
+        ] );
         $this->add_control( '_experience', [
             'label'       => plugin()->translations->get( 'experience_label', _x( 'Years of Experience', 'Admin Metabox', 'wpspeedo-team' ) ),
             'label_block' => false,

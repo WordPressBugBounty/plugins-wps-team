@@ -174,6 +174,7 @@ class Utils {
             '_skills',
             '_designation',
             '_telephone',
+            '_fax',
             '_email',
             '_website',
             '_social_links',
@@ -304,6 +305,7 @@ class Utils {
             'email_label'                  => 'Email Address',
             'mobile_label'                 => 'Mobile (Personal)',
             'telephone_label'              => 'Telephone (Office)',
+            'fax_label'                    => 'Fax',
             'experience_label'             => 'Years of Experience',
             'website_label'                => 'Website',
             'company_label'                => 'Company',
@@ -1592,6 +1594,7 @@ class Utils {
             'email'       => _x( 'Email', 'Editor', 'wpspeedo-team' ),
             'mobile'      => _x( 'Mobile', 'Editor', 'wpspeedo-team' ),
             'telephone'   => _x( 'Telephone', 'Editor', 'wpspeedo-team' ),
+            'fax'         => _x( 'Fax', 'Editor', 'wpspeedo-team' ),
             'experience'  => _x( 'Experience', 'Editor', 'wpspeedo-team' ),
             'website'     => _x( 'Website', 'Editor', 'wpspeedo-team' ),
             'company'     => _x( 'Company', 'Editor', 'wpspeedo-team' ),
@@ -2189,6 +2192,9 @@ class Utils {
                 case '_telephone':
                     $field_label = '<i class="fas fa-phone"></i>';
                     break;
+                case '_fax':
+                    $field_label = '<i class="fas fa-fax"></i>';
+                    break;
                 case '_email':
                     $field_label = '<i class="fas fa-envelope"></i>';
                     break;
@@ -2218,6 +2224,9 @@ class Utils {
                     break;
                 case '_telephone':
                     $field_label = plugin()->translations->get( 'phone_meta_label', _x( 'Phone:', 'Public', 'wpspeedo-team' ) );
+                    break;
+                case '_fax':
+                    $field_label = plugin()->translations->get( 'fax_meta_label', _x( 'Fax:', 'Public', 'wpspeedo-team' ) );
                     break;
                 case '_email':
                     $field_label = plugin()->translations->get( 'email_meta_label', _x( 'Email:', 'Public', 'wpspeedo-team' ) );
@@ -2255,6 +2264,7 @@ class Utils {
         $display_fields = [];
         $supported_sorted_fields = array_intersect( $sorted_fields, array_merge( [
             '_telephone',
+            '_fax',
             '_email',
             '_website',
             '_experience',
@@ -2317,6 +2327,10 @@ class Utils {
             }
             if ( $field === '_telephone' ) {
                 $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="tel:%s">%s</a>', Utils::sanitize_phone_number( $val ), sanitize_text_field( $val ) ) . '</li>';
+                continue;
+            }
+            if ( $field === '_fax' ) {
+                $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="fax:%s">%s</a>', sanitize_text_field( $val ), sanitize_text_field( $val ) ) . '</li>';
                 continue;
             }
             if ( $field === '_email' ) {
@@ -2402,6 +2416,12 @@ class Utils {
             if ( $field === '_telephone' ) {
                 $fields_html .= "{{? it.{$field}}}";
                 $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="tel:%1$s">%1$s</a>', sanitize_text_field( $val ) ) . '</li>';
+                $fields_html .= '{{?}}';
+                continue;
+            }
+            if ( $field === '_fax' ) {
+                $fields_html .= "{{? it.{$field}}}";
+                $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="fax:%1$s">%1$s</a>', sanitize_text_field( $val ) ) . '</li>';
                 $fields_html .= '{{?}}';
                 continue;
             }

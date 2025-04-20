@@ -143,7 +143,12 @@ class Data {
         $args = array(
             'label'                          => $single_name,
             'labels'                         => $labels,
-            'supports'                       => array('title', 'editor', 'thumbnail'),
+            'supports'                       => array(
+                'title',
+                'editor',
+                'thumbnail',
+                'excerpt'
+            ),
             'taxonomies'                     => array('group'),
             'hierarchical'                   => false,
             'public'                         => false,
@@ -242,7 +247,7 @@ class Data {
         /*
          * Save Gallery Meta Fields
          */
-        if ( $_POST['gallery'] ) {
+        if ( !empty( $_POST['gallery'] ) ) {
             $gallery_data = array_map( 'intval', $_POST['gallery'] );
             $gallery_data = array_filter( $_POST['gallery'] );
             if ( $gallery_data ) {
@@ -292,6 +297,7 @@ class Data {
                 '_experience',
                 '_mobile',
                 '_telephone',
+                '_fax',
                 '_address'
             ] ) ) {
                 $data[$meta_key] = sanitize_text_field( $meta_val );
