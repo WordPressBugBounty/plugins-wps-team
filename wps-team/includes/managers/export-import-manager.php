@@ -30,9 +30,14 @@ class Export_Import_Manager {
 
     public function ajax_export_data() {
 
+        // allow for manage_options capability
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( __('You do not have permission to perform this action', 'wpspeedo-team'), 403 );
+        }
+
         // Check for required data
         if ( empty( $options = $_REQUEST['options'] ) ) {
-            wp_send_json_error( __('No export data provided', 'gsteam'), 400 );
+            wp_send_json_error( __('No export data provided', 'wpspeedo-team'), 400 );
         }
 
         // Validate the export data
@@ -42,7 +47,7 @@ class Export_Import_Manager {
 
         // Check for valid export data
         if ( ! $export_team_members && ! $export_shortcodes && ! $export_settings ) {
-            wp_send_json_error( __('No export data provided', 'gsteam'), 400 );
+            wp_send_json_error( __('No export data provided', 'wpspeedo-team'), 400 );
         }
 
         // Init the zip archive
@@ -104,7 +109,7 @@ class Export_Import_Manager {
 
             unset($post_data['meta_input']['_edit_last']);
             unset($post_data['meta_input']['_edit_lock']);
-            unset($post_data['meta_input']['gsteam-demo_data']);
+            unset($post_data['meta_input']['wpspeedo-team-demo_data']);
 
             $json_data['posts'][] = $post_data;
         }
@@ -218,7 +223,7 @@ class Export_Import_Manager {
 
         // Check file existence and readability
         if ( ! file_exists($this->zip_file) || ! is_readable($this->zip_file) ) {
-            wp_send_json_error( __('Export file not found or inaccessible', 'gsteam'), 500 );
+            wp_send_json_error( __('Export file not found or inaccessible', 'wpspeedo-team'), 500 );
         }
 
         // Send the zip file
@@ -238,22 +243,27 @@ class Export_Import_Manager {
 
     public function ajax_import_data() {
 
+        // allow for manage_options capability
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( __('You do not have permission to perform this action', 'wpspeedo-team'), 403 );
+        }
+
         // Check for required data
-        if ( empty($_FILES['import_file']) ) wp_send_json_error( __('No import file provided', 'gsteam'), 400 );
+        if ( empty($_FILES['import_file']) ) wp_send_json_error( __('No import file provided', 'wpspeedo-team'), 400 );
 
         // Save the uploaded file
         $this->upload_dir = $this->save_imported_file();
 
         // Check if the data.json file exists
         $json_import_file = $this->upload_dir . '/data.json';
-        if ( ! file_exists( $json_import_file ) ) wp_send_json_error( __('Invalid file', 'gsteam'), 400 );
+        if ( ! file_exists( $json_import_file ) ) wp_send_json_error( __('Invalid file', 'wpspeedo-team'), 400 );
 
         // Read the JSON data
         $json_data = @file_get_contents($this->upload_dir . '/data.json');
         $json_data = json_decode($json_data, true);
 
         // Check for valid JSON data
-        if (empty($json_data)) wp_send_json_error( __('Invalid file content', 'gsteam'), 400 );
+        if (empty($json_data)) wp_send_json_error( __('Invalid file content', 'wpspeedo-team'), 400 );
         
         // Initiate the Import Process
         $this->import__team_data( $json_data );
@@ -262,7 +272,7 @@ class Export_Import_Manager {
         Utils::delete_directory_recursive( $this->upload_dir );
 
         // Send the success message
-        wp_send_json_success( __('Data imported successfully', 'gsteam'), 200 );
+        wp_send_json_success( __('Data imported successfully', 'wpspeedo-team'), 200 );
 
     }
 
@@ -504,7 +514,7 @@ class Export_Import_Manager {
         $file_name_cmps  = explode(".", $file_name);
         $file_extension  = strtolower(end($file_name_cmps));
 
-        if ( $file_extension != 'zip' ) wp_send_json_error( __('Invalid file type', 'gsteam'), 400 );
+        if ( $file_extension != 'zip' ) wp_send_json_error( __('Invalid file type', 'wpspeedo-team'), 400 );
 
         $upload_file_dir = get_temp_dir() . 'wpspeedo/wps-team';
 
@@ -521,10 +531,10 @@ class Export_Import_Manager {
                 $zip->close();
                 unlink($dest_file_path);
             } else {
-                wp_send_json_error(__('File upload failed', 'gsteam'), 400);
+                wp_send_json_error(__('File upload failed', 'wpspeedo-team'), 400);
             }
         } else {
-            wp_send_json_error(__('File upload failed', 'gsteam'), 400);
+            wp_send_json_error(__('File upload failed', 'wpspeedo-team'), 400);
         }
 
         return $upload_file_dir;

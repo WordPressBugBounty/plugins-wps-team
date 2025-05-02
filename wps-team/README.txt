@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team, team plugin, team members, team showcase, team builder
 Requires at least: 5.9
 Tested up to: 6.8
-Stable tag: 3.4.1
+Stable tag: 3.4.2
 Requires PHP: 7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -257,6 +257,9 @@ Yes, this Team plugin supports multi-language.
 15. WPS Team Members - Settings Page
 
 == Changelog ==
+
+= 3.4.2 - 03-05-2025 =
+* Fixed: Various security issues.
 
 = 3.4.1 - 20-04-2025 =
 * Added: Fax field.

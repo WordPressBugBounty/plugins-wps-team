@@ -65,7 +65,7 @@ class Plugin_Hooks {
             ?>
                 <div class="wps-widget--edit-link">
                     <a class="wps-widget--edit-link-btn" target="_blank" href="<?php 
-            echo admin_url( "/admin.php?page=wps-team#/shortcode/{$shortcode_loader->id}" );
+            echo esc_url( admin_url( "/admin.php?page=wps-team#/shortcode/{$shortcode_loader->id}" ) );
             ?>">
                         <i class="fas fa-pencil-alt"></i>
                         <span class="wps-widget--edit-link-popup">Only <strong>Admin</strong> & <strong>Editor</strong> can see this link</span>
@@ -117,7 +117,7 @@ class Plugin_Hooks {
         ?>
         <div class="wps-team--not-found-wrapper">
             <div class="wps-team--not-found"><?php 
-        esc_html_e( plugin()->translations->get( 'no_results_found_text', _x( 'No Results Found', 'Public', 'wpspeedo-team' ) ) );
+        echo esc_html( plugin()->translations->get( 'no_results_found_text', _x( 'No Results Found', 'Public', 'wpspeedo-team' ) ) );
         ?></div>
         </div>
         <?php 

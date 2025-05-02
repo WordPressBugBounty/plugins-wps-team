@@ -290,7 +290,7 @@ class Utils {
     }
 
     public static function get_brnad_name( $icon ) {
-        return str_replace( ['fab fa-', 'far fa-', 'fas fa-'], '', $icon );
+        return str_replace( ['fab fa-', 'far fa-', 'fas fa-'], '', esc_attr( $icon ) );
     }
 
     public static function sanitize_phone_number( $phone ) {

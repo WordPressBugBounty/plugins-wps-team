@@ -192,6 +192,16 @@ msgctxt "Editor"
 msgid "Google Early Access"
 msgstr ""
 
+#: ../includes/plugin-hooks.php:253
+msgctxt "Public"
+msgid "No Results Found"
+msgstr ""
+
+#: ../includes/plugin-hooks.php:286
+msgctxt "Public: Pagination"
+msgid "Load More"
+msgstr ""
+
 #: ../includes/utils.php:242
 msgctxt "Dashboard"
 msgid "Template file is not found"
@@ -1007,17 +1017,22 @@ msgctxt "Editor: Upgrade Notice"
 msgid "Coming Soon"
 msgstr ""
 
-#: ../includes/demo-import/demo-import.php:105
+#: ../includes/demo-import/demo-import.php:101, ../includes/demo-import/demo-import.php:129
+msgctxt "Settings: Tools"
+msgid "You do not have permission to perform this action"
+msgstr ""
+
+#: ../includes/demo-import/demo-import.php:110
 msgctxt "Settings: Tools"
 msgid "Dummy team members already imported"
 msgstr ""
 
-#: ../includes/demo-import/demo-import.php:114
+#: ../includes/demo-import/demo-import.php:119
 msgctxt "Settings: Tools"
 msgid "Dummy team members imported"
 msgstr ""
 
-#: ../includes/demo-import/demo-import.php:130
+#: ../includes/demo-import/demo-import.php:141
 msgctxt "Settings: Tools"
 msgid "Dummy team members deleted"
 msgstr ""
@@ -2340,6 +2355,42 @@ msgstr ""
 #: ../includes/managers/bulk-import-manager.php:218, ../includes/managers/bulk-import-manager.php:223
 msgctxt "Bulk Import"
 msgid "Invalid File Content"
+msgstr ""
+
+#: ../includes/managers/export-import-manager.php:35, ../includes/managers/export-import-manager.php:248
+msgid "You do not have permission to perform this action"
+msgstr ""
+
+#: ../includes/managers/export-import-manager.php:40, ../includes/managers/export-import-manager.php:50
+msgid "No export data provided"
+msgstr ""
+
+#: ../includes/managers/export-import-manager.php:226
+msgid "Export file not found or inaccessible"
+msgstr ""
+
+#: ../includes/managers/export-import-manager.php:252
+msgid "No import file provided"
+msgstr ""
+
+#: ../includes/managers/export-import-manager.php:259
+msgid "Invalid file"
+msgstr ""
+
+#: ../includes/managers/export-import-manager.php:266
+msgid "Invalid file content"
+msgstr ""
+
+#: ../includes/managers/export-import-manager.php:275
+msgid "Data imported successfully"
+msgstr ""
+
+#: ../includes/managers/export-import-manager.php:517
+msgid "Invalid file type"
+msgstr ""
+
+#: ../includes/managers/export-import-manager.php:537, ../includes/managers/export-import-manager.php:534
+msgid "File upload failed"
 msgstr ""
 
 #: ../includes/managers/icon-manager.php:15

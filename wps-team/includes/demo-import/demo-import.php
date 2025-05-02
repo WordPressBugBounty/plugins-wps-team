@@ -87,6 +87,16 @@ class Demo_Import {
     }
 
     public function ajax_import_demo_data() {
+        if ( !current_user_can( 'manage_options' ) ) {
+            $message = _x( 'You do not have permission to perform this action', 'Settings: Tools', 'wpspeedo-team' );
+            if ( wp_doing_ajax() ) {
+                wp_send_json_error( $message, 403 );
+            }
+            return [
+                'status'  => 403,
+                'message' => $message,
+            ];
+        }
         $this->disable_notice();
         if ( get_option( self::$key . '_dummy_post_data_created' ) !== false || get_transient( self::$key . '_dummy_post_data_creating' ) !== false ) {
             $message_202 = _x( 'Dummy team members already imported', 'Settings: Tools', 'wpspeedo-team' );
@@ -110,6 +120,16 @@ class Demo_Import {
     }
 
     public function ajax_remove_demo_data() {
+        if ( !current_user_can( 'manage_options' ) ) {
+            $message = _x( 'You do not have permission to perform this action', 'Settings: Tools', 'wpspeedo-team' );
+            if ( wp_doing_ajax() ) {
+                wp_send_json_error( $message, 403 );
+            }
+            return [
+                'status'  => 403,
+                'message' => $message,
+            ];
+        }
         $this->delete_dummy_attachments();
         $this->delete_dummy_terms();
         $this->delete_dummy_posts();

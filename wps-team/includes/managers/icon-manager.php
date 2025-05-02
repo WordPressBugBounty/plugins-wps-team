@@ -91,17 +91,13 @@ class Icon_Manager {
 			return call_user_func_array( $icon_types[ $icon['library'] ]['render_callback'], [ $icon, $attributes, $tag ] );
 		}
 
-		$content = '';
-
-		if ( ! $content ) {
-			if ( empty( $attributes['class'] ) ) {
-				$attributes['class'] = $icon['icon'];
+		if ( empty( $attributes['class'] ) ) {
+			$attributes['class'] = $icon['icon'];
+		} else {
+			if ( is_array( $attributes['class'] ) ) {
+				$attributes['class'][] = $icon['icon'];
 			} else {
-				if ( is_array( $attributes['class'] ) ) {
-					$attributes['class'][] = $icon['icon'];
-				} else {
-					$attributes['class'] .= ' ' . $icon['icon'];
-				}
+				$attributes['class'] .= ' ' . $icon['icon'];
 			}
 		}
 
