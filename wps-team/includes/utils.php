@@ -197,7 +197,7 @@ class Utils {
             $value = get_post_meta( $post_id, $data_key, true );
         } else {
             if ( in_array( $data_key, $taxonomies ) ) {
-                $value = get_the_terms( $post_id, str_replace( '_', '-', $data_key ) );
+                $value = wp_get_object_terms( $post_id, str_replace( '_', '-', $data_key ) );
             }
         }
         global $wps_team_id;
@@ -364,6 +364,7 @@ class Utils {
             'detail_thumbnail_size_custom' => [],
             'detail_thumbnail_type'        => 'image',
             'enable_archive'               => true,
+            'with_front'                   => true,
             'post_type_slug'               => 'wps-members',
             'member_plural_name'           => 'Members',
             'member_single_name'           => 'Member',
@@ -2540,6 +2541,16 @@ class Utils {
         if ( !empty( $last_name ) ) {
             update_post_meta( $post_id, '_last_name', $last_name );
         }
+    }
+
+    public static function sanitize_title_allow_slash( $title ) {
+        // Temporarily replace slashes to preserve them
+        $title = str_replace( '/', '___slash___', $title );
+        // Use WordPress's sanitize_title
+        $title = sanitize_title( $title );
+        // Restore slashes
+        $title = str_replace( '___slash___', '/', $title );
+        return $title;
     }
 
 }

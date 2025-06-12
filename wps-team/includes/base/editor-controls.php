@@ -23,7 +23,7 @@ abstract class Editor_Controls extends Controls_Stack {
 		return $config;
 	}
 
-	public function __construct( array $data = [], array $args = null ) {
+	public function __construct( Array $data = [], $args = [] ) {
 		
 		if ( $data ) {
 		} elseif ( $args ) {

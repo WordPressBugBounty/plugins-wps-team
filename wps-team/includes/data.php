@@ -166,9 +166,10 @@ class Data {
         );
         if ( Utils::has_archive() ) {
             $args['public'] = true;
-            $args['has_archive'] = Utils::get_archive_slug();
+            $args['has_archive'] = Utils::get_setting( 'enable_archive' );
             $args['rewrite'] = [
-                'slug' => Utils::get_archive_slug(),
+                'slug'       => Utils::get_archive_slug(),
+                'with_front' => Utils::get_setting( 'with_front' ),
             ];
         }
         register_post_type( Utils::post_type_name(), $args );
@@ -209,7 +210,51 @@ class Data {
         $meta_data = $this->get_validated_meta_data( $post->ID );
         // Sanitization & Validation Done
         printf( "<div id='wps-meta-boxes'><meta-box meta_data='%s'></meta-box></div>", esc_attr( json_encode( $meta_data ) ) );
+        $this->print_other_meta_fields( $meta_data );
         $this->print_nonce();
+    }
+
+    /*
+     * Print Other Meta Fields
+     */
+    public function print_other_meta_fields( $meta_data ) {
+        ?>
+
+        <!-- Education -->
+        <div class="wps-meta-box--area d-flex">
+            <div class="wps-meta-box--area-inner g-0 mt-0 pt-3 pb-3 flex-wrap">
+                <section class="wps-section wps-section--education_section">
+                    <h2 class="wps-section--title d-flex align-items-center justify-content-between"><?php 
+        echo _x( 'Education', 'Admin Metabox', 'wpspeedo-team' );
+        ?></h2>
+                    <div class="wps-section--fields">
+                        <div class="wps-field--wrapper">
+
+                            <?php 
+        ?>
+
+                                <div class="wps-field wps-field-type--upgrade_notice wps-field--upgrade-notice wps-field-block wps-field-separator--none">
+                                    <div class="wps-field-core d-flex flex-wrap align-items-center">
+                                        <span class="wps-field-group d-flex">
+                                            <div class="wps--upgrade-notice">
+                                                <i class="fas fa-rocket"></i>
+                                                <span>Upgrade to Pro</span>
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+
+                            <?php 
+        ?>
+
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <!-- Education End -->
+
+        <?php 
     }
 
     /*
@@ -270,6 +315,10 @@ class Data {
                 $meta_data['_first_name'] = sanitize_text_field( $_POST['_first_name'] );
                 $meta_data['_last_name'] = sanitize_text_field( $_POST['_last_name'] );
             }
+            // Education
+            if ( array_key_exists( '_education', $_POST ) ) {
+                $meta_data['_education'] = wp_kses_post( $_POST['_education'] );
+            }
             foreach ( $meta_data as $meta_key => $meta_value ) {
                 update_post_meta( $post_id, $meta_key, $meta_value );
                 Utils::update_all_posts_meta_vals();
@@ -301,10 +350,6 @@ class Data {
                 '_address'
             ] ) ) {
                 $data[$meta_key] = sanitize_text_field( $meta_val );
-                continue;
-            }
-            if ( $meta_key == '_education' ) {
-                $data[$meta_key] = wp_kses_post( $meta_val );
                 continue;
             }
             if ( $meta_key == '_email' ) {

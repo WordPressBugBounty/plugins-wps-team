@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
 class Settings_Editor extends Editor_Controls {
-    public function __construct( array $data = [], array $args = null ) {
+    public function __construct( array $data = [], array $args = [] ) {
         parent::__construct( $data, $args );
         do_action( 'wpspeedo_team/settings_editor/init', $this );
     }
@@ -62,6 +62,16 @@ class Settings_Editor extends Editor_Controls {
             'separator'   => 'none',
             'type'        => Controls_Manager::TEXT,
             'default'     => Utils::get_archive_slug(),
+            'condition'   => [
+                'enable_archive' => true,
+            ],
+        ] );
+        $this->add_control( 'with_front', [
+            'label'       => _x( 'Include Base Slug in URLs', 'Settings: General', 'wpspeedo-team' ),
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::SWITCHER,
+            'default'     => Utils::get_default( 'with_front' ),
             'condition'   => [
                 'enable_archive' => true,
             ],

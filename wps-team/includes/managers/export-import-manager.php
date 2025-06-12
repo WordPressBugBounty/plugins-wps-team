@@ -193,6 +193,7 @@ class Export_Import_Manager {
         foreach( $shortcodes as &$shortcode ) {
             $shortcode['settings'] = maybe_unserialize( $shortcode['settings'] );
             $shortcode['settings'] = plugin()->api->validate_shortcode( $shortcode )->get_settings_value(); // Settings will be Sanitized & Validated by Shortcode_Editor class.
+            $shortcode['settings'] = wp_json_encode( $shortcode['settings'] ); // Encode settings to JSON format
         }
 
         return $shortcodes;
@@ -468,6 +469,11 @@ class Export_Import_Manager {
         global $wpdb;
 
         foreach ($shortcodes as $shortcode) {
+
+            // Decode JSON settings
+            $shortcode['settings'] = json_decode($shortcode['settings'], true);
+
+            if ( $shortcode['settings'] === null ) continue; // Skip if settings are not valid JSON
 
             // Validate the shortcode settings
             $_shortcode = plugin()->api->validate_shortcode([

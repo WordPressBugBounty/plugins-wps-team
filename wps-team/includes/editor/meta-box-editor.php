@@ -6,7 +6,7 @@ if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
 class Meta_Box_Editor extends Editor_Controls {
-    public function __construct( array $data = [], array $args = null ) {
+    public function __construct( array $data = [], $args = null ) {
         parent::__construct( $data, $args );
         do_action( 'wpspeedo_team/metabox_editor/init', $this );
         add_action( 'edit_form_before_permalink', [$this, 'add_name_fields'] );
@@ -52,7 +52,6 @@ class Meta_Box_Editor extends Editor_Controls {
 
     protected function _register_controls() {
         $this->personal_info();
-        $this->education();
         $this->social_links();
         $this->skills();
     }
@@ -140,18 +139,6 @@ class Meta_Box_Editor extends Editor_Controls {
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::COLOR,
-        ] );
-        $this->end_controls_section();
-    }
-
-    protected function education() {
-        $this->start_controls_section( 'education_section', [
-            'label' => _x( 'Education', 'Admin Metabox', 'wpspeedo-team' ),
-        ] );
-        $this->add_control( '_education', [
-            'label_block' => true,
-            'separator'   => 'none',
-            'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->end_controls_section();
     }

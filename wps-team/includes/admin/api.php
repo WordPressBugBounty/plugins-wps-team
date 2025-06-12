@@ -23,7 +23,10 @@ class API {
 
     public function sanitize_settings( $settings ) {
         if ( !empty( $settings['post_type_slug'] ) ) {
-            $settings['post_type_slug'] = sanitize_title( $settings['post_type_slug'] );
+            if ( $settings['post_type_slug'] === '/' ) {
+                $settings['post_type_slug'] = '';
+            }
+            $settings['post_type_slug'] = Utils::sanitize_title_allow_slash( $settings['post_type_slug'] );
         }
         $base_settings = new Settings_Editor();
         $settings = $base_settings->get_stack_formed_values( $settings );
