@@ -203,6 +203,8 @@ class Assets extends Assets_Manager {
         $this->add_style( $selector, '--wps-info-text-color: {{value}}', 'info_text_color' );
         $this->add_style( $selector, '--wps-info-link-color: {{value}}', 'info_link_color' );
         $this->add_style( $selector, '--wps-info-link-hover-color: {{value}}', 'info_link_hover_color' );
+        $this->add_style( $selector, '--wps-read-more-link-color: {{value}}', 'read_more_text_color' );
+        $this->add_style( $selector, '--wps-read-more-link-color-hover: {{value}}', 'read_more_text_hover_color' );
         $this->add_style( $selector, '--wps-thumb-object-pos: {{value}}', 'thumbnail_position' );
         if ( !empty( $this->settings['aspect_ratio'] ) && $this->settings['aspect_ratio']['value'] !== 'default' ) {
             $this->add_style( $selector, '--wps-thumb-aspect-ratio: {{value}}', 'aspect_ratio' );

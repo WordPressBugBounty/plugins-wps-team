@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team, team plugin, team members, team showcase, team builder
 Requires at least: 5.9
 Tested up to: 6.8
-Stable tag: 3.4.3
+Stable tag: 3.4.4
 Requires PHP: 7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -233,6 +233,13 @@ Yes, this Team showcase plugin will work with multisite.
 
 Yes, this Team plugin supports multi-language.
 
+= How can I report security bugs? =
+
+You can report security bugs through the Patchstack Vulnerability Disclosure
+Program. The Patchstack team help validate, triage and handle any security
+vulnerabilities.
+[Report a security vulnerability.](https://patchstack.com/database/vdp/wps-team)
+
 = Do you need any help? =
 
 * Please mail us at `wpspeedo@gmail.com`
@@ -257,6 +264,12 @@ Yes, this Team plugin supports multi-language.
 15. WPS Team Members - Settings Page
 
 == Changelog ==
+
+= 3.4.4 - 26-06-2025 =
+* Added: Support for single pages on block enabled themes.
+* Tweak: Improved shortcodes page on admin, added pagination.
+* Fixed: Modal close button displace issues.
+* Fixed: Read more color, and hover color issues.
 
 = 3.4.3 - 12-06-2025 =
 * Tweak: Changed education field to native WordPress editor field.

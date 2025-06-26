@@ -8,7 +8,7 @@ if ( !defined( 'ABSPATH' ) ) {
 class Shortcode_Editor extends Editor_Controls {
     public $taxonomies = [];
 
-    public function __construct( array $data = [], array $args = null ) {
+    public function __construct( array $data = [], $args = null ) {
         parent::__construct( $data, $args );
         do_action( 'wpspeedo_team/shortcode_editor/init', $this );
     }

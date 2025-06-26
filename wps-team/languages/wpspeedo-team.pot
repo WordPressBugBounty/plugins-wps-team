@@ -197,12 +197,24 @@ msgctxt "Editor"
 msgid "Google Early Access"
 msgstr ""
 
-#: ../includes/plugin-hooks.php:253
+#: ../includes/plugin-hooks.php:48
+msgid "Team Archive"
+msgstr ""
+
+#: ../includes/plugin-hooks.php:49
+msgid "Custom template for team archive."
+msgstr ""
+
+#: ../includes/plugin-hooks.php:77
+msgid "Single WPS Team Member"
+msgstr ""
+
+#: ../includes/plugin-hooks.php:302
 msgctxt "Public"
 msgid "No Results Found"
 msgstr ""
 
-#: ../includes/plugin-hooks.php:286
+#: ../includes/plugin-hooks.php:335
 msgctxt "Public: Pagination"
 msgid "Load More"
 msgstr ""

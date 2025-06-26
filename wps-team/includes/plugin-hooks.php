@@ -7,7 +7,13 @@ if ( !defined( 'ABSPATH' ) ) {
 }
 class Plugin_Hooks {
     public function __construct() {
-        add_filter( 'template_include', [$this, 'maybe_load_dynamic_template'] );
+        if ( wp_is_block_theme() ) {
+            add_filter( 'default_wp_template_part_areas', [$this, 'default_wp_template_part_areas'] );
+            add_action( 'init', [$this, 'register_block_types'], 0 );
+            add_action( 'init', [$this, 'register_block_templates'], 0 );
+        } else {
+            add_filter( 'template_include', [$this, 'maybe_load_dynamic_template'] );
+        }
         add_action( 'init', [$this, 'maybe_flush_rewrite_rules'], PHP_INT_MAX );
         add_action( 'wpspeedo_team/before_single_team', [$this, 'before_single_team'] );
         add_action( 'wpspeedo_team/before_wrapper_inner', [$this, 'before_wrapper_inner'] );
@@ -15,6 +21,56 @@ class Plugin_Hooks {
         add_action( 'wpspeedo_team/after_wrapper_inner', [$this, 'after_wrapper_inner'] );
         add_action( 'wpspeedo_team/after_wrapper_inner', [$this, 'after_wrapper_inner_last'], 999999 );
         add_action( 'wpspeedo_team/after_posts', [$this, 'after_posts'] );
+    }
+
+    public function default_wp_template_part_areas( $areas ) {
+        $areas[] = [
+            'area'        => 'wps-team-archive',
+            'label'       => __( 'Team Archive', 'wpspeedo-team' ),
+            'description' => __( 'Custom template for team archive.', 'wpspeedo-team' ),
+            'icon'        => 'id',
+            'area_tag'    => 'main',
+            'area_slug'   => 'wps-team-archive',
+        ];
+        return $areas;
+    }
+
+    public function register_block_types() {
+        if ( function_exists( 'register_block_type' ) ) {
+            wp_register_script(
+                'wps-team-member-details-editor',
+                WPS_TEAM_URL . 'blocks/member-details/editor.min.js',
+                ['wp-blocks', 'jquery', 'wp-i18n'],
+                '1.0.0'
+            );
+            wp_register_style(
+                'wps-team-member-details-editor-style',
+                WPS_TEAM_URL . 'blocks/member-details/editor.css',
+                [],
+                '1.0.0'
+            );
+            register_block_type( WPS_TEAM_PATH . 'blocks/member-details', [
+                'render_callback' => function ( $attributes, $content, $block ) {
+                    ob_start();
+                    global $shortcode_loader;
+                    include Utils::load_template( "partials/template-single-content.php" );
+                    return ob_get_clean();
+                },
+            ] );
+        }
+    }
+
+    public function register_block_templates() {
+        if ( function_exists( 'register_block_template' ) ) {
+            register_block_template( 'wps-team//single-wps-team-members', [
+                'title'      => __( 'Single WPS Team Member', 'wpspeedo-team' ),
+                'content'    => '
+                <!-- wp:template-part {"slug":"header","tagName":"header", "lock":{"move":true,"remove":true}} /-->
+                <!-- wp:wps-team/member-details /-->
+                <!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->',
+                'post_types' => ['wps-team-members'],
+            ] );
+        }
     }
 
     function single_page_few_info() {
