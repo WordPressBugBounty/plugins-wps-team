@@ -59,22 +59,12 @@ class Assets extends Assets_Manager {
 
     public function get_widget_fonts( $settings ) {
         $fonts = [];
-        if ( !empty( $settings['typo_name_font_family'] ) ) {
-            $fonts[] = $settings['typo_name_font_family']['value'];
+        foreach ( $settings as $key => $value ) {
+            if ( str_ends_with( $key, '_font_family' ) && !empty( $value['value'] ) ) {
+                $fonts[] = $value['value'];
+            }
         }
-        if ( !empty( $settings['typo_desig_font_family'] ) ) {
-            $fonts[] = $settings['typo_desig_font_family']['value'];
-        }
-        if ( !empty( $settings['typo_content_font_family'] ) ) {
-            $fonts[] = $settings['typo_content_font_family']['value'];
-        }
-        if ( !empty( $settings['typo_meta_font_family'] ) ) {
-            $fonts[] = $settings['typo_meta_font_family']['value'];
-        }
-        if ( empty( $fonts ) ) {
-            $fonts = ['Cambo', 'Roboto', 'Fira Sans'];
-        }
-        return $fonts;
+        return ( !empty( $fonts ) ? $fonts : ['Cambo', 'Roboto', 'Fira Sans'] );
     }
 
     public function public_scripts() {
@@ -174,6 +164,22 @@ class Assets extends Assets_Manager {
         $selector_popup = $this->shortcode_selector_popup( $shortcode_id );
         $selector_expand = $selector . ' .wps-widget-container-expand';
         $selector_side_panel = $this->shortcode_selector_side_panel( $shortcode_id );
+        $selector_group_1 = '';
+        $selector_group_2 = '';
+        if ( $this->get_setting( 'card_action' ) == 'modal' ) {
+            $selector_group_1 = $selector . ',' . $selector_popup;
+            $selector_group_2 = $selector_popup;
+        } else {
+            if ( $this->get_setting( 'card_action' ) == 'expand' ) {
+                $selector_group_1 = $selector . ',' . $selector_expand;
+                $selector_group_2 = $selector_expand;
+            } else {
+                if ( $this->get_setting( 'card_action' ) == 'side-panel' ) {
+                    $selector_group_1 = $selector . ',' . $selector_side_panel;
+                    $selector_group_2 = $selector_side_panel;
+                }
+            }
+        }
         $this->add_responsive_style(
             $selector,
             '--wps-container-width: {{value}}{{unit}}',
@@ -188,14 +194,8 @@ class Assets extends Assets_Manager {
         $this->add_background_style( $selector, 'item_background_', '--wps-item-bg-color' );
         $this->add_style( $selector, '--wps-title-color: {{value}}', 'title_color' );
         $this->add_style( $selector, '--wps-title-color-hover: {{value}}', 'title_color_hover' );
-        $selector_group_1 = implode( ',', [
-            $selector,
-            $selector_expand,
-            $selector_popup,
-            $selector_side_panel
-        ] );
-        $this->add_style( $selector_group_1, '--wps-ribbon-color: {{value}}', 'ribbon_text_color' );
-        $this->add_style( $selector_group_1, '--wps-ribbon-bg-color: {{value}}', 'ribbon_bg_color' );
+        $this->add_style( $selector, '--wps-ribbon-color: {{value}}', 'ribbon_text_color' );
+        $this->add_style( $selector, '--wps-ribbon-bg-color: {{value}}', 'ribbon_bg_color' );
         $this->add_style( $selector, '--wps-desig-color: {{value}}', 'designation_color' );
         $this->add_style( $selector, '--wps-text-color: {{value}}', 'desc_color' );
         $this->add_style( $selector . ' .wps-team--divider', '--wps-divider-bg-color: {{value}}', 'divider_color' );
@@ -206,7 +206,7 @@ class Assets extends Assets_Manager {
         $this->add_style( $selector, '--wps-read-more-link-color: {{value}}', 'read_more_text_color' );
         $this->add_style( $selector, '--wps-read-more-link-color-hover: {{value}}', 'read_more_text_hover_color' );
         $this->add_style( $selector, '--wps-thumb-object-pos: {{value}}', 'thumbnail_position' );
-        if ( !empty( $this->settings['aspect_ratio'] ) && $this->settings['aspect_ratio']['value'] !== 'default' ) {
+        if ( !empty( $this->get_setting( 'aspect_ratio' ) ) && $this->get_setting( 'aspect_ratio' ) !== 'default' ) {
             $this->add_style( $selector, '--wps-thumb-aspect-ratio: {{value}}', 'aspect_ratio' );
         }
     }

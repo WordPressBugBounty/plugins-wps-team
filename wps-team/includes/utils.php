@@ -282,11 +282,73 @@ class Utils {
         return implode( ' ', $rendered_attributes );
     }
 
-    public static function max_letters( $text, $limit ) {
-        if ( mb_strlen( $text ) > $limit ) {
-            $text = mb_substr( $text, 0, $limit ) . '...';
+    public static function wp_trim_html_chars( $html, $maxLength = 110 ) {
+        $allowed_tags = [
+            'a'      => [
+                'href'   => true,
+                'title'  => true,
+                'target' => true,
+                'rel'    => true,
+                'style'  => true,
+            ],
+            'strong' => [],
+            'b'      => [],
+            'em'     => [],
+            'i'      => [],
+            'u'      => [],
+            'span'   => [
+                'class' => true,
+                'style' => true,
+            ],
+            'p'      => [
+                'style' => true,
+            ],
+            'br'     => [],
+            'ul'     => [],
+            'ol'     => [],
+            'li'     => [
+                'style' => true,
+            ],
+        ];
+        $html = wp_kses( $html, $allowed_tags );
+        $html = strip_shortcodes( $html );
+        $output = '';
+        $len = 0;
+        $open_tags = [];
+        $was_trimmed = false;
+        $regex = '/(<[^>]+>|[^<]+)/u';
+        preg_match_all( $regex, $html, $matches );
+        foreach ( $matches[0] as $token ) {
+            if ( preg_match( '/^<[^>]+>$/', $token ) ) {
+                // Tag
+                if ( preg_match( '/^<(\\w+)[^>]*>$/', $token, $tag_match ) ) {
+                    $open_tags[] = $tag_match[1];
+                } elseif ( preg_match( '/^<\\/(\\w+)>$/', $token, $tag_match ) ) {
+                    array_pop( $open_tags );
+                }
+                $output .= $token;
+            } else {
+                // Text
+                $remaining = $maxLength - $len;
+                $token_len = mb_strlen( $token );
+                if ( $token_len <= $remaining ) {
+                    $output .= $token;
+                    $len += $token_len;
+                } else {
+                    $output .= mb_substr( $token, 0, $remaining );
+                    $was_trimmed = true;
+                    break;
+                }
+            }
         }
-        return $text;
+        // Close unclosed tags
+        while ( $tag = array_pop( $open_tags ) ) {
+            $output .= "</{$tag}>";
+        }
+        if ( $was_trimmed ) {
+            $output .= '...';
+        }
+        return $output;
     }
 
     public static function get_brnad_name( $icon ) {
@@ -1704,8 +1766,8 @@ class Utils {
                 $des_length = $des_length - mb_strlen( $read_more_text );
             }
         }
-        $excerpt = Utils::max_letters( get_the_excerpt( $post_id ), $des_length );
-        $excerpt = wpautop( sanitize_text_field( $excerpt ) . $read_more_link );
+        $excerpt = Utils::wp_trim_html_chars( get_the_excerpt( $post_id ), $des_length );
+        $excerpt = wpautop( $excerpt . $read_more_link );
         return sprintf( '<%1$s class="wps-team--member-details wps-team--member-details-excerpt wps-team--member-element">%2$s</%1$s>', $tag, wp_kses_post( $excerpt ) );
     }
 
@@ -2551,6 +2613,24 @@ class Utils {
         // Restore slashes
         $title = str_replace( '___slash___', '/', $title );
         return $title;
+    }
+
+    public static function maybe_json_encode( $data ) {
+        if ( is_array( $data ) || is_object( $data ) ) {
+            return wp_json_encode( $data );
+        }
+        return $data;
+    }
+
+    public static function maybe_json_decode( $data, $assoc = true ) {
+        if ( !is_string( $data ) || trim( $data ) === '' ) {
+            return $data;
+        }
+        $decoded = json_decode( $data, $assoc );
+        if ( json_last_error() === JSON_ERROR_NONE ) {
+            return $decoded;
+        }
+        return $data;
     }
 
 }

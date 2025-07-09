@@ -347,6 +347,8 @@ class Shortcode_Editor extends Editor_Controls {
     protected function style_section_group() {
         // Text & Icons
         $this->style_text_icon_controls();
+        // Detail Text & Icons
+        $this->style_detail_text_icon_controls__premium_only();
         // Single Item
         $this->style_item_styling_controls();
         // Custom Spacing
@@ -938,9 +940,17 @@ class Shortcode_Editor extends Editor_Controls {
      * Typography Section
      */
     protected function typo_section_group() {
+        // Card Typography
+        $this->card_typo_controls();
+        // Detail Typography
+        $this->detail_typo_controls();
+    }
+
+    // Card Typography
+    protected function card_typo_controls() {
         include WPS_TEAM_PATH . 'includes/editor/variables.php';
-        $this->start_controls_section( 'typo_section', [
-            'label' => _x( 'Typography', 'Editor', 'wpspeedo-team' ),
+        $this->start_controls_section( 'card_typo_section', [
+            'label' => _x( 'Card Typography', 'Editor', 'wpspeedo-team' ),
             'tab'   => 'typo',
         ] );
         $this->add_control( 'typo_name', [
@@ -959,6 +969,40 @@ class Shortcode_Editor extends Editor_Controls {
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );
         $this->add_control( 'typo_meta', [
+            'label'       => $typo_meta_txt,
+            'label_block' => true,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+        ] );
+        $this->end_controls_section();
+    }
+
+    // Detail Typography
+    protected function detail_typo_controls() {
+        include WPS_TEAM_PATH . 'includes/editor/variables.php';
+        $this->start_controls_section( 'detail_typo_section', [
+            'label'     => _x( 'Detail Typography', 'Editor', 'wpspeedo-team' ),
+            'tab'       => 'typo',
+            'condition' => [
+                'card_action' => ['modal', 'side-panel', 'expand'],
+            ],
+        ] );
+        $this->add_control( 'detail_typo_name', [
+            'label'       => $typo_name_txt,
+            'label_block' => true,
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+        ] );
+        $this->add_control( 'detail_typo_desig', [
+            'label'       => $typo_designation_txt,
+            'label_block' => true,
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+        ] );
+        $this->add_control( 'detail_typo_content', [
+            'label'       => $typo_content_txt,
+            'label_block' => true,
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+        ] );
+        $this->add_control( 'detail_typo_meta', [
             'label'       => $typo_meta_txt,
             'label_block' => true,
             'separator'   => 'none',

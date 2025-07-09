@@ -462,7 +462,9 @@ abstract class Assets_Manager extends Style_Manager {
     }
 
     public function print_google_fonts_preconnect_tag() {
-        // if ( Utils::get_setting('disable_google_fonts_loading') ) return;
+        if ( Utils::get_setting( 'disable_google_fonts_loading' ) ) {
+            return;
+        }
         if ( 0 >= $this->google_fonts_index ) {
             return;
         }

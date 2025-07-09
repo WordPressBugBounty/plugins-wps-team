@@ -103,7 +103,7 @@ class API {
         global $wpdb;
         $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A );
         foreach ( $shortcodes as &$shortcode ) {
-            $shortcode['settings'] = maybe_unserialize( $shortcode['settings'] );
+            $shortcode['settings'] = Utils::maybe_json_decode( $shortcode['settings'] );
             $shortcode['settings'] = $this->validate_shortcode( $shortcode )->get_settings_value();
             // Settings will be Sanitized & Validated by Shortcode_Editor class.
         }
@@ -123,7 +123,7 @@ class API {
         if ( $wpdb->last_error !== '' ) {
             return false;
         }
-        $shortcode['settings'] = maybe_unserialize( $shortcode['settings'] );
+        $shortcode['settings'] = Utils::maybe_json_decode( $shortcode['settings'] );
         $shortcode['settings'] = $this->validate_shortcode( $shortcode )->get_settings_value();
         // Settings will be Sanitized & Validated by Shortcode_Editor class.
         return $shortcode;
@@ -146,7 +146,7 @@ class API {
             $shortcode['settings'] = $_REQUEST['settings'];
             // Settings will be Sanitized & Validated by Shortcode_Editor class.
             $shortcode = $this->validate_shortcode( $shortcode );
-            $data['settings'] = maybe_serialize( $shortcode->get_settings_value() );
+            $data['settings'] = Utils::maybe_json_encode( $shortcode->get_settings_value() );
             $return_data = $shortcode->get_data();
         }
         $data["updated_at"] = current_time( 'mysql' );
@@ -169,7 +169,7 @@ class API {
     }
 
     public function validate_shortcode( $shortcode ) {
-        $shortcode['settings'] = maybe_unserialize( $shortcode['settings'] );
+        $shortcode['settings'] = Utils::maybe_json_decode( $shortcode['settings'] );
         $setting_columns = array_column( $shortcode['settings'], 'name' );
         if ( empty( $setting_columns ) ) {
             $base_settings = new Shortcode_Editor();
@@ -193,7 +193,7 @@ class API {
         ] );
         $data = array(
             "name"       => $shortcode->get_data( 'name' ),
-            "settings"   => maybe_serialize( $shortcode->get_settings_value() ),
+            "settings"   => Utils::maybe_json_encode( $shortcode->get_settings_value() ),
             "created_at" => current_time( 'mysql' ),
             "updated_at" => current_time( 'mysql' ),
         );
@@ -245,7 +245,7 @@ class API {
         $settings_data = $shortcode->get_settings_value();
         $data = array(
             "name"       => $shortcode->get_data( 'name' ),
-            "settings"   => maybe_serialize( $settings_data ),
+            "settings"   => Utils::maybe_json_encode( $settings_data ),
             "created_at" => current_time( 'mysql' ),
             "updated_at" => current_time( 'mysql' ),
         );

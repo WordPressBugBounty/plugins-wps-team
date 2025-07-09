@@ -191,9 +191,9 @@ class Export_Import_Manager {
         $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A );
 
         foreach( $shortcodes as &$shortcode ) {
-            $shortcode['settings'] = maybe_unserialize( $shortcode['settings'] );
+            $shortcode['settings'] = Utils::maybe_json_decode( $shortcode['settings'] );
             $shortcode['settings'] = plugin()->api->validate_shortcode( $shortcode )->get_settings_value(); // Settings will be Sanitized & Validated by Shortcode_Editor class.
-            $shortcode['settings'] = wp_json_encode( $shortcode['settings'] ); // Encode settings to JSON format
+            $shortcode['settings'] = Utils::maybe_json_encode( $shortcode['settings'] ); // Encode settings to JSON format
         }
 
         return $shortcodes;
@@ -485,7 +485,7 @@ class Export_Import_Manager {
             // Build the data array
             $data = array(
                 "name"          => $_shortcode->get_data('name'),
-                "settings"      => maybe_serialize( $_shortcode->get_settings_value() ),
+                "settings"      => Utils::maybe_json_encode( $_shortcode->get_settings_value() ),
                 "created_at"    => $shortcode['created_at'],
                 "updated_at"    => $shortcode['created_at'],
             );

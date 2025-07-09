@@ -1,180 +1,136 @@
-=== Team Members – Best WordPress Team Plugin with Team Slider, Team Showcase & Team Builder ===
+=== Team Members – Showcase with Shortcode Builder ===
 
 Contributors: wpspeedo, freemius
-Tags: team, team plugin, team members, team showcase, team builder
+Tags: team, team members, team showcase, team plugin, staff directory
 Requires at least: 5.9
 Tested up to: 6.8
-Stable tag: 3.4.4
+Stable tag: 3.4.5
 Requires PHP: 7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Team Plugin WordPress: Build team members with the best WordPress team plugin with grid, carousel, list & filter. Get the Team Plugin for WP for Free.
+Display your team members in responsive grid, slider, list, table, or filterable layouts — with support for popups, drawers, side panels, and a powerful shortcode builder (Live Editor).
 
 == Description ==
 
-== Team Members – The Best Team Plugin For WordPress ==
+== Team Members – Team Showcase with Shortcode Builder ==
 
-The WordPress Team Plugin is a powerful tool for displaying team members with their profiles on your WordPress website. It allows you to easily add team members, their photos, biographies, departments, locations, and social media links.
+The **WordPress Team Plugin** is a powerful tool for displaying team members with their profiles on your website. Easily add photos, bios, departments, locations, and social profiles.
 
-This plugin is perfect for your businesses, organizations, and startups if you want to showcase your team members and improve your online presence. It is easy to use and highly customizable, allowing you to choose from many design options, 1400+ Google fonts, and unlimited colors to match the branding of your website.
+Perfect for businesses, organizations, and startups, this plugin helps you create a professional and modern team showcase. Choose from multiple layout styles, 1400+ Google Fonts, and unlimited colors to match your branding.
 
-This WordPress Team Plugin guarantees the best views across all devices. It comes with a powerful & elegant visual shortcode builder, to help you customize your team section easily.
+This responsive team plugin features a visual shortcode builder, making customization simple.
 
 https://www.youtube.com/watch?v=jIyzbech8Vg&ab_channel=wpspeedo
 
 👉 [Plugin Demo](https://demo.wpspeedo.com/wps-team/?utm_source=wp-plugins&utm_campaign=readme&utm_medium=wp-dash) | [Get Pro Version](https://wpspeedo.com/wps-team-pro/?utm_source=wp-plugins&utm_campaign=readme&utm_medium=wp-dash) | [Documentation](https://wpspeedo.com/docs/team-installation-free-version/?utm_source=wp-plugins&utm_campaign=readme&utm_medium=wp-dash)
 
-With our **Team Member Plugin**, you can showcase your team member profiles in **various layouts & display types**. It supports **Grid Layouts**, **Slider Layouts**, and **Filter Layouts** (Pro). This WP Team Plugin lets you choose almost all themes for each display type, which means you can create many team layouts with many functionalities. This facility will help you build an elegant “Meet The Team” section on the website.
+With the **Team Member Plugin**, you can showcase profiles in **Grid**, **Slider**, or **Filter** layouts (Filter in Pro). Flexible theming lets you create stylish "Meet The Team" or "About The Team" sections.
 
-This plugin has many themes like Square, Circle, Horiz & Table. Almost every theme comes with Grid, Slider & Filter functionalities, which help you to display a modern “About The Team” section on your website with various possibilities.
+Themes include **Square**, **Circle**, **Horizontal**, and **Table** styles. Each supports Grid, Slider, and Filter layouts (Pro), giving you full control over the presentation.
 
-This Team Showcase plugin is fully customizable. So you can create unique team showcases for your site. Its shortcode generator gives you an additional customization option and easy control over your layouts. It will be your **best staff directory plugin** to arrange your every **employee** conveniently.
+With over 50+ layout controls and 100+ style options, it's the most customizable staff directory plugin available.
 
+== 🏆 Exclusive Features of this Team Showcase Plugin ==
 
-== 🏆 Exclusive Feature of WPS Team Plugin ==
+👉 **Grid Layouts:** Six flexible grid designs in the free version.
 
-👉 **Grid Layouts:** Our WordPress team plugin free version comes with six grid layouts to showcase your team members. When you have many team members, the grid layouts will showcase them elegantly.
+👉 **Carousel Layouts:** Multiple slider themes with adjustable speed, navigation, loop, and autoplay options.
 
-👉 **Carousel Layout:** This WP Team Plugin offers a lot of carousel & slider themes to showcase the elegant team layout. Additionally, you can customize the carousel speed, navigations, loop, autoplay & many more with our WordPress team members plugin.
+👉 **Isotope Filter (PRO):** Six dynamic filter layouts to categorize and filter members.
 
-👉 **Isotope Filter (PRO):** This Team Showcase plugin has 6 isotope **team filter** layouts to work with. Isotope filters your team showcases items based on the category you define. This feature must-have for a best team plugin WordPress.
+👉 **Pagination (Standard / AJAX) (PRO):** Load team members using traditional or AJAX-powered pagination.
 
-👉 **Pagination (Standard / AJAX) (PRO):** This Team Plugin supports both standard & AJAX pagination, this is useful when you have many team members. Our WordPress Team Members plugin will make it easy for you.
+👉 **AJAX Load More (PRO)**
 
-👉 **AJAX Load More (PRO):** OAdded: fax field.
-Added: excerpt field.
-Fixed: unexpected notices.
-Fixed: theme conflict for filters.
-👉 **Infinite Scroll (PRO):** WPS Team Plugin supports the **Infinite Scroll** feature, users do not need to click on any button, instead when he scrolls down the AJAX event will fire, and load new team members from the server.
+👉 **Infinite Scroll (PRO):** Seamlessly load new team members as users scroll.
 
-👉 **AJAX Carousel (PRO):** This Team Members Plugin supports the **AJAX Carousel** feature, you can display a few members initially, but when the carousel reaches the end of the items, it immediately triggers the AJAX action and pull down new team members and stars carousing.
+👉 **AJAX Carousel (PRO):** Automatically fetch and display new members when the carousel ends.
 
-👉 **Modal & Popup (PRO):** Our Team Members plugin offers elegant popups for every theme. If a user clicks on a team member, it will immediately **display a popup** with more information about your team member.
+👉 **Modal & Popup (PRO):** Click to open a team member's profile in a popup.
 
-👉 **Side Panel (PRO):** The best team plugin offers an elegant **Side Panel** for every theme. If you click on a team member, a side panel will appear with more information about your team member.
+👉 **Side Panel (PRO):** Display extended information in a sleek side panel upon click.
 
-👉 **Drawer & Expand (PRO):** Our Team Members plugin offers drawer & expand layouts for each theme. Whenever you click on a team member, a **drawer will expand** at the bottom with extra information about your team member.
+👉 **Drawer & Expand (PRO):** Expand a drawer below the member card for more info.
 
-👉 **Two Custom URLs (PRO):** Our WP Team List plugin offers to set two custom URLs for each team member and the ability to **link the title & thumbnail** to these custom URLs.
+👉 **Two Custom URLs (PRO):** Link member title and image to two custom URLs.
 
-👉 **Gutter/ Gap Control:** This team builder plugin allows you to customize the size of the inter-column space, also known as gutter margins. You can customize it for four devices like: desktop, laptop, tablet, or mobile.
+👉 **Gutter / Gap Control:** Set horizontal and vertical spacing by device.
 
-👉 **Vertical Gutter/ Gap Control:** Like the Gutter control, you can control the Vertical gutter margins between the team members. This feature is also available for four different devices.
+👉 **Columns Control:** Set columns per row for desktop, tablet, and mobile.
 
-👉 **Columns Control:** This plugin allows you to customize the number of team members you want to show per row. You can customize it for four different devices to make it super responsive.
+👉 **Carousel Options:** Customize speed, loop, arrows, and dots.
 
-👉 **Carousel Speed:** This option enables you to control & customize the movement speed of the team member’s carousel.
+👉 **Styling & Theming:** 100+ options to style cards and containers.
 
-👉 **Dots Pagination:** If you use the carousel layout, this option gives you extra control to enable & disable the Dots pagination.
+👉 **Advanced Query:** 14 filter parameters to fine-tune team member display.
 
-👉 **Arrow Navigation:** If you want to enable or disable Arrow Navigation, this option allows you to do so.
+👉 **Element Visibility:** Show or hide specific profile fields.
 
-👉 **Carousel Loop:** This WordPress Team Plugin Slider offers a Carousel Loop option that will enable continuous loop mode for your team member’s carousel.
+👉 **On-Demand Asset Loading:** Load scripts only where the shortcode is used to improve performance.
 
-👉 **Styling & Theming:** 100+ Styling options to customize the looks of the team members to match the rest of the parts of your website.
+== 🏆 Key Features ==
 
-👉 **Advance Query:** 14 Query options are available to display the specific categorized team members.
+* Fully responsive and mobile-friendly
+* Unlimited teams and members
+* Unlimited color control
+* Easy-to-use **shortcode builder**
+* Custom Post Type for members
+* Unlimited **social links** with icon picker
+* Custom fields: phone, fax, email, website, ribbon, etc.
+* Multiple responsive settings (gap, columns, widths)
+* Custom image sizes
+* Background gradient, padding, z-index, CSS class (Pro)
+* Category, group, location, language, specialty filters
+* 99.99% browser compatibility
 
-👉 **Elements Visibility:** Powerful panel to control the information you want to hide/display for the team members.
+== 🏆 Free Version Fields ==
 
-👉 **On Demand Assets Loading:** Enqueue the only needed CSS & JS assets on the pages where the “team shortcode” is used, so the other pages will not load our plugin assets. This feature will improve the page speed and help increase the performance & SEO score.
-
-
-== 🏆 KEY FEATURE OF THIS TEAM PLUGIN WP ==
-* Fully Responsive And Clean Design.
-* All Colors are changeable in our team plugin.
-* Add Limitless Teams anywhere in the theme.
-* Comes with awesome **shortcode generator**.
-* This Team Plugin For WordPress supports **unlimited Colors**.
-* Custom Post Type for Team Members.
-* Unlimited **social profile** for each team member with an amazing icon picker.
-* Huge customization options to adjust the **team section**.
-* This Team Plugin has a modern frontend and backend UI.
-* Tested with most WordPress popular themes.
-* Add and remove Team Members from the backend Quickly.
-* Multiple advanced **Custom Fields** are available.
-* Add Email ID, Website Link, Company Name, Phone Number, and Mobile Number.
-* Add Designation, Ribbon, and many more.
-* WPS Team Plugin allows you to create **Unlimited Shortcode**.
-* Customize the Gap/Margin for each responsive device.
-* Customize the **number of team members** you want to display for each responsive device.
-* Custom width, Vertical gap, etc for each responsive device are available with our WordPress Team Member Plugin.
-* Control elements visibility for each Team Member’s shortcode (Pro).
-* Ability to choose image sizes to increase optimization.
-* Custom background color with **gradient controls** for the shortcode container (Pro).
-* Responsive padding controls for the shortcode container (Pro).
-* This Team Plugin supports Custom **Z-index & CSS Class** controls for the shortcode container (Pro).
-* Query with Group / Category is available in this Team Plugin.
-* Query with Location, Language, Specialty, and Gender (Pro).
-* 4 Responsive Devices are available in this Team Plugin.
-* 99.99% of browsers are compatible.
-
-== 🏆 This Free Team Plugin Offers Important Fields ==
-* Member’s first name
-* Member’s last name
-* Member’s short bio
-* Member’s detailed bio
-* Team member’s photo
-* Team member’s gallery images
-* Team member’s designation
-* Team member’s email
-* Team member’s fax
-* Member’s mobile number
-* Member’s telephone number
+* First & Last Name
+* Short Bio & Detailed Bio
+* Photo & Gallery
+* Designation
+* Email, Fax, Mobile, Phone
 * Years of Experience
-* Member’s Website
-* Member’s Company
-* Member’s Education
+* Website, Company, Education
 * Ribbon / Tag
-* Personalized Color
-* Social Links
-* Team Member’s Skills
-* Custom Link 1
-* Custom Link 2
+* Custom Colors
+* Social Profiles
+* Skills
+* Custom Link 1 & 2
 
-== 👉 Taxonomies / Groups for Our Team Plugin WordPress ==
-* Group Taxonomy.
-* Location Taxonomy.
-* Language Taxonomy.
-* Specialty Taxonomy.
-* Gender Taxonomy.
-* Extra One Taxonomy.
-* Extra Two Taxonomy.
-* Extra Three Taxonomy.
-* Extra Four Taxonomy.
-* Extra Five Taxonomy.
+== 👉 Taxonomies & Groups ==
 
-Extended customization feature: You can enable, disable, rename, and set custom slugs for each of them.
+* Group
+* Location
+* Language
+* Specialty
+* Gender
+* Extra One to Extra Five (customizable and renamable)
 
-== 👉 Available Themes Of This Team Showcase Plugin ==
-* 12+ Square Themes
-* 6+ Circle Themes
-* 4+ Horiz Themes
-* 4+ Table Themes
-* More are coming
+== 👉 Available Themes ==
 
+* 12+ Square
+* 6+ Circle
+* 4+ Horizontal
+* 4+ Table
 
-== 👉 Better Team Plugin For Everyone ==
-Our Team Plugin for WordPress supports necessary **action types**. Action Types are **click** events, When the visitor clicks on the title or image, this team showcase plugin allows you to define the appropriate action type you want to enable.
+More themes are on the way!
 
-* None – The links will be non-clickable & nothing will happen if a visitor clicks on them.
-* Single Page – When clicked, visitors will be redirected to the associate team single page.
-* Modal / Popup – It will trigger a popup modal on the same page.
-* Drawer Expand – It will expand a drawer at the bottom of the clicked team member.
-* Side Panel – It will display an animated side panel.
-* External Link 1 – Redirect to the external link in the new tab.
-* External Link 2 – Redirect to the external link in the new tab.
+== 👉 Click Behavior Options ==
 
-== 👉 Best Free WordPress Team Plugin With Pro Features ==
+* None
+* Single Page
+* Modal / Popup
+* Drawer Expand
+* Side Panel
+* External Link 1 & 2
 
-Many More Features are included in our **WP Team Members Plugin**. We just listed a few of them here. A lot of plugins are available in the market, but this is the best free WordPress team plugin with the power of Pro.
+== 🌟 A Top Free WordPress Team Plugin with Advanced Features ==
 
-****/****/****/****/****/****/****/****/****/****/
+Many features listed here are just a preview of what the WPS Team Plugin offers. It's built to be the most powerful and flexible team showcase plugin available.
 
-👉 [Plugin Demo](https://demo.wpspeedo.com/wps-team/?utm_source=wp-plugins&utm_campaign=readme&utm_medium=wp-dash) | [Get Pro Version](https://wpspeedo.com/wps-team-pro/?utm_source=wp-plugins&utm_campaign=readme&utm_medium=wp-dash) | [Documentation](https://wpspeedo.com/docs/team-installation-free-version/?utm_source=wp-plugins&utm_campaign=readme&utm_medium=wp-dash)
-
-****/****/****/****/****/****/****/****/****/****/
+🔹 [Plugin Demo](https://demo.wpspeedo.com/wps-team/?utm_source=wp-plugins&utm_campaign=readme&utm_medium=wp-dash) | [Get Pro Version](https://wpspeedo.com/wps-team-pro/?utm_source=wp-plugins&utm_campaign=readme&utm_medium=wp-dash) | [Documentation](https://wpspeedo.com/docs/team-installation-free-version/?utm_source=wp-plugins&utm_campaign=readme&utm_medium=wp-dash)
 
 
 == Installation ==
@@ -198,10 +154,10 @@ Yes, you can add unlimited social links by our repeater field.
 
 = Can I add social links in the Team Members plugin for WordPress website? =
 
-Yes, you can, to add a new team member to the plugin, follow the below steps:
+Yes, you can, add a new team member to the plugin, Follow the steps below:
 
 * Go to the WordPress dashboard and navigate to WPS Team > Add Member.
-* Fill out the essential information, such as their name, details, and designation & photo.
+* Fill out the essential information, such as their name, details, designation & photo.
 * Assign them to the respective Group, Location, and Specialty taxonomies.
 * Finally, hit the Publish button.
 
@@ -211,15 +167,15 @@ Yes, the Team Members plugin has the feature to add skills. We have a repeater f
 
 = Can I use the Team plugin with any theme? =
 
-Yes, you can use this plugin with any theme. If you face any issues, please send a mail to our support center, and we will contact you.
+Yes, you can use this plugin with any theme. If you face any issues, please send an email to our support center, and we will contact you.
 
 = How many team members can I add using this team plugin? =
 
 This Team Plugin supports unlimited Team Members, so you can easily create, edit & delete the team members.
 
-= Can I organize the team members with custom order =
+= Can I organize the team members in a custom order? =
 
-Yes, This Team Plugin has a settings panel, where you can sort the **team members** with the popular drag and drop feature. You can use this custom order in the Shortcode Query settings to reflect the **custom order** in the team members of that shortcode.
+Yes, this Team Plugin has a settings panel, where you can sort the **team members** with the popular drag and drop feature. You can use this custom order in the Shortcode Query settings to reflect the **custom order** in the team members of that shortcode.
 
 = Is this Team Plugin allowing a slider? =
 
@@ -229,14 +185,14 @@ Yes, we added a slider layout.
 
 Yes, this Team showcase plugin will work with multisite.
 
-= Is this Team plugin support multi-language? =
+= Does this Team plugin support multi-language? =
 
-Yes, this Team plugin supports multi-language.
+Yes, this Team plugin supports multiple languages.
 
 = How can I report security bugs? =
 
 You can report security bugs through the Patchstack Vulnerability Disclosure
-Program. The Patchstack team help validate, triage and handle any security
+Program. The Patchstack team helps validate, triage, and handle any security
 vulnerabilities.
 [Report a security vulnerability.](https://patchstack.com/database/vdp/wps-team)
 
@@ -247,23 +203,30 @@ vulnerabilities.
 
 == Screenshots ==
 
-01. WPS Team Members - Theme One Grid
-02. WPS Team Members - Theme One Carousel
-03. WPS Team Members - Theme Two Grid
-04. WPS Team Members - Theme Two Carousel
-05. WPS Team Members - Theme Three Grid
-06. WPS Team Members - Theme Three Carousel
-07. WPS Team Members - Theme Four Grid
-08. WPS Team Members - Theme Four Carousel
-09. WPS Team Members - Theme Five Grid
-10. WPS Team Members - Theme Five Carousel
-11. WPS Team Members - Theme Six Grid
-12. WPS Team Members - Theme Six Carousel
-13. WPS Team Members - Shortcode List
-14. WPS Team Members - Shortcode Editor
-15. WPS Team Members - Settings Page
+01. Theme One – Grid Layout
+02. Theme One – Carousel Layout
+03. Theme Two – Grid Layout
+04. Theme Two – Carousel Layout
+05. Theme Three – Grid Layout
+06. Theme Three – Carousel Layout
+07. Theme Four – Grid Layout
+08. Theme Four – Carousel Layout
+09. Theme Five – Grid Layout
+10. Theme Five – Carousel Layout
+11. Theme Six – Grid Layout
+12. Theme Six – Carousel Layout
+13. Shortcode List Page
+14. Shortcode Editor Interface
+15. Plugin Settings Panel
 
 == Changelog ==
+
+= 3.4.5 - 09-07-2025 =
+* Added: Support for basic HTML formatting in excerpts (bold, italic, links, etc.).
+* Added: Typography controls for the detail view.
+* Added: Custom text and icon color options for the detail view.
+* Fixed: Displacement issue with the modal close button.
+* Fixed: PHP Object Injection vulnerability patched for enhanced security.
 
 = 3.4.4 - 26-06-2025 =
 * Added: Support for single pages on block enabled themes.
@@ -273,7 +236,6 @@ vulnerabilities.
 
 = 3.4.3 - 12-06-2025 =
 * Tweak: Changed education field to native WordPress editor field.
-* Fixed: PHP Object Injection Vulnerability.
 
 = 3.4.2 - 03-05-2025 =
 * Fixed: Various security issues.

@@ -26,7 +26,7 @@ class Upgrader {
     }
 
     public function upgrade_paths() {
-        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.1', '3.3.1' ];
+        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.1', '3.3.1', '3.4.5' ];
     }
 
     public function run() {
@@ -357,6 +357,36 @@ class Upgrader {
 
         foreach ( $team_members as $team_member_id ) {
             Utils::update_name_fields_from_title( $team_member_id, get_the_title( $team_member_id ) );
+        }
+
+    }
+
+    public function _v_3_4_5() {
+
+        global $wpdb;
+
+        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A );
+        
+        foreach ( $shortcodes as &$shortcode ) {
+
+            $shortcode['settings'] = maybe_unserialize( $shortcode['settings'] );
+
+            if ( ! empty( $shortcode['settings']['ribbon_text_color']['value'] ) ) {
+                $shortcode['settings']['detail_ribbon_text_color'] = [
+                    'value' => $shortcode['settings']['ribbon_text_color']['value']
+                ];
+            }
+
+            if ( ! empty( $shortcode['settings']['ribbon_bg_color']['value'] ) ) {
+                $shortcode['settings']['detail_ribbon_bg_color'] = [
+                    'value' => $shortcode['settings']['ribbon_bg_color']['value']
+                ];
+            }
+
+            $shortcode['settings'] = json_encode( $shortcode['settings'] );
+            $shortcode["updated_at"] = current_time('mysql');
+            $wpdb->update( "{$wpdb->prefix}wps_team" , $shortcode, array( 'id' => $shortcode['id'] ),  plugin()->api->db_columns_format() );
+
         }
 
     }
