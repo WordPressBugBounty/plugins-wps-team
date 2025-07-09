@@ -26,7 +26,7 @@ class Upgrader {
     }
 
     public function upgrade_paths() {
-        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.1', '3.3.1', '3.4.5' ];
+        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.1', '3.3.1', '3.4.5', '3.4.6' ];
     }
 
     public function run() {
@@ -369,7 +369,7 @@ class Upgrader {
         
         foreach ( $shortcodes as &$shortcode ) {
 
-            $shortcode['settings'] = maybe_unserialize( $shortcode['settings'] );
+            $shortcode['settings'] = Utils::maybe_decoded_data( $shortcode['settings'] );
 
             if ( ! empty( $shortcode['settings']['ribbon_text_color']['value'] ) ) {
                 $shortcode['settings']['detail_ribbon_text_color'] = [
@@ -388,6 +388,12 @@ class Upgrader {
             $wpdb->update( "{$wpdb->prefix}wps_team" , $shortcode, array( 'id' => $shortcode['id'] ),  plugin()->api->db_columns_format() );
 
         }
+
+    }
+
+    public function _v_3_4_6() {
+
+        $this->_v_3_4_5();
 
     }
 

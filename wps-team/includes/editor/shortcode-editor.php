@@ -347,8 +347,6 @@ class Shortcode_Editor extends Editor_Controls {
     protected function style_section_group() {
         // Text & Icons
         $this->style_text_icon_controls();
-        // Detail Text & Icons
-        $this->style_detail_text_icon_controls__premium_only();
         // Single Item
         $this->style_item_styling_controls();
         // Custom Spacing

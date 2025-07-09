@@ -2633,4 +2633,16 @@ class Utils {
         return $data;
     }
 
+    public static function maybe_decoded_data( $data ) {
+        if ( is_serialized( $data ) ) {
+            return unserialize( $data );
+        }
+        $json = json_decode( $data, true );
+        if ( json_last_error() === JSON_ERROR_NONE ) {
+            return $json;
+        }
+        return $data;
+        // return as-is if not serialized or valid JSON
+    }
+
 }
