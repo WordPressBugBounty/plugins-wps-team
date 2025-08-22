@@ -231,7 +231,8 @@ abstract class Style_Manager extends Attribute_Manager {
 
     public function _generate_css( $shortcode_id ) {
         $this->generate_css( $shortcode_id );
-        return $this->build_css() . $this->build_css( 'tablet' ) .  $this->build_css( 'small_tablet' ) . $this->build_css( 'mobile' );
+        $css = $this->build_css() . $this->build_css( 'tablet' ) .  $this->build_css( 'small_tablet' ) . $this->build_css( 'mobile' );
+        return Utils::minify_validated_css( $css );
     }
 
     public function get_custom_css( $shortcode_id ) {

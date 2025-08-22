@@ -350,6 +350,7 @@ class Controls_Manager {
 			self::REPEATER,
 			self::ICON,
 			self::COLOR,
+			self::CODE,
 			self::CHOOSE,
 			self::FONT,
 			self::CUSTOM_IMAGE_SIZE,

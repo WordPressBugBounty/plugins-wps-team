@@ -44,6 +44,10 @@ class Assets extends Assets_Manager {
             $this->add_item_in_asset_list( 'styles', $this->asset_handler(), [$this->asset_handler() . '-divi'] );
         }
         $css = $this->get_custom_css( $settings['id'] );
+        $custom_css = Utils::get_setting( 'custom_css' );
+        if ( !empty( $custom_css ) ) {
+            $css .= $custom_css;
+        }
         if ( !empty( $css ) ) {
             $this->add_item_in_asset_list( 'styles', 'inline', $css );
         }
@@ -84,14 +88,19 @@ class Assets extends Assets_Manager {
             wp_enqueue_script( $this->asset_handler() );
             $css = $this->get_singular_styles();
             if ( !empty( $css ) ) {
-                wp_add_inline_style( $this->asset_handler(), $this->get_singular_styles() );
+                wp_add_inline_style( $this->asset_handler(), $css );
             }
         }
     }
 
     public function get_singular_styles() {
         $Assets_Singular = new Assets_Singular();
-        return $Assets_Singular->get_custom_css( null );
+        $css = $Assets_Singular->get_custom_css( null );
+        $custom_css = Utils::get_setting( 'custom_css' );
+        if ( !empty( $custom_css ) ) {
+            $css .= $custom_css;
+        }
+        return $css;
     }
 
     public function register_assets() {

@@ -1312,8 +1312,13 @@ class Utils {
         return ceil( ($new_time - $old_time) / DAY_IN_SECONDS );
     }
 
-    function minify_css( $css ) {
-        // https://datayze.com/howto/minify-css-with-php
+    public static function minify_validated_css( $css ) {
+        $css = trim( wp_unslash( $css ) );
+        if ( empty( $css ) ) {
+            return '';
+        }
+        $css = preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $css );
+        $css = preg_replace( '#<style(.*?)>(.*?)</style>#is', '', $css );
         $css = preg_replace( '/\\/\\*((?!\\*\\/).)*\\*\\//', '', $css );
         // negative look ahead
         $css = preg_replace( '/\\s{2,}/', ' ', $css );

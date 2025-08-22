@@ -37,7 +37,7 @@ if ( !empty($color) ) {
             echo Utils::get_the_divider([ 'class' => 'wps-show--tablet-small' ]);
             
             echo Utils::get_the_extra_info( get_the_ID(), [
-                'fields' => [ '_mobile', '_telephone', '_email', '_fax', '_website' ],
+                'fields' => [ '_mobile', '_telephone', '_email', '_fax', '_website', '_address' ],
                 'info_style' => 'start-aligned',
             ]);
             

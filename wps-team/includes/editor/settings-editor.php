@@ -24,6 +24,8 @@ class Settings_Editor extends Editor_Controls {
         $this->advance_settings();
         // Single Page Settings
         $this->single_page_settings();
+        // Custom Scripts
+        $this->custom_scripts_settings();
     }
 
     protected function general_settings() {
@@ -507,7 +509,7 @@ class Settings_Editor extends Editor_Controls {
         $this->add_control( 'thumbnail_size', [
             'label'       => _x( 'Member Image Size', 'Settings: Advance', 'wpspeedo-team' ),
             'description' => _x( 'This image size is used for general layout globally for all shortcodes, unless it is overridden from the specific shortcode.', 'Settings: Advance', 'wpspeedo-team' ),
-            'label_block' => true,
+            'label_block' => false,
             'type'        => Controls_Manager::SELECT,
             'separator'   => 'before',
             'default'     => Utils::get_default( 'thumbnail_size' ),
@@ -516,7 +518,7 @@ class Settings_Editor extends Editor_Controls {
         ] );
         $this->add_control( 'thumbnail_size_custom', [
             'label'       => $set_custom_size_label,
-            'label_block' => true,
+            'label_block' => false,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
             'condition'   => [
                 'thumbnail_size' => 'custom',
@@ -525,7 +527,7 @@ class Settings_Editor extends Editor_Controls {
         $this->add_control( 'detail_thumbnail_size', [
             'label'       => _x( 'Member Detail\'s Image Size', 'Settings: Advance', 'wpspeedo-team' ),
             'description' => _x( 'This image size is used for modal, expand, panel & single layouts globally for all shortcodes, unless it is overridden from the specific shortcode', 'Settings: Advance', 'wpspeedo-team' ),
-            'label_block' => true,
+            'label_block' => false,
             'type'        => Controls_Manager::SELECT,
             'separator'   => 'before',
             'default'     => Utils::get_default( 'detail_thumbnail_size' ),
@@ -534,7 +536,7 @@ class Settings_Editor extends Editor_Controls {
         ] );
         $this->add_control( 'detail_thumbnail_size_custom', [
             'label'       => $set_custom_size_label,
-            'label_block' => true,
+            'label_block' => false,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
             'condition'   => [
                 'detail_thumbnail_size' => 'custom',
@@ -558,6 +560,23 @@ class Settings_Editor extends Editor_Controls {
         $this->style_text_icon_controls();
         // Social Icons
         $this->social_icons_controls();
+        $this->end_controls_section();
+    }
+
+    protected function custom_scripts_settings() {
+        $this->start_controls_section( 'custom_scripts_settings_section', [
+            'label'      => _x( 'Custom Scripts', 'Settings: Custom Scripts', 'wpspeedo-team' ),
+            'menu_label' => _x( 'Custom Scripts', 'Settings: Custom Scripts', 'wpspeedo-team' ),
+            'icon'       => 'fas fa-code',
+            'path'       => 'custom-scripts',
+        ] );
+        $this->add_control( 'custom_css', [
+            'label'       => _x( 'Custom CSS', 'Settings: Custom Scripts', 'wpspeedo-team' ),
+            'description' => _x( 'This CSS code will be applied globally to the team members layout where the shortcode is used or in the single member view.', 'Settings: Custom Scripts', 'wpspeedo-team' ),
+            'label_block' => true,
+            'type'        => Controls_Manager::CODE,
+            'eventType'   => 'change',
+        ] );
         $this->end_controls_section();
     }
 

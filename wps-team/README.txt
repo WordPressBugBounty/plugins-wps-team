@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team, team members, team showcase, team plugin, staff directory
 Requires at least: 5.9
 Tested up to: 6.8
-Stable tag: 3.4.6
+Stable tag: 3.4.7
 Requires PHP: 7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -195,6 +195,11 @@ Using the [WordPress.org](https://wordpress.org/support/plugin/wps-team/) suppor
 15. Plugin Settings Panel – Configure the Team Members WordPress plugin options
 
 == Changelog ==
+
+3.4.7 - 22-08-2025
+* Added: Ability to add Custom CSS
+* Fixed: address field not displaying issue
+* Fixed: Order by last name issue
 
 3.4.6 - 09-07-2025
 * Fixed: shortcodes disappear issues and fatal errors.

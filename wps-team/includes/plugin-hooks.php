@@ -21,6 +21,7 @@ class Plugin_Hooks {
         add_action( 'wpspeedo_team/after_wrapper_inner', [$this, 'after_wrapper_inner'] );
         add_action( 'wpspeedo_team/after_wrapper_inner', [$this, 'after_wrapper_inner_last'], 999999 );
         add_action( 'wpspeedo_team/after_posts', [$this, 'after_posts'] );
+        add_filter( 'wpspeedo_team/query_params', array($this, 'query_params') );
     }
 
     public function default_wp_template_part_areas( $areas ) {
@@ -73,19 +74,19 @@ class Plugin_Hooks {
         }
     }
 
-    function single_page_few_info() {
-        return [
-            '_mobile',
-            '_telephone',
-            '_email',
-            '_fax',
-            '_website'
-        ];
+    public function query_params( $args ) {
+        if ( empty( $args['orderby'] ) ) {
+            return $args;
+        }
+        if ( $args['orderby'] === 'last_name' ) {
+            $args['orderby'] = 'meta_value';
+            $args['meta_key'] = '_last_name';
+        }
+        return $args;
     }
 
     function maybe_load_dynamic_template( $template ) {
         if ( is_singular( Utils::post_type_name() ) ) {
-            add_filter( 'wpspeedo_team/few_info', [$this, 'single_page_few_info'] );
             return Utils::load_template( 'template-single.php' );
         }
         if ( is_post_type_archive( Utils::post_type_name() ) ) {

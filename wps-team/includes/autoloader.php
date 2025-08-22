@@ -101,6 +101,7 @@ class Autoloader {
 			'Control_Repeater' => 'includes/controls/repeater.php',
 			'Control_Icon' => 'includes/controls/icon.php',
 			'Control_Color' => 'includes/controls/color.php',
+			'Control_Code' => 'includes/controls/code.php',
 			'Control_Wysiwyg' => 'includes/controls/wysiwyg.php',
 			'Control_Tabs' => 'includes/controls/tabs.php',
 			'Control_Tab' => 'includes/controls/tab.php',
