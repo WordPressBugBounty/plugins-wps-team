@@ -35,10 +35,10 @@ class Control_Custom_Image_Size extends Base_Data_Control {
 			parent::get_default_settings(), [
 				'label_block' => true,
 				'tooltips' => [
-					'width' => _x('Width', 'Editor: Image Size', 'wpspeedo-team'),
-					'height' => _x('Height', 'Editor: Image Size', 'wpspeedo-team'),
-					'crop' => _x('Crop', 'Editor: Image Size', 'wpspeedo-team'),
-					'apply' => _x('Apply', 'Editor: Image Size', 'wpspeedo-team'),
+					'width' => _x('Width', 'Editor: Image Size', 'wps-team'),
+					'height' => _x('Height', 'Editor: Image Size', 'wps-team'),
+					'crop' => _x('Crop', 'Editor: Image Size', 'wps-team'),
+					'apply' => _x('Apply', 'Editor: Image Size', 'wps-team'),
 				],
 			]
 		);

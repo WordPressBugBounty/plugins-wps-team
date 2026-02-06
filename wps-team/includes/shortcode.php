@@ -18,13 +18,21 @@ class Shortcode {
 	
 	public function shortcode( $args ) {
 
+		if ( empty($args['id']) ) return sprintf( '<h3>%s</h3>', esc_html__( 'Please provide a valid Team Shortcode ID.', 'wps-team' )	 );
+
 		global $wps_team_id;
 
 		$wps_team_id = $args['id'];
 
 		$settings = (array) $this->load_settings( $args['id'] );
 
-		if ( empty($settings) ) return sprintf( '<h3>Team Shortcode <strong>%s</strong> not found</h3>', $args['id'] );
+		if ( empty( $settings ) ) {
+			return sprintf( '<h3>%s</h3>', sprintf(
+				/* translators: %s: shortcode ID */
+				__( 'Team Shortcode <strong>%s</strong> not found', 'wps-team' ),
+				esc_html( $args['id'] )
+			));
+		}
 		
 		ob_start();
 

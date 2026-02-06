@@ -28,12 +28,15 @@ class Autoloader {
 
 		self::$classes_map = [
 
+			'Variables' => 'includes/variables.php',
 			'Setting_Methods' => 'includes/traits/setting-methods.php',
 			'AJAX_Template_Methods' => 'includes/traits/ajax-template-methods.php',
 			'AJAX_Handler' => 'includes/traits/ajax-handler.php',
 			'Date_Methods' => 'includes/traits/date-methods.php',
-			
+
+			'Currency' => 'includes/traits/currency.php',
 			'Utils' => 'includes/utils.php',
+			'Compatibility' => 'includes/compatibility.php',
 			'Assets' => 'includes/assets.php',
 			'Assets_Singular' => 'includes/assets-singular.php',
 			'Plugin' => 'includes/plugin.php',
@@ -49,6 +52,7 @@ class Autoloader {
 			'Integration_Elementor' => 'includes/integrations/elementor/integration.php',
 			'Integration_Gutenberg' => 'includes/integrations/gutenberg/integration.php',
 			'Integration_Divi' => 'includes/integrations/divi/integration.php',
+			'Integration_WPBakery' => 'includes/integrations/wpbakery/integration.php',
 			'Divi_Module' => 'includes/integrations/divi/module.php',
 
 			'Taxonomy' => 'includes/traits/taxonomy.php',
@@ -56,7 +60,7 @@ class Autoloader {
 			'Shortcode_Loader' => 'includes/loaders/shortcode-loader.php',
 			'Single_Loader' => 'includes/loaders/single-loader.php',
 			'Archive_Loader' => 'includes/loaders/archive-loader.php',
-			'Plugin_Hooks' => 'includes/plugin-hooks.php',
+			'Hooks' => 'includes/hooks.php',
 
 			'Fonts' => 'includes/fonts.php',
 
@@ -78,6 +82,7 @@ class Autoloader {
 			'Notification_Manager' => 'includes/managers/notification-manager.php',
 			'Bulk_Import_Manager' => 'includes/managers/bulk-import-manager.php',
 			'Export_Import_Manager' => 'includes/managers/export-import-manager.php',
+			'Erase_Reset_Manager' => 'includes/managers/erase-reset-manager.php',
 
 			'Notifications' => 'includes/notifications/notifications.php',
 			'Notification' => 'includes/notifications/model/notification.php',

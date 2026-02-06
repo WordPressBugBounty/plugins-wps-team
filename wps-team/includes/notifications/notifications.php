@@ -43,14 +43,21 @@ class Notifications {
 
         $this->check_security();
 
-        $action_type = sanitize_key($_REQUEST['action_type']);
-        $notification_type = sanitize_key($_REQUEST['notification_type']);
-        $trigger_time = sanitize_text_field($_REQUEST['trigger_time']);
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $action_type = isset( $_REQUEST['action_type'] ) ? sanitize_key($_REQUEST['action_type']) : '';
+
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $notification_type = isset( $_REQUEST['notification_type'] ) ? sanitize_key($_REQUEST['notification_type']) : '';
+        
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $trigger_time = isset( $_REQUEST['trigger_time'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['trigger_time'] ) ) : '';
+
+        if ( empty($action_type) || empty($notification_type) || empty($trigger_time) ) wp_send_json_error();
 
         $exec_notifications = $this->manager->get_exec_notifications($trigger_time, $notification_type);
 
         // No Executable Notifications found
-        if (empty($exec_notifications)) die(0);
+        if (empty($exec_notifications)) wp_send_json_success();
 
         $count = 0;
 
@@ -67,7 +74,9 @@ class Notifications {
             }
         }
 
-        die(0);
+        wp_send_json_success([
+            'processed' => count($exec_notifications)
+        ]);
     }
 
     public function check_security() {

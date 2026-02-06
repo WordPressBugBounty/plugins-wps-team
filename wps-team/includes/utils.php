@@ -6,8 +6,62 @@ use WP_Query, WP_Error;
 if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
+if ( !trait_exists( __NAMESPACE__ . '\\Currency' ) ) {
+    trait Currency
+    {
+    }
+}
 class Utils {
-    static function elementor_get_post_meta( $post_id ) {
+    use Currency;
+    public static function join_classes( array $classes ) : string {
+        $classes = array_filter( array_map( 'trim', $classes ) );
+        $classes = array_unique( $classes );
+        return implode( ' ', $classes );
+    }
+
+    public static function normalize_card_action( string $card_action, int $post_id ) : string {
+        if ( Utils::has_archive() || $card_action !== 'single-page' ) {
+            return $card_action;
+        }
+        return 'none';
+    }
+
+    public static function get_link_attrs_for_post( int $post_id, string $action, string $extra_class = '' ) : array {
+        $shortcode_id = self::shortcode_loader()->id;
+        $attrs = self::get_post_link_attrs( $post_id, $shortcode_id, $action );
+        $attrs['class'] = self::join_classes( [$attrs['class'] ?? '', $extra_class] );
+        return $attrs;
+    }
+
+    public static function attrs_to_html( array $attrs, array $allow = [] ) : string {
+        $allowed = array_merge( [
+            'href',
+            'class',
+            'target',
+            'rel',
+            'data-panel-position'
+        ], $allow );
+        $out = [];
+        foreach ( $allowed as $key ) {
+            if ( isset( $attrs[$key] ) && $attrs[$key] !== '' ) {
+                $value = ( $key === 'href' ? esc_url( $attrs[$key] ) : esc_attr( $attrs[$key] ) );
+                $out[] = sprintf( '%s="%s"', $key, $value );
+            }
+        }
+        return implode( ' ', $out );
+    }
+
+    public static function render_link( array $attrs, string $inner_html, array $extra_attrs = [] ) : string {
+        $merged = $attrs;
+        foreach ( $extra_attrs as $k => $v ) {
+            if ( $v !== '' && $v !== null ) {
+                $merged[$k] = $v;
+            }
+        }
+        return sprintf( '<a %s>%s</a>', self::attrs_to_html( $merged, ['aria-label'] ), $inner_html );
+    }
+
+    public static function elementor_get_post_meta( $post_id ) {
         $meta = get_post_meta( $post_id, '_elementor_data', true );
         if ( is_string( $meta ) && !empty( $meta ) ) {
             $meta = json_decode( $meta, true );
@@ -18,7 +72,7 @@ class Utils {
         return $meta;
     }
 
-    static function elementor_update_post_meta( $post_id, $value ) {
+    public static function elementor_update_post_meta( $post_id, $value ) {
         update_metadata(
             'post',
             $post_id,
@@ -27,14 +81,14 @@ class Utils {
         );
     }
 
-    static function get_posts_meta_cache_key( $meta_key, $post_type = null ) {
+    public static function get_posts_meta_cache_key( $meta_key, $post_type = null ) {
         if ( empty( $post_type ) ) {
             $post_type = self::post_type_name();
         }
         return sprintf( 'wps--meta-vals--%s_%s', $post_type, $meta_key );
     }
 
-    static function is_external_url( $url ) {
+    public static function is_external_url( $url ) {
         $self_data = wp_parse_url( home_url() );
         $url_data = wp_parse_url( $url );
         if ( $self_data['host'] == $url_data['host'] ) {
@@ -43,20 +97,20 @@ class Utils {
         return true;
     }
 
-    static function get_ext_url_params() {
+    public static function get_ext_url_params() {
         return ' rel="nofollow noopener noreferrer" target="_blank"';
     }
 
-    static function update_posts_meta_vals( $meta_key, $post_type = null ) {
+    public static function update_posts_meta_vals( $meta_key, $post_type = null ) {
         if ( empty( $post_type ) ) {
             $post_type = self::post_type_name();
         }
         $cache_key = self::get_posts_meta_cache_key( $meta_key, $post_type );
-        delete_transient( $cache_key );
+        wp_cache_delete( $cache_key, 'wps_team' );
         return self::get_posts_meta_vals( $meta_key, $post_type );
     }
 
-    static function update_all_posts_meta_vals( $meta_fields = [], $post_type = null ) {
+    public static function update_all_posts_meta_vals( $meta_fields = [], $post_type = null ) {
         $meta_fields = ( !empty( $meta_fields ) ? $meta_fields : ['_ribbon'] );
         if ( empty( $post_type ) ) {
             $post_type = self::post_type_name();
@@ -66,27 +120,28 @@ class Utils {
         }
     }
 
-    static function get_posts_meta_vals( $meta_key, $post_type = null ) {
+    public static function get_posts_meta_vals( $meta_key, $post_type = null ) {
         global $wpdb;
         if ( empty( $post_type ) ) {
             $post_type = self::post_type_name();
         }
         $cache_key = self::get_posts_meta_cache_key( $meta_key, $post_type );
-        $cache_data = get_transient( $cache_key );
-        if ( $cache_data !== false ) {
+        $cache_data = wp_cache_get( $cache_key, 'wps_team' );
+        if ( $cache_data === false ) {
             return $cache_data;
         }
-        $results = $wpdb->get_results( $wpdb->prepare( "\n\t\t\tselect META.meta_value\n\t\t\tfrom {$wpdb->postmeta} AS META\n\t\t\tINNER JOIN {$wpdb->posts} AS POST\n\t\t\tON META.post_id = POST.ID\n\t\t\twhere POST.post_type = %s AND\n\t\t\tPOST.post_status = 'publish' AND\n\t\t\tMETA.meta_key = %s;\n\t\t", $post_type, $meta_key ) );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+        $results = $wpdb->get_results( $wpdb->prepare( "\n\t\t\t\tSELECT META.meta_value\n\t\t\t\tFROM {$wpdb->postmeta} AS META\n\t\t\t\tINNER JOIN {$wpdb->posts} AS POST ON META.post_id = POST.ID\n\t\t\t\tWHERE POST.post_type = %s\n\t\t\t\tAND POST.post_status = 'publish'\n\t\t\t\tAND META.meta_key = %s\n\t\t\t\t", $post_type, $meta_key ) );
         if ( !empty( $results ) ) {
             $results = wp_list_pluck( $results, 'meta_value' );
             $results = array_values( array_unique( $results ) );
-            set_transient( $cache_key, $results, MINUTE_IN_SECONDS * 10 );
+            wp_cache_set( $cache_key, $results, 'wps_team' );
             return $results;
         }
         return [];
     }
 
-    static function get_posts( $query_args = [] ) {
+    public static function get_posts( $query_args = [] ) {
         $args = [
             'posts_per_page' => -1,
             'paged'          => 1,
@@ -97,7 +152,7 @@ class Utils {
         return new WP_Query($args);
     }
 
-    static function search_by_custom_criteria( $where, $wp_query ) {
+    public static function search_by_custom_criteria( $where, $wp_query ) {
         global $wpdb;
         if ( $search_term = $wp_query->get( 'search_by_name' ) ) {
             // Escaping the search term for safety
@@ -109,7 +164,7 @@ class Utils {
         return $where;
     }
 
-    static function paginate_links( $args ) {
+    public static function paginate_links( $args ) {
         global $wp;
         $args = array_merge( [
             'query'           => null,
@@ -121,12 +176,11 @@ class Utils {
             return;
         }
         $query = (object) $args['query'];
-        $is_ajax = $args['ajax'];
+        $is_ajax = wp_validate_boolean( $args['ajax'] );
         $shortcode_id = $args['shortcode_id'];
-        $extra_links = $args['edge_page_links'];
-        $paged_var = self::get_paged_var( $shortcode_id );
+        $extra_links = (int) $args['edge_page_links'];
         $total = $query->max_num_pages;
-        $current = ( isset( $_GET[$paged_var] ) ? (int) $_GET[$paged_var] : 1 );
+        $current = $query->query['paged'];
         if ( $current < 1 ) {
             $current = 1;
         }
@@ -136,36 +190,87 @@ class Utils {
         if ( $total < 2 ) {
             return;
         }
-        $current_url = home_url( add_query_arg( array($_GET), $wp->request ) );
-        printf( '<div class="wps-pagination--wrap"><nav class="wps-team--navigation"><ul class="wps-team--pagination %s">', ( $is_ajax ? 'wps-team--pagination-ajax' : '' ) );
-        $prev_limit = $current - $extra_links + min( $total - $current - $extra_links, 0 );
-        $next_limit = $current + $extra_links + max( $extra_links + 1 - $current, 0 );
-        for ($n = 1; $n <= $total; $n++) {
-            $ajax_hidden_class = '';
-            $url = ( $n == 1 ? remove_query_arg( $paged_var, $current_url ) : ($url = add_query_arg( $paged_var, $n, $current_url )) );
-            if ( $n < $prev_limit || $n > $next_limit ) {
-                if ( !$is_ajax ) {
-                    continue;
-                }
-                $ajax_hidden_class = 'wps-page-item--hidden';
-            }
-            printf(
-                '<li class="%s"><a class="wps--page-numbers %s" href="%s" data-page="%d">%s</a></li>',
-                $ajax_hidden_class,
-                ( $n == $current ? 'wps--current' : '' ),
-                esc_url( $url ),
-                abs( $n ),
-                number_format_i18n( $n )
-            );
+        $paged_var = self::get_paged_var( $shortcode_id );
+        $current_url = home_url( trailingslashit( $wp->request ) );
+        $current_url = add_query_arg( self::sanitize_request( $_GET ), $current_url );
+        // phpcs:ignore WordPress.Security.NonceVerification
+        if ( wp_doing_ajax() ) {
+            $current_url = wp_get_referer();
         }
-        echo '</ul></nav></div>';
+        $current_url = remove_query_arg( $paged_var, $current_url );
+        $current_url = add_query_arg( $paged_var, '%#%', $current_url );
+        return self::get_pagination( [
+            'current'  => $current,
+            'total'    => $total,
+            'format'   => false,
+            'base'     => $current_url,
+            'is_ajax'  => $is_ajax,
+            'mid_size' => $extra_links,
+        ] );
     }
 
-    static function get_paged_var( $id ) {
-        return 'paged' . $id;
+    public static function add_data_page_attr( $html ) {
+        return preg_replace_callback( '/<a\\b([^>]*?)href="([^"]+)"([^>]*)>/i', function ( $m ) {
+            $url = $m[2];
+            $page = null;
+            // Check query string first
+            if ( preg_match( '/(?:paged|wps-team-\\d+-paged)=(\\d+)/', $url, $qmatch ) ) {
+                $page = (int) $qmatch[1];
+            } elseif ( preg_match( '#/page/(\\d+)/?#', $url, $pmatch ) ) {
+                $page = (int) $pmatch[1];
+            }
+            return ( $page ? '<a' . $m[1] . 'href="' . $url . '" data-page="' . $page . '"' . $m[3] . '>' : $m[0] );
+        }, $html );
     }
 
-    static function get_meta_field_keys() {
+    public static function sanitize_request( $array ) {
+        $sanitized = [];
+        foreach ( $array as $key => $value ) {
+            $sanitized[sanitize_key( $key )] = sanitize_text_field( wp_unslash( $value ) );
+        }
+        return $sanitized;
+    }
+
+    public static function get_pagination( $args ) {
+        $args = shortcode_atts( [
+            'current'  => 1,
+            'total'    => 1,
+            'format'   => false,
+            'base'     => false,
+            'is_ajax'  => false,
+            'mid_size' => 2,
+        ], $args );
+        $pagination_args = [
+            'base'      => str_replace( 999999999, '%#%', esc_url( get_pagenum_link( 999999999 ) ) ),
+            'format'    => '?paged=%#%',
+            'total'     => $args['total'],
+            'current'   => $args['current'],
+            'type'      => 'array',
+            'prev_text' => '<svg viewBox="0 0 96 96"><path d="M39.3756,48.0022l30.47-25.39a6.0035,6.0035,0,0,0-7.6878-9.223L26.1563,43.3906a6.0092,6.0092,0,0,0,0,9.2231L62.1578,82.615a6.0035,6.0035,0,0,0,7.6878-9.2231Z"/></svg>',
+            'next_text' => '<svg viewBox="0 0 96 96"><path d="M69.8437,43.3876,33.8422,13.3863a6.0035,6.0035,0,0,0-7.6878,9.223l30.47,25.39-30.47,25.39a6.0035,6.0035,0,0,0,7.6878,9.2231L69.8437,52.6106a6.0091,6.0091,0,0,0,0-9.223Z"/></svg>',
+            'mid_size'  => $args['mid_size'],
+        ];
+        $args['format'] && ($pagination_args['format'] = $args['format']);
+        $args['base'] && ($pagination_args['base'] = $args['base']);
+        $pages = paginate_links( $pagination_args );
+        if ( !is_array( $pages ) ) {
+            return;
+        }
+        $html = sprintf( '<div class="wps-pagination--wrap"><nav class="wps-team--navigation"><ul class="wps-team--pagination %s">', ( $args['is_ajax'] ? 'wps-team--pagination-ajax' : '' ) );
+        foreach ( $pages as $page ) {
+            $page = str_replace( ['page-numbers', 'current'], ['wps--page-numbers', 'wps--current'], $page );
+            $html .= sprintf( '<li>%s</li>', $page );
+        }
+        $html .= '</ul></nav></div>';
+        echo self::add_data_page_attr( $html );
+        // phpcs:ignore WordPress.Security.EscapeOutput
+    }
+
+    public static function get_paged_var( $id ) {
+        return 'wps-team-' . $id . '-paged';
+    }
+
+    public static function get_meta_field_keys() {
         $field_keys = [
             '_first_name',
             '_last_name',
@@ -180,13 +285,12 @@ class Utils {
             '_social_links',
             '_ribbon',
             '_mobile',
-            '_color',
-            '_education'
+            '_address'
         ];
         return $field_keys;
     }
 
-    static function get_item_data( $data_key, $post_id = null, $shortcode_id = null ) {
+    public static function get_item_data( $data_key, $post_id = null, $shortcode_id = null ) {
         if ( empty( $post_id ) ) {
             $post_id = get_the_ID();
         }
@@ -216,7 +320,7 @@ class Utils {
         return false;
     }
 
-    static function load_template( $template_name ) {
+    public static function load_template( $template_name ) {
         $template_folder = (string) apply_filters( 'wpspeedo_team/template/folder', 'wpspeedo-team' );
         $template_folder = '/' . trailingslashit( ltrim( $template_folder, '/\\' ) );
         // Load from mu-plugins if template exists
@@ -253,22 +357,28 @@ class Utils {
         if ( file_exists( $template_path ) ) {
             return $template_path;
         }
-        return new WP_Error('wpspeedo_team/template/not_found', _x( 'Template file is not found', 'Dashboard', 'wpspeedo-team' ));
+        return new WP_Error('wpspeedo_team/template/not_found', _x( 'Template file is not found', 'Dashboard', 'wps-team' ));
     }
 
-    static function get_temp_settings() {
+    public static function get_temp_settings() {
         $temp_key = self::get_shortcode_preview_key();
         if ( $temp_key ) {
-            return get_transient( $temp_key );
+            $settings = get_transient( $temp_key );
+            if ( !empty( $settings ) ) {
+                return $settings;
+            }
         }
+        return [];
     }
 
-    static function is_shortcode_preview() {
+    public static function is_shortcode_preview() {
+        // phpcs:ignore WordPress.Security.NonceVerification
         return (bool) (!empty( $_REQUEST['wps_team_sh_preview'] ));
     }
 
-    static function get_shortcode_preview_key() {
-        return ( self::is_shortcode_preview() ? sanitize_text_field( $_REQUEST['wps_team_sh_preview'] ) : null );
+    public static function get_shortcode_preview_key() {
+        // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
+        return ( self::is_shortcode_preview() ? sanitize_text_field( wp_unslash( $_REQUEST['wps_team_sh_preview'] ) ) : null );
     }
 
     public static function render_html_attributes( array $attributes ) {
@@ -351,7 +461,7 @@ class Utils {
         return $output;
     }
 
-    public static function get_brnad_name( $icon ) {
+    public static function get_brand_name( $icon ) {
         return str_replace( ['fab fa-', 'far fa-', 'fas fa-'], '', esc_attr( $icon ) );
     }
 
@@ -395,12 +505,18 @@ class Utils {
             'skills_title'                 => 'Skills:',
             'education_title'              => 'Education:',
             'mobile_meta_label'            => 'Mobile:',
-            'phone_meta_label'             => 'Phone:',
+            'phone_meta_label'             => 'Telephone:',
+            'fax_meta_label'               => 'Fax:',
             'email_meta_label'             => 'Email:',
             'website_meta_label'           => 'Website:',
             'experience_meta_label'        => 'Experience:',
             'company_meta_label'           => 'Company:',
             'address_meta_label'           => 'Address:',
+            'email_link_text'              => 'Send Email',
+            'website_link_text'            => 'Visit Website',
+            'mobile_link_text'             => 'Call on Mobile',
+            'phone_link_text'              => 'Call on Telephone',
+            'fax_link_text'                => 'Send Fax',
             'group_meta_label'             => 'Group:',
             'location_meta_label'          => 'Location:',
             'language_meta_label'          => 'Language:',
@@ -414,6 +530,11 @@ class Utils {
             'load_more_text'               => 'Load More',
             'return_to_archive_text'       => 'Back to Team Page',
             'no_results_found_text'        => 'No Results Found',
+            'website_display_format'       => 'linked_raw',
+            'email_display_format'         => 'linked_raw',
+            'mobile_display_format'        => 'linked_raw',
+            'telephone_display_format'     => 'linked_raw',
+            'fax_display_format'           => 'linked_raw',
             'enable_multilingual'          => false,
             'disable_google_fonts_loading' => false,
             'single_link_1'                => false,
@@ -491,7 +612,7 @@ class Utils {
         return null;
     }
 
-    static function get_registered_image_sizes() {
+    public static function get_registered_image_sizes() {
         $sizes = get_intermediate_image_sizes();
         if ( empty( $sizes ) ) {
             return [];
@@ -504,11 +625,11 @@ class Utils {
             ];
         }
         $_sizes = array_merge( $_sizes, [[
-            'label' => _x( 'Full', 'Editor', 'wpspeedo-team' ),
+            'label' => _x( 'Full', 'Editor', 'wps-team' ),
             'value' => 'full',
         ]] );
         $custom_size = [
-            'label' => _x( 'Custom', 'Editor', 'wpspeedo-team' ),
+            'label' => _x( 'Custom', 'Editor', 'wps-team' ),
             'value' => 'custom',
         ];
         $custom_size['label'] = self::get_pro_label() . $custom_size['label'];
@@ -517,57 +638,57 @@ class Utils {
         return $_sizes;
     }
 
-    static function get_thumbnail_position() {
+    public static function get_thumbnail_position() {
         return [
             [
-                'label' => _x( 'Top Left', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Top Left', 'Editor', 'wps-team' ),
                 'value' => 'left top',
             ],
             [
-                'label' => _x( 'Top Center', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Top Center', 'Editor', 'wps-team' ),
                 'value' => 'center top',
             ],
             [
-                'label' => _x( 'Top Right', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Top Right', 'Editor', 'wps-team' ),
                 'value' => 'right top',
             ],
             [
-                'label' => _x( 'Middle Left', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Middle Left', 'Editor', 'wps-team' ),
                 'value' => 'left center',
             ],
             [
-                'label' => _x( 'Middle Center', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Middle Center', 'Editor', 'wps-team' ),
                 'value' => 'center center',
             ],
             [
-                'label' => _x( 'Middle Right', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Middle Right', 'Editor', 'wps-team' ),
                 'value' => 'right center',
             ],
             [
-                'label' => _x( 'Bottom Left', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Bottom Left', 'Editor', 'wps-team' ),
                 'value' => 'left bottom',
             ],
             [
-                'label' => _x( 'Bottom Center', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Bottom Center', 'Editor', 'wps-team' ),
                 'value' => 'center bottom',
             ],
             [
-                'label' => _x( 'Bottom Right', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Bottom Right', 'Editor', 'wps-team' ),
                 'value' => 'right bottom',
             ]
         ];
     }
 
-    static function get_options_thumbnail_type( $excludes = [] ) {
+    public static function get_options_thumbnail_type( $excludes = [] ) {
         $options = [[
-            'label' => _x( 'Image', 'Editor', 'wpspeedo-team' ),
+            'label' => _x( 'Image', 'Editor', 'wps-team' ),
             'value' => 'image',
         ], [
-            'label'    => _x( 'Carousel', 'Editor', 'wpspeedo-team' ),
+            'label'    => _x( 'Carousel', 'Editor', 'wps-team' ),
             'disabled' => true,
             'value'    => 'carousel',
         ], [
-            'label'    => _x( 'Flip Image', 'Editor', 'wpspeedo-team' ),
+            'label'    => _x( 'Flip Image', 'Editor', 'wps-team' ),
             'disabled' => true,
             'value'    => 'flip',
         ]];
@@ -578,6 +699,21 @@ class Utils {
             }
             $options = array_values( $options );
         }
+        return $options;
+    }
+
+    public static function get_options_display_format() {
+        $options = [[
+            'label' => _x( 'Clickable Value', 'Settings', 'wps-team' ),
+            'value' => 'linked_raw',
+        ], [
+            'label' => _x( 'Plain Text (No Link)', 'Settings', 'wps-team' ),
+            'value' => 'no_link',
+        ], [
+            'label'    => _x( 'Action Text', 'Settings', 'wps-team' ),
+            'disabled' => true,
+            'value'    => 'linked_text',
+        ]];
         return $options;
     }
 
@@ -758,36 +894,45 @@ class Utils {
     }
 
     public static function get_pro_label() {
-        return _x( '(Pro) - ', 'Editor', 'wpspeedo-team' );
+        return _x( '(Pro) - ', 'Editor', 'wps-team' );
     }
 
     public static function get_options_display_type() {
-        $options = [[
-            'label' => _x( 'Grid', 'Editor', 'wpspeedo-team' ),
-            'value' => 'grid',
-        ], [
-            'label' => _x( 'Carousel', 'Editor', 'wpspeedo-team' ),
-            'value' => 'carousel',
-        ], [
-            'disabled' => true,
-            'label'    => _x( 'Filter', 'Editor', 'wpspeedo-team' ),
-            'value'    => 'filter',
-        ]];
+        $options = [
+            [
+                'label' => _x( 'Grid', 'Editor', 'wps-team' ),
+                'value' => 'grid',
+            ],
+            [
+                'label' => _x( 'Carousel', 'Editor', 'wps-team' ),
+                'value' => 'carousel',
+            ],
+            [
+                'disabled' => true,
+                'label'    => _x( 'Masonry', 'Editor', 'wps-team' ),
+                'value'    => 'masonry',
+            ],
+            [
+                'disabled' => true,
+                'label'    => _x( 'Filter', 'Editor', 'wps-team' ),
+                'value'    => 'filter',
+            ]
+        ];
         return $options;
     }
 
     public static function get_options_filters_theme() {
         $options = [[
             'disabled' => true,
-            'label'    => _x( 'Style 01', 'Editor', 'wpspeedo-team' ),
+            'label'    => _x( 'Style 01', 'Editor', 'wps-team' ),
             'value'    => 'style-01',
         ], [
             'disabled' => true,
-            'label'    => _x( 'Style 02', 'Editor', 'wpspeedo-team' ),
+            'label'    => _x( 'Style 02', 'Editor', 'wps-team' ),
             'value'    => 'style-02',
         ], [
             'disabled' => true,
-            'label'    => _x( 'Style 03', 'Editor', 'wpspeedo-team' ),
+            'label'    => _x( 'Style 03', 'Editor', 'wps-team' ),
             'value'    => 'style-03',
         ]];
         return $options;
@@ -796,87 +941,87 @@ class Utils {
     public static function get_options_aspect_ratio() {
         $options = [
             [
-                'label' => _x( 'Default', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Default', 'Editor', 'wps-team' ),
                 'value' => 'default',
             ],
             [
-                'label' => _x( 'Square - 1:1', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Square - 1:1', 'Editor', 'wps-team' ),
                 'value' => '1/1',
             ],
             [
-                'label' => _x( 'Portrait - 6:7', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Portrait - 6:7', 'Editor', 'wps-team' ),
                 'value' => '6/7',
             ],
             [
-                'label' => _x( 'Portrait - 5:6', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Portrait - 5:6', 'Editor', 'wps-team' ),
                 'value' => '5/6',
             ],
             [
-                'label' => _x( 'Portrait - 4:5', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Portrait - 4:5', 'Editor', 'wps-team' ),
                 'value' => '4/5',
             ],
             [
-                'label' => _x( 'Portrait - 8.5:11', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Portrait - 8.5:11', 'Editor', 'wps-team' ),
                 'value' => '8.5/11',
             ],
             [
-                'label' => _x( 'Portrait - 3:4', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Portrait - 3:4', 'Editor', 'wps-team' ),
                 'value' => '3/4',
             ],
             [
-                'label' => _x( 'Portrait - 5:7', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Portrait - 5:7', 'Editor', 'wps-team' ),
                 'value' => '5/7',
             ],
             [
-                'label' => _x( 'Portrait - 2:3', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Portrait - 2:3', 'Editor', 'wps-team' ),
                 'value' => '2/3',
             ],
             [
-                'label' => _x( 'Portrait - 9:16', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Portrait - 9:16', 'Editor', 'wps-team' ),
                 'value' => '9/16',
             ],
             [
-                'label' => _x( 'Landscape - 5:4', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Landscape - 5:4', 'Editor', 'wps-team' ),
                 'value' => '5/4',
             ],
             [
-                'label' => _x( 'Landscape - 4:3', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Landscape - 4:3', 'Editor', 'wps-team' ),
                 'value' => '4/3',
             ],
             [
-                'label' => _x( 'Landscape - 3:2', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Landscape - 3:2', 'Editor', 'wps-team' ),
                 'value' => '3/2',
             ],
             [
-                'label' => _x( 'Landscape - 14:9', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Landscape - 14:9', 'Editor', 'wps-team' ),
                 'value' => '14/9',
             ],
             [
-                'label' => _x( 'Landscape - 16:10', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Landscape - 16:10', 'Editor', 'wps-team' ),
                 'value' => '16/10',
             ],
             [
-                'label' => _x( 'Landscape - 1.66:1', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Landscape - 1.66:1', 'Editor', 'wps-team' ),
                 'value' => '1.66/1',
             ],
             [
-                'label' => _x( 'Landscape - 1.75:1', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Landscape - 1.75:1', 'Editor', 'wps-team' ),
                 'value' => '1.75/1',
             ],
             [
-                'label' => _x( 'Landscape - 16:9', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Landscape - 16:9', 'Editor', 'wps-team' ),
                 'value' => '16/9',
             ],
             [
-                'label' => _x( 'Landscape - 1.91:1', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Landscape - 1.91:1', 'Editor', 'wps-team' ),
                 'value' => '1.91/1',
             ],
             [
-                'label' => _x( 'Landscape - 2:1', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Landscape - 2:1', 'Editor', 'wps-team' ),
                 'value' => '2/1',
             ],
             [
-                'label' => _x( 'Landscape - 21:9', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Landscape - 21:9', 'Editor', 'wps-team' ),
                 'value' => '21/9',
             ]
         ];
@@ -885,11 +1030,36 @@ class Utils {
 
     public static function get_options_layout_mode() {
         $options = [[
-            'label' => _x( 'Masonry', 'Editor', 'wpspeedo-team' ),
+            'label' => _x( 'Masonry', 'Editor', 'wps-team' ),
             'value' => 'masonry',
         ], [
-            'label' => _x( 'Fit Rows', 'Editor', 'wpspeedo-team' ),
+            'label' => _x( 'Fit Rows', 'Editor', 'wps-team' ),
             'value' => 'fitRows',
+        ]];
+        return $options;
+    }
+
+    public static function get_options_panel_position() {
+        $options = [[
+            'label' => _x( 'Left', 'Editor', 'wps-team' ),
+            'value' => 'left',
+        ], [
+            'label' => _x( 'Right', 'Editor', 'wps-team' ),
+            'value' => 'right',
+        ], [
+            'label' => _x( 'Dynamic', 'Editor', 'wps-team' ),
+            'value' => 'dynamic',
+        ]];
+        return $options;
+    }
+
+    public static function get_options_meta_panel_position() {
+        $options = [[
+            'label' => _x( 'Left', 'Editor', 'wps-team' ),
+            'value' => 'left',
+        ], [
+            'label' => _x( 'Right', 'Editor', 'wps-team' ),
+            'value' => 'right',
         ]];
         return $options;
     }
@@ -897,15 +1067,15 @@ class Utils {
     public static function get_shape_types() {
         $options = [
             'circle' => [
-                'title' => _x( 'Circle', 'Editor', 'wpspeedo-team' ),
+                'title' => _x( 'Circle', 'Editor', 'wps-team' ),
                 'icon'  => 'fas fa-circle',
             ],
             'square' => [
-                'title' => _x( 'Square', 'Editor', 'wpspeedo-team' ),
+                'title' => _x( 'Square', 'Editor', 'wps-team' ),
                 'icon'  => 'fas fa-square-full',
             ],
             'radius' => [
-                'title' => _x( 'Radius', 'Editor', 'wpspeedo-team' ),
+                'title' => _x( 'Radius', 'Editor', 'wps-team' ),
                 'icon'  => 'fas fa-square',
             ],
         ];
@@ -915,156 +1085,174 @@ class Utils {
     public static function get_options_theme() {
         $options = [
             [
-                'label' => _x( 'Square One', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Square One', 'Editor', 'wps-team' ),
                 'value' => 'square-01',
             ],
             [
-                'label' => _x( 'Square Two', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Square Two', 'Editor', 'wps-team' ),
                 'value' => 'square-02',
             ],
             [
-                'label' => _x( 'Square Three', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Square Three', 'Editor', 'wps-team' ),
                 'value' => 'square-03',
             ],
             [
-                'label' => _x( 'Square Four', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Square Four', 'Editor', 'wps-team' ),
                 'value' => 'square-04',
             ],
             [
-                'label' => _x( 'Square Five', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Square Five', 'Editor', 'wps-team' ),
                 'value' => 'square-05',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Square Six', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Square Six', 'Editor', 'wps-team' ),
                 'value'    => 'square-06',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Square Seven', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Square Seven', 'Editor', 'wps-team' ),
                 'value'    => 'square-07',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Square Eight', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Square Eight', 'Editor', 'wps-team' ),
                 'value'    => 'square-08',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Square Nine', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Square Nine', 'Editor', 'wps-team' ),
                 'value'    => 'square-09',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Square Ten', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Square Ten', 'Editor', 'wps-team' ),
                 'value'    => 'square-10',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Square Eleven', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Square Eleven', 'Editor', 'wps-team' ),
                 'value'    => 'square-11',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Square Twelve', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Square Twelve', 'Editor', 'wps-team' ),
                 'value'    => 'square-12',
             ],
             [
-                'label' => _x( 'Circle One', 'Editor', 'wpspeedo-team' ),
+                'disabled' => true,
+                'label'    => _x( 'Square Thirteen', 'Editor', 'wps-team' ),
+                'value'    => 'square-13',
+            ],
+            [
+                'label' => _x( 'Circle One', 'Editor', 'wps-team' ),
                 'value' => 'circle-01',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Circle Two', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Circle Two', 'Editor', 'wps-team' ),
                 'value'    => 'circle-02',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Circle Three', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Circle Three', 'Editor', 'wps-team' ),
                 'value'    => 'circle-03',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Circle Four', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Circle Four', 'Editor', 'wps-team' ),
                 'value'    => 'circle-04',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Circle Five', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Circle Five', 'Editor', 'wps-team' ),
                 'value'    => 'circle-05',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Circle Six', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Circle Six', 'Editor', 'wps-team' ),
                 'value'    => 'circle-06',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Horiz One', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Horiz One', 'Editor', 'wps-team' ),
                 'value'    => 'horiz-01',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Horiz Two', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Horiz Two', 'Editor', 'wps-team' ),
                 'value'    => 'horiz-02',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Horiz Three', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Horiz Three', 'Editor', 'wps-team' ),
                 'value'    => 'horiz-03',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Horiz Four', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Horiz Four', 'Editor', 'wps-team' ),
                 'value'    => 'horiz-04',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Table One', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Table One', 'Editor', 'wps-team' ),
                 'value'    => 'table-01',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Table Two', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Table Two', 'Editor', 'wps-team' ),
                 'value'    => 'table-02',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Table Three', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Table Three', 'Editor', 'wps-team' ),
                 'value'    => 'table-03',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Table Four', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Table Four', 'Editor', 'wps-team' ),
                 'value'    => 'table-04',
             ]
         ];
         return $options;
     }
 
+    public static function get_options_side_panel_theme() {
+        $options = [[
+            'disabled' => true,
+            'label'    => _x( 'Style One', 'Editor', 'wps-team' ),
+            'value'    => 'style-01',
+        ], [
+            'disabled' => true,
+            'label'    => _x( 'Style Two', 'Editor', 'wps-team' ),
+            'value'    => 'style-02',
+        ]];
+        return $options;
+    }
+
     public static function get_options_card_action() {
         $options = [
             [
-                'label' => _x( 'None', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'None', 'Editor', 'wps-team' ),
                 'value' => 'none',
             ],
             [
-                'label' => _x( 'Single Page', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Single Page', 'Editor', 'wps-team' ),
                 'value' => 'single-page',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Modal', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Modal', 'Editor', 'wps-team' ),
                 'value'    => 'modal',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Side Panel', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Side Panel', 'Editor', 'wps-team' ),
                 'value'    => 'side-panel',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Expand', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Expand', 'Editor', 'wps-team' ),
                 'value'    => 'expand',
             ],
             [
@@ -1084,32 +1272,32 @@ class Utils {
     public static function get_options_orderby() {
         $options = [
             [
-                'label' => _x( 'ID', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'ID', 'Editor', 'wps-team' ),
                 'value' => 'ID',
             ],
             [
-                'label' => _x( 'First Name', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'First Name', 'Editor', 'wps-team' ),
                 'value' => 'title',
             ],
             [
-                'label' => _x( 'Last Name', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Last Name', 'Editor', 'wps-team' ),
                 'value' => 'last_name',
             ],
             [
-                'label' => _x( 'Date', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Date', 'Editor', 'wps-team' ),
                 'value' => 'date',
             ],
             [
-                'label' => _x( 'Random', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Random', 'Editor', 'wps-team' ),
                 'value' => 'rand',
             ],
             [
-                'label' => _x( 'Modified', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Modified', 'Editor', 'wps-team' ),
                 'value' => 'modified',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Custom Order', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Custom Order', 'Editor', 'wps-team' ),
                 'value'    => 'menu_order',
             ]
         ];
@@ -1119,28 +1307,28 @@ class Utils {
     public static function get_options_terms_orderby() {
         $options = [
             [
-                'label' => _x( 'Default', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Default', 'Editor', 'wps-team' ),
                 'value' => 'none',
             ],
             [
-                'label' => _x( 'ID', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'ID', 'Editor', 'wps-team' ),
                 'value' => 'id',
             ],
             [
-                'label' => _x( 'Name', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Name', 'Editor', 'wps-team' ),
                 'value' => 'name',
             ],
             [
-                'label' => _x( 'Slug', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Slug', 'Editor', 'wps-team' ),
                 'value' => 'slug',
             ],
             [
-                'label' => _x( 'Count', 'Editor', 'wpspeedo-team' ),
+                'label' => _x( 'Count', 'Editor', 'wps-team' ),
                 'value' => 'count',
             ],
             [
                 'disabled' => true,
-                'label'    => _x( 'Custom Order', 'Editor', 'wpspeedo-team' ),
+                'label'    => _x( 'Custom Order', 'Editor', 'wps-team' ),
                 'value'    => 'term_order',
             ]
         ];
@@ -1162,20 +1350,32 @@ class Utils {
         return '';
     }
 
+    public static function get_post_term_classes( $post_id, array $term_names, $separator = ' ' ) {
+        $terms = [];
+        foreach ( $term_names as $term_name ) {
+            $_terms = get_the_terms( $post_id, $term_name );
+            if ( !empty( $_terms ) && !is_wp_error( $_terms ) ) {
+                $terms = array_merge( $terms, wp_list_pluck( $_terms, 'hash_id' ) );
+            }
+        }
+        if ( empty( $terms ) ) {
+            return '';
+        }
+        return implode( $separator, $terms );
+    }
+
     public static function get_terms( $taxonomy, $args = [] ) {
         $args = array_merge( [
             'taxonomy'   => $taxonomy,
             'orderby'    => 'name',
             'order'      => 'ASC',
             'hide_empty' => false,
-            'include'    => [],
-            'exclude'    => [],
         ], $args );
         // Generate Cache Key
         $cache_key = md5( 'wpspeedo_team_terms_' . serialize( $args ) );
         // Get Terms from Cache If Exists for Public Request
         if ( !is_admin() ) {
-            $terms = get_transient( $cache_key );
+            $terms = wp_cache_get( $cache_key, 'wps_team' );
             if ( $terms !== false ) {
                 return $terms;
             }
@@ -1186,7 +1386,7 @@ class Utils {
             return [];
         }
         // Set Cache
-        set_transient( $cache_key, $terms, 10 );
+        wp_cache_set( $cache_key, $terms, 'wps_team' );
         return $terms;
     }
 
@@ -1266,16 +1466,58 @@ class Utils {
         return $status;
     }
 
-    public static function get_social_classes( array $initials, array $settings ) {
-        $initials = array_filter( $initials );
-        $settings = array_filter( $settings );
-        $config = array_merge( [
+    public static function get_social_settings( $class = null, $context = 'general' ) {
+        if ( $context === 'single' ) {
+            return [
+                'shape'               => Utils::get_setting( 'social_links_shape' ),
+                'bg_color_type'       => Utils::get_setting( 'social_links_bg_color_type' ),
+                'bg_color_type_hover' => Utils::get_setting( 'social_links_bg_color_type_hover' ),
+                'br_color_type'       => Utils::get_setting( 'social_links_br_color_type' ),
+                'br_color_type_hover' => Utils::get_setting( 'social_links_br_color_type_hover' ),
+                'color_type'          => Utils::get_setting( 'social_links_color_type' ),
+                'color_type_hover'    => Utils::get_setting( 'social_links_color_type_hover' ),
+            ];
+        } else {
+            if ( $context === 'general' ) {
+                return [
+                    'shape'               => $class->get_setting( 'social_links_shape' ),
+                    'bg_color_type'       => $class->get_setting( 'social_links_bg_color_type' ),
+                    'bg_color_type_hover' => $class->get_setting( 'social_links_bg_color_type_hover' ),
+                    'br_color_type'       => $class->get_setting( 'social_links_br_color_type' ),
+                    'br_color_type_hover' => $class->get_setting( 'social_links_br_color_type_hover' ),
+                    'color_type'          => $class->get_setting( 'social_links_color_type' ),
+                    'color_type_hover'    => $class->get_setting( 'social_links_color_type_hover' ),
+                ];
+            } else {
+                if ( $context === 'details' ) {
+                    return [
+                        'shape'               => $class->get_setting( 'detail_social_links_shape' ),
+                        'bg_color_type'       => $class->get_setting( 'detail_social_links_bg_color_type' ),
+                        'bg_color_type_hover' => $class->get_setting( 'detail_social_links_bg_color_type_hover' ),
+                        'br_color_type'       => $class->get_setting( 'detail_social_links_br_color_type' ),
+                        'br_color_type_hover' => $class->get_setting( 'detail_social_links_br_color_type_hover' ),
+                        'color_type'          => $class->get_setting( 'detail_social_links_color_type' ),
+                        'color_type_hover'    => $class->get_setting( 'detail_social_links_color_type_hover' ),
+                    ];
+                }
+            }
+        }
+    }
+
+    public static function get_social_classes( $class = null, $initials = [], $context = 'general' ) {
+        $defaults = [
             'shape'               => 'circle',
             'bg_color_type'       => 'brand',
             'bg_color_type_hover' => 'brand',
+            'br_color_type'       => 'brand',
+            'br_color_type_hover' => 'brand',
             'color_type'          => 'custom',
             'color_type_hover'    => 'custom',
-        ], $initials, $settings );
+        ];
+        $initials = array_filter( $initials );
+        $settings = self::get_social_settings( $class, $context );
+        $settings = array_filter( $settings );
+        $config = array_merge( $defaults, $initials, $settings );
         $social_classes = ['wps--social-links'];
         if ( $config['shape'] ) {
             $social_classes[] = 'wps-si--shape-' . $config['shape'];
@@ -1286,6 +1528,12 @@ class Utils {
         if ( $config['bg_color_type_hover'] === 'brand' ) {
             $social_classes[] = 'wps-si--b-bg-color--hover';
         }
+        if ( $config['br_color_type'] === 'brand' ) {
+            $social_classes[] = 'wps-si--b-br-color';
+        }
+        if ( $config['br_color_type_hover'] === 'brand' ) {
+            $social_classes[] = 'wps-si--b-br-color--hover';
+        }
         if ( $config['bg_color_type'] !== 'brand' && $config['color_type'] === 'brand' ) {
             $social_classes[] = 'wps-si--b-color';
         }
@@ -1293,6 +1541,25 @@ class Utils {
             $social_classes[] = 'wps-si--b-color--hover';
         }
         return $social_classes;
+    }
+
+    public static function set_social_attrs_for_detail_view( $shortcode_loader, $settings = [] ) {
+        $settings = shortcode_atts( [
+            'shape'               => 'circle',
+            'bg_color_type'       => 'custom',
+            'bg_color_type_hover' => 'brand',
+            'br_color_type'       => 'custom',
+            'br_color_type_hover' => 'brand',
+            'color_type'          => 'brand',
+            'color_type_hover'    => 'custom',
+        ], $settings );
+        $social_classes = Utils::get_social_classes( $shortcode_loader, $settings, 'details' );
+        $shortcode_loader->add_attribute(
+            'social_details',
+            'class',
+            $social_classes,
+            true
+        );
     }
 
     public static function get_installed_time() {
@@ -1312,18 +1579,31 @@ class Utils {
         return ceil( ($new_time - $old_time) / DAY_IN_SECONDS );
     }
 
-    public static function minify_validated_css( $css ) {
-        $css = trim( wp_unslash( $css ) );
+    public static function minify_css( $css ) {
+        if ( empty( $css ) ) {
+            return '';
+        }
+        $css = preg_replace( '!/\\*.*?\\*/!s', '', $css );
+        $css = preg_replace( '/\\s*([:;{}])\\s*/', '$1', $css );
+        $css = preg_replace( '/\\s*,\\s*/', ',', $css );
+        $css = preg_replace( '/;}/', '}', $css );
+        $css = preg_replace( '/\\s+/', ' ', $css );
+        return trim( $css );
+    }
+
+    public static function validate_css( $css ) {
+        $css = trim( (string) wp_unslash( $css ) );
         if ( empty( $css ) ) {
             return '';
         }
         $css = preg_replace( '#<script(.*?)>(.*?)</script>#is', '', $css );
         $css = preg_replace( '#<style(.*?)>(.*?)</style>#is', '', $css );
-        $css = preg_replace( '/\\/\\*((?!\\*\\/).)*\\*\\//', '', $css );
-        // negative look ahead
-        $css = preg_replace( '/\\s{2,}/', ' ', $css );
-        $css = preg_replace( '/\\s*([:;{}])\\s*/', '$1', $css );
-        $css = preg_replace( '/;}/', '}', $css );
+        return $css;
+    }
+
+    public static function minify_validated_css( $css ) {
+        $css = self::validate_css( $css );
+        $css = self::minify_css( $css );
         return $css;
     }
 
@@ -1334,28 +1614,17 @@ class Utils {
             'target' => '',
             'rel'    => '',
         ];
-        if ( !Utils::has_archive() && $action === 'single-page' ) {
-            return $attrs;
-        }
-        if ( $action === 'single-page' ) {
+        if ( $action === 'single-page' && Utils::has_archive() ) {
             $attrs['href'] = get_the_permalink( $post_id );
+            $attrs['class'] = 'wpspeedo-team--url';
         }
-        return $attrs;
-    }
-
-    public static function get_post_link_attrs_template( $shortcode_id = null, $action = 'single-page' ) {
-        $attrs = [
-            'href'   => '',
-            'class'  => '',
-            'target' => '',
-            'rel'    => '',
-        ];
-        if ( !Utils::has_archive() && $action === 'single-page' ) {
-            return $attrs;
-        }
-        if ( $action === 'single-page' ) {
-            $attrs['href'] = '{{=it.post_permalink}}';
-        }
+        $attrs = apply_filters(
+            'wpspeedo_team/post_link_attrs',
+            $attrs,
+            $action,
+            $post_id,
+            $shortcode_id
+        );
         return $attrs;
     }
 
@@ -1365,70 +1634,30 @@ class Utils {
             'tag'         => 'h3',
             'class'       => '',
         ], $args );
-        $action = $args['card_action'];
-        $tag = $args['tag'];
-        $title_classes = ['wps-team--member-title wps-team--member-element'];
+        $action = self::normalize_card_action( (string) $args['card_action'], $post_id );
+        $tag_name = (string) $args['tag'];
+        $title_classes = ['wps-team--member-title', 'wps-team--member-element'];
         if ( !empty( $args['class'] ) ) {
             $title_classes[] = $args['class'];
-        }
-        if ( !Utils::has_archive() && $action === 'single-page' ) {
-            $action = 'none';
         }
         if ( $action !== 'none' ) {
             $title_classes[] = 'team-member--link';
         }
-        $html = sprintf( '<%s class="%s">', $tag, implode( ' ', $title_classes ) );
+        $title_open = sprintf( '<%s class="%s">', esc_attr( $tag_name ), esc_attr( self::join_classes( $title_classes ) ) );
+        $title_text = get_the_title( $post_id );
         if ( $action === 'none' ) {
-            $html .= get_the_title();
+            $content = esc_html( $title_text );
         } else {
-            $attrs = self::get_post_link_attrs( $post_id, self::shortcode_loader()->id, $action );
-            $html .= sprintf(
-                '<a href="%s" class="%s" %s %s>%s</a>',
-                esc_attr( $attrs['href'] ),
-                esc_attr( $attrs['class'] ),
-                ( empty( $attrs['target'] ) ? '' : sprintf( 'target="%s"', esc_attr( $attrs['target'] ) ) ),
-                ( empty( $attrs['rel'] ) ? '' : sprintf( 'rel="%s"', esc_attr( $attrs['rel'] ) ) ),
-                get_the_title()
-            );
+            $link_attrs = self::get_link_attrs_for_post( (int) $post_id, $action );
+            $content = self::render_link( $link_attrs, esc_html( $title_text ) );
         }
-        $html .= sprintf( '</%s>', $tag );
-        return $html;
-    }
-
-    public static function get_the_title_template( $args = [] ) {
-        $args = shortcode_atts( [
-            'card_action' => 'single-page',
-            'tag'         => 'h3',
-            'class'       => '',
-        ], $args );
-        $action = $args['card_action'];
-        $tag = $args['tag'];
-        $title_classes = ['wps-team--member-title wps-team--member-element'];
-        if ( !empty( $args['class'] ) ) {
-            $title_classes[] = $args['class'];
-        }
-        if ( !Utils::has_archive() && $action === 'single-page' ) {
-            $action = 'none';
-        }
-        if ( $action !== 'none' ) {
-            $title_classes[] = 'team-member--link';
-        }
-        $html = sprintf( '<%s class="%s">', $tag, implode( ' ', $title_classes ) );
-        if ( $action === 'none' ) {
-            $html .= '{{=it.post_title}}';
-        } else {
-            $attrs = self::get_post_link_attrs_template( self::shortcode_loader()->id, $action );
-            $html .= sprintf(
-                '<a href="%s" class="%s" %s %s>%s</a>',
-                esc_attr( $attrs['href'] ),
-                esc_attr( $attrs['class'] ),
-                ( empty( $attrs['target'] ) ? '' : sprintf( 'target="%s"', esc_attr( $attrs['target'] ) ) ),
-                ( empty( $attrs['rel'] ) ? '' : sprintf( 'rel="%s"', esc_attr( $attrs['rel'] ) ) ),
-                '{{=it.post_title}}'
-            );
-        }
-        $html .= sprintf( '</%s>', $tag );
-        return $html;
+        printf(
+            '%s%s</%s>',
+            $title_open,
+            $content,
+            esc_attr( $tag_name )
+        );
+        // phpcs:ignore WordPress.Security.EscapeOutput
     }
 
     public static function get_render_info( $element, $context = 'general' ) {
@@ -1437,6 +1666,9 @@ class Utils {
         }
         if ( $context == 'details' ) {
             return self::shortcode_loader()->get_setting( "show_details_{$element}" );
+        }
+        if ( $context == 'single' ) {
+            return self::get_setting( "single_{$element}" );
         }
     }
 
@@ -1474,92 +1706,54 @@ class Utils {
             'class'                 => '',
             'allow_ribbon'          => false,
         ], $args );
-        if ( !self::is_allowed_render( 'thumbnail', $args['context'], $args['force_show'] ) ) {
+        if ( !self::is_allowed_render( 'thumbnail', $args['context'], (bool) $args['force_show'] ) ) {
             return '';
         }
-        $tag = $args['tag'];
-        $action = $args['card_action'];
-        $thumb_wrapper_classes = ['team-member--thumbnail-wrapper wps-team--member-element'];
-        $thumb_classes = ['team-member--thumbnail'];
-        $args['thumbnail_type'] = 'image';
+        $action = self::normalize_card_action( (string) $args['card_action'], $post_id );
+        $wrapper_tag = (string) $args['tag'];
+        $wrapper_classes = ['team-member--thumbnail-wrapper', 'wps-team--member-element'];
+        $thumbnail_container = ['team-member--thumbnail'];
+        $thumb_img_extra_class = '';
         $thumbnail_size = $args['thumbnail_size'];
         $gallery_html = '';
-        if ( !empty( $args['class'] ) ) {
-            $thumb_wrapper_classes[] = $args['class'];
+        $args['thumbnail_type'] = 'image';
+        $html = sprintf( '<%s class="%s">', esc_attr( $wrapper_tag ), esc_attr( self::join_classes( $wrapper_classes ) ) );
+        $html .= sprintf( '<div class="%s">', esc_attr( self::join_classes( $thumbnail_container ) ) );
+        if ( wps_team_fs()->can_use_premium_code__premium_only() && $args['thumbnail_type'] === 'carousel' ) {
+            $html .= '<div class="swiper-wrapper">';
         }
-        if ( !Utils::has_archive() && $action === 'single-page' ) {
-            $action = 'none';
-        }
-        $html = sprintf( '<%s class="%s">', $tag, implode( ' ', $thumb_wrapper_classes ) );
-        $html .= sprintf( '<div class="%s">', implode( ' ', $thumb_classes ) );
-        $thumbnail_img_classes = '';
         if ( $action === 'none' ) {
-            $html .= get_the_post_thumbnail( null, $thumbnail_size, [
-                'class' => $thumbnail_img_classes,
+            $html .= get_the_post_thumbnail( $post_id, $thumbnail_size, [
+                'class' => $thumb_img_extra_class,
             ] );
+            // phpcs:ignore WordPress.Security.EscapeOutput
             $html .= $gallery_html;
+            // phpcs:ignore WordPress.Security.EscapeOutput
         } else {
-            $attrs = self::get_post_link_attrs( $post_id, self::shortcode_loader()->id, $action );
-            $html .= sprintf(
-                '<a href="%s" class="%s" %s %s %s>',
-                esc_attr( $attrs['href'] ),
-                esc_attr( $attrs['class'] ),
-                ( empty( $attrs['target'] ) ? '' : sprintf( 'target="%s"', esc_attr( $attrs['target'] ) ) ),
-                ( empty( $attrs['rel'] ) ? '' : sprintf( 'rel="%s"', esc_attr( $attrs['rel'] ) ) ),
-                sprintf( 'aria-label="%s"', sprintf( esc_attr_x( 'Read More about %s.', 'Public', 'wpspeedo-team' ), get_the_title( $post_id ) ) )
-            ) . get_the_post_thumbnail( null, $thumbnail_size ) . $gallery_html . '</a>';
+            $link_attrs = self::get_link_attrs_for_post( (int) $post_id, $action );
+            $aria = sprintf( 
+                /* translators: %s: Post title. */
+                esc_attr_x( 'Read More about %s.', 'Public', 'wps-team' ),
+                get_the_title( $post_id )
+             );
+            $inner = get_the_post_thumbnail( $post_id, $thumbnail_size );
+            // phpcs:ignore WordPress.Security.EscapeOutput
+            $inner .= $gallery_html;
+            // phpcs:ignore WordPress.Security.EscapeOutput
+            $html .= self::render_link( $link_attrs, $inner, [
+                'aria-label' => $aria,
+            ] );
         }
-        if ( $args['allow_ribbon'] ) {
-            $html .= Utils::get_the_ribbon( get_the_ID() );
+        if ( wps_team_fs()->can_use_premium_code__premium_only() && $args['thumbnail_type'] === 'carousel' ) {
+            $html .= '</div><div class="wps-team--carousel-navs"><button class="swiper-button-prev" tabindex="0" aria-label="Previous slide"><i aria-hidden="true" class="fas fa-chevron-left"></i></button><button class="swiper-button-next" tabindex="0" aria-label="Next slide"><i aria-hidden="true" class="fas fa-chevron-right"></i></button></div><div class="swiper-pagination"></div>';
         }
-        $html .= sprintf( '</div></%s>', $tag );
-        return $html;
-    }
-
-    public static function get_the_thumbnail_template( $args = [] ) {
-        $args = shortcode_atts( [
-            'context'               => 'general',
-            'card_action'           => 'single-page',
-            'thumbnail_size'        => 'large',
-            'thumbnail_size_custom' => [],
-            'force_show'            => false,
-            'tag'                   => 'div',
-            'class'                 => '',
-            'allow_ribbon'          => false,
-        ], $args );
-        if ( !self::is_allowed_render( 'thumbnail', $args['context'], $args['force_show'] ) ) {
-            return '';
+        echo $html;
+        // phpcs:ignore WordPress.Security.EscapeOutput
+        if ( !empty( $args['allow_ribbon'] ) ) {
+            Utils::get_the_ribbon( get_the_ID() );
         }
-        $thumbnail_size = $args['thumbnail_size'];
-        $tag = $args['tag'];
-        $thumb_classes = ['team-member--thumbnail-wrapper wps-team--member-element'];
-        if ( !empty( $args['class'] ) ) {
-            $thumb_classes[] = $args['class'];
-        }
-        $action = $args['card_action'];
-        if ( !Utils::has_archive() && $action === 'single-page' ) {
-            $action = 'none';
-        }
-        $html = sprintf( '<%s class="%s">', $tag, implode( ' ', $thumb_classes ) );
-        $html .= '<div class="team-member--thumbnail">';
-        if ( $action === 'none' ) {
-            $html .= '{{=it.post_thumbnail}}';
-        } else {
-            $attrs = self::get_post_link_attrs_template( self::shortcode_loader()->id, $action );
-            $html .= sprintf(
-                '<a href="%s" class="%s" %s %s %s>',
-                esc_attr( $attrs['href'] ),
-                esc_attr( $attrs['class'] ),
-                ( empty( $attrs['target'] ) ? '' : sprintf( 'target="%s"', esc_attr( $attrs['target'] ) ) ),
-                ( empty( $attrs['rel'] ) ? '' : sprintf( 'rel="%s"', esc_attr( $attrs['rel'] ) ) ),
-                sprintf( 'aria-label="%s"', sprintf( esc_attr_x( 'Read More about %s.', 'Public', 'wpspeedo-team' ), '{{=it.post_title}}' ) )
-            ) . '{{=it.post_thumbnail}}' . '</a>';
-        }
-        if ( $args['allow_ribbon'] ) {
-            $html .= Utils::get_the_ribbon( get_the_ID() );
-        }
-        $html .= sprintf( '</div></%s>', $tag );
-        return $html;
+        printf( '</div></%s>', esc_attr( $wrapper_tag ) );
+        // phpcs:ignore WordPress.Security.EscapeOutput
     }
 
     public static function get_the_ribbon( $post_id, $args = [] ) {
@@ -1580,24 +1774,7 @@ class Utils {
         if ( empty( $ribbon ) ) {
             return '';
         }
-        return sprintf( '<div class="%s">%s</div>', esc_attr( implode( ' ', $ribbon_classes ) ), esc_html( $ribbon ) );
-    }
-
-    public static function get_the_ribbon_template( $args = [] ) {
-        $args = shortcode_atts( [
-            'context' => 'general',
-            'class'   => '',
-        ], $args );
-        $ribbon_render = self::get_render_info( 'ribbon', $args['context'] );
-        $show_ribbon = ( $ribbon_render == '' ? false : wp_validate_boolean( $ribbon_render ) );
-        if ( !$show_ribbon ) {
-            return '';
-        }
-        $ribbon_classes = ['wps-team--member-ribbon wps-team--member-element'];
-        if ( !empty( $args['class'] ) ) {
-            $ribbon_classes[] = $args['class'];
-        }
-        return sprintf( '<div class="%s">{{=it.ribbon}}</div>', esc_attr( implode( ' ', $ribbon_classes ) ) );
+        printf( '<div class="%s">%s</div>', esc_attr( self::join_classes( $ribbon_classes ) ), esc_html( $ribbon ) );
     }
 
     public static function shortcode_loader() {
@@ -1621,58 +1798,42 @@ class Utils {
         if ( empty( $designation ) ) {
             return '';
         }
-        return sprintf(
+        printf(
             '<%1$s class="%2$s">%3$s</%1$s>',
-            $args['tag'],
-            esc_attr( implode( ' ', $desig_classes ) ),
+            esc_attr( $args['tag'] ),
+            esc_attr( self::join_classes( $desig_classes ) ),
             esc_html( $designation )
-        );
-    }
-
-    public static function get_the_designation_template( $args = [] ) {
-        $args = shortcode_atts( [
-            'context' => 'general',
-            'tag'     => 'h4',
-            'class'   => '',
-        ], $args );
-        if ( !self::is_allowed_render( 'designation', $args['context'] ) ) {
-            return '';
-        }
-        $desig_classes = ['wps-team--member-desig wps-team--member-element'];
-        if ( !empty( $args['class'] ) ) {
-            $desig_classes[] = $args['class'];
-        }
-        return sprintf(
-            '<%1$s class="%2$s">%3$s</%1$s>',
-            $args['tag'],
-            esc_attr( implode( ' ', $desig_classes ) ),
-            '{{=it.designation}}'
         );
     }
 
     public static function elements_display_order( $context = 'general' ) {
         $elements = [
-            'thumbnail'   => _x( 'Thumbnail', 'Editor', 'wpspeedo-team' ),
-            'divider'     => _x( 'Divider', 'Editor', 'wpspeedo-team' ),
-            'designation' => _x( 'Designation', 'Editor', 'wpspeedo-team' ),
-            'description' => _x( 'Description', 'Editor', 'wpspeedo-team' ),
-            'education'   => _x( 'Education', 'Editor', 'wpspeedo-team' ),
-            'social'      => _x( 'Social', 'Editor', 'wpspeedo-team' ),
-            'ribbon'      => _x( 'Ribbon/Tag', 'Editor', 'wpspeedo-team' ),
-            'email'       => _x( 'Email', 'Editor', 'wpspeedo-team' ),
-            'mobile'      => _x( 'Mobile', 'Editor', 'wpspeedo-team' ),
-            'telephone'   => _x( 'Telephone', 'Editor', 'wpspeedo-team' ),
-            'fax'         => _x( 'Fax', 'Editor', 'wpspeedo-team' ),
-            'experience'  => _x( 'Experience', 'Editor', 'wpspeedo-team' ),
-            'website'     => _x( 'Website', 'Editor', 'wpspeedo-team' ),
-            'company'     => _x( 'Company', 'Editor', 'wpspeedo-team' ),
-            'address'     => _x( 'Address', 'Editor', 'wpspeedo-team' ),
-            'skills'      => _x( 'Skills', 'Editor', 'wpspeedo-team' ),
+            'thumbnail'   => _x( 'Thumbnail', 'Editor', 'wps-team' ),
+            'divider'     => _x( 'Divider', 'Editor', 'wps-team' ),
+            'designation' => _x( 'Designation', 'Editor', 'wps-team' ),
+            'description' => _x( 'Description', 'Editor', 'wps-team' ),
+            'education'   => _x( 'Education', 'Editor', 'wps-team' ),
+            'social'      => _x( 'Social', 'Editor', 'wps-team' ),
+            'ribbon'      => _x( 'Ribbon/Tag', 'Editor', 'wps-team' ),
+            'email'       => _x( 'Email', 'Editor', 'wps-team' ),
+            'mobile'      => _x( 'Mobile', 'Editor', 'wps-team' ),
+            'telephone'   => _x( 'Telephone', 'Editor', 'wps-team' ),
+            'fax'         => _x( 'Fax', 'Editor', 'wps-team' ),
+            'experience'  => _x( 'Experience', 'Editor', 'wps-team' ),
+            'website'     => _x( 'Website', 'Editor', 'wps-team' ),
+            'company'     => _x( 'Company', 'Editor', 'wps-team' ),
+            'address'     => _x( 'Address', 'Editor', 'wps-team' ),
+            'skills'      => _x( 'Skills', 'Editor', 'wps-team' ),
             'link_1'      => self::get_setting( 'link_1_label', 'Resume Link' ),
             'link_2'      => self::get_setting( 'link_2_label', 'Hire Link' ),
+            'pricing'     => _x( 'Pricing', 'Editor', 'wps-team' ),
         ];
         if ( $context == 'general' ) {
-            $elements['read_more'] = _x( 'Read More Button', 'Editor', 'wpspeedo-team' );
+            $elements['read_more'] = _x( 'Read More Button', 'Editor', 'wps-team' );
+        }
+        if ( $context == 'single' ) {
+            unset($elements['thumbnail']);
+            unset($elements['social']);
         }
         foreach ( self::get_taxonomy_roots() as $tax_root ) {
             $elements[self::get_taxonomy_name( $tax_root, true )] = Utils::get_setting( Utils::to_field_key( $tax_root ) . '_single_name' );
@@ -1720,10 +1881,7 @@ class Utils {
         if ( !empty( $args['class'] ) ) {
             $divider_classes[] = $args['class'];
         }
-        $html = sprintf( '<div class="%s">', esc_attr( implode( ' ', $divider_classes ) ) );
-        $html .= '<div class="wps-team--divider"></div>';
-        $html .= '</div>';
-        return $html;
+        printf( '<div class="%s"><div class="wps-team--divider"></div></div>', esc_attr( self::join_classes( $divider_classes ) ) );
     }
 
     public static function get_description_length( $length = null ) {
@@ -1748,72 +1906,21 @@ class Utils {
         if ( !self::is_allowed_render( 'description', $args['context'] ) ) {
             return '';
         }
-        $tag = $args['tag'];
-        $des_length = $args['description_length'];
-        $read_more_text = $args['read_more_text'];
-        $read_more_link = '';
-        if ( $des_length > 0 && $args['add_read_more'] && !empty( $read_more_text ) ) {
-            $action = $args['card_action'];
-            if ( !Utils::has_archive() && $action === 'single-page' ) {
-                $action = 'none';
-            }
+        $tag_name = (string) $args['tag'];
+        $max_length = (int) $args['description_length'];
+        $read_more_text = (string) $args['read_more_text'];
+        $action = self::normalize_card_action( (string) $args['card_action'], $post_id );
+        $read_more_link_html = '';
+        if ( $max_length > 0 && !empty( $read_more_text ) && !empty( $args['add_read_more'] ) ) {
             if ( $action !== 'none' ) {
-                $attrs = self::get_post_link_attrs( $post_id, self::shortcode_loader()->id, $action );
-                $attrs['class'] = 'wps-team--read-more-link ' . $attrs['class'];
-                $read_more_link = sprintf(
-                    '<a href="%s" class="%s" %s %s>%s</a>',
-                    esc_attr( $attrs['href'] ),
-                    esc_attr( $attrs['class'] ),
-                    ( empty( $attrs['target'] ) ? '' : sprintf( 'target="%s"', esc_attr( $attrs['target'] ) ) ),
-                    ( empty( $attrs['rel'] ) ? '' : sprintf( 'rel="%s"', esc_attr( $attrs['rel'] ) ) ),
-                    $read_more_text
-                );
-                $des_length = $des_length - mb_strlen( $read_more_text );
+                $link_attrs = self::get_link_attrs_for_post( (int) $post_id, $action, 'wps-team--read-more-link' );
+                $read_more_link_html = self::render_link( $link_attrs, esc_html( $read_more_text ) );
+                $max_length = max( 0, $max_length - mb_strlen( $read_more_text ) );
             }
         }
-        $excerpt = Utils::wp_trim_html_chars( get_the_excerpt( $post_id ), $des_length );
-        $excerpt = wpautop( $excerpt . $read_more_link );
-        return sprintf( '<%1$s class="wps-team--member-details wps-team--member-details-excerpt wps-team--member-element">%2$s</%1$s>', $tag, wp_kses_post( $excerpt ) );
-    }
-
-    public static function get_the_excerpt_template( $args = [] ) {
-        $args = shortcode_atts( [
-            'context'        => 'general',
-            'tag'            => 'div',
-            'add_read_more'  => false,
-            'card_action'    => 'single-page',
-            'read_more_text' => '',
-        ], $args );
-        if ( !self::is_allowed_render( 'description', $args['context'] ) ) {
-            return '';
-        }
-        $tag = $args['tag'];
-        $read_more_link = '';
-        $read_more_text = $args['read_more_text'];
-        if ( $args['add_read_more'] && !empty( $args['read_more_text'] ) ) {
-            $action = $args['card_action'];
-            if ( !Utils::has_archive() && $action === 'single-page' ) {
-                $action = 'none';
-            }
-            if ( $action !== 'none' ) {
-                $attrs = self::get_post_link_attrs_template( self::shortcode_loader()->id, $action );
-                $attrs['class'] = 'wps-team--read-more-link ' . $attrs['class'];
-                $read_more_link = sprintf(
-                    '<a href="%s" class="%s" %s %s>%s</a>',
-                    esc_attr( $attrs['href'] ),
-                    esc_attr( $attrs['class'] ),
-                    ( empty( $attrs['target'] ) ? '' : sprintf( 'target="%s"', esc_attr( $attrs['target'] ) ) ),
-                    ( empty( $attrs['rel'] ) ? '' : sprintf( 'rel="%s"', esc_attr( $attrs['rel'] ) ) ),
-                    $read_more_text
-                );
-            }
-        }
-        return sprintf(
-            '<%1$s class="wps-team--member-details wps-team--member-details-excerpt wps-team--member-element"><p>%2$s%3$s</p></%1$s>',
-            $tag,
-            '{{=it.excerpt}}',
-            $read_more_link
-        );
+        $trimmed = Utils::wp_trim_html_chars( get_the_excerpt( $post_id ), $max_length );
+        $markup = wpautop( $trimmed . $read_more_link_html );
+        printf( '<%1$s class="wps-team--member-details wps-team--member-details-excerpt wps-team--member-element">%2$s</%1$s>', esc_attr( $tag_name ), wp_kses_post( $markup ) );
     }
 
     public static function get_the_description( $post_id, $args = [] ) {
@@ -1823,24 +1930,22 @@ class Utils {
         if ( !self::is_allowed_render( 'description', $args['context'] ) ) {
             return '';
         }
-        return '<div class="wps-team--member-details wps-team--member-element">' . self::get_the_content( $post_id ) . '</div>';
-    }
+        ?>
 
-    public static function get_the_description_template( $args = [] ) {
-        $args = shortcode_atts( [
-            'context' => 'general',
-        ], $args );
-        if ( !self::is_allowed_render( 'description', $args['context'] ) ) {
-            return '';
-        }
-        return '<div class="wps-team--member-details wps-team--member-element">{{=it.post_content}}</div>';
+		<div class="wps-team--member-details wps-team--member-element">
+			<?php 
+        self::get_the_content( $post_id );
+        ?>
+		</div>
+
+		<?php 
     }
 
     public static function get_the_education_title( $args = [] ) {
         $args = shortcode_atts( [
             'title_tag' => 'h4',
         ], $args );
-        $title_text = plugin()->translations->get( 'education_title', _x( 'Education:', 'Public', 'wpspeedo-team' ) );
+        $title_text = plugin()->translations->get( 'education_title', _x( 'Education:', 'Public', 'wps-team' ) );
         printf( '<%1$s class="wps-team--block-title team-member--education-title">%2$s</%1$s>', sanitize_key( $args['title_tag'] ), esc_html( $title_text ) );
     }
 
@@ -1875,33 +1980,6 @@ class Utils {
 		<?php 
     }
 
-    public static function get_the_education_template( $args = [] ) {
-        $args = shortcode_atts( [
-            'context'    => 'general',
-            'title_tag'  => 'h4',
-            'show_title' => false,
-        ], $args );
-        if ( !self::is_allowed_render_alt( 'education', $args['context'] ) ) {
-            return '';
-        }
-        ?>
-
-		{{? it._education }}
-
-		<div class="wps-team--member-education wps-team--member-element">
-			<?php 
-        if ( $args['show_title'] ) {
-            self::get_the_education_title( $args );
-        }
-        ?>
-			<div class="wps-team--member-details wps--education">{{=it._education}}</div>
-		</div>
-
-		{{?}}
-		
-		<?php 
-    }
-
     public static function wps_responsive_oembed( $html ) {
         return '<div class="wps-team--res-oembed">' . $html . '</div>';
     }
@@ -1913,7 +1991,8 @@ class Utils {
         $content = wpautop( $content );
         $content = str_replace( ']]>', ']]&gt;', $content );
         remove_filter( 'embed_oembed_html', get_called_class() . '::wps_responsive_oembed' );
-        return $content;
+        echo $content;
+        // phpcs:ignore WordPress.Security.EscapeOutput --safe-html
     }
 
     public static function parse_social_links( $social_links ) {
@@ -1921,12 +2000,13 @@ class Utils {
         foreach ( $social_links as $slink ) {
             $links .= sprintf(
                 '<li class="wps-si--%s">
-				<a href="%s" aria-label="%s"%s>%s</a>
-			</li>',
-                Utils::get_brnad_name( $slink['social_icon']['icon'] ),
+					<a href="%s" aria-label="%s"%s>%s</a>
+				</li>',
+                esc_attr( Utils::get_brand_name( $slink['social_icon']['icon'] ) ),
                 esc_url_raw( $slink['social_link'] ),
                 'Social Link',
                 self::get_ext_url_params(),
+                // phpcs:ignore WordPress.Security.EscapeOutput
                 Icon_Manager::render_font_icon( $slink['social_icon'] )
             );
         }
@@ -1937,7 +2017,7 @@ class Utils {
         $args = shortcode_atts( [
             'title_tag' => 'h4',
         ], $args );
-        $title_text = plugin()->translations->get( 'social_links_title', _x( 'Connect with me:', 'Public', 'wpspeedo-team' ) );
+        $title_text = plugin()->translations->get( 'social_links_title', _x( 'Connect with me:', 'Public', 'wps-team' ) );
         printf( '<%1$s class="wps-team--block-title team-member--slinks-title">%2$s</%1$s>', sanitize_key( $args['title_tag'] ), esc_html( $title_text ) );
     }
 
@@ -1956,69 +2036,42 @@ class Utils {
             return;
         }
         $tag = $args['tag'];
-        printf( '<%s class="wps-team--member-s-links wps-team--member-element">', $tag );
+        if ( $args['context'] === 'general' ) {
+            $render_string_key = 'social';
+        } else {
+            if ( $args['context'] === 'details' ) {
+                $render_string_key = 'social_details';
+            }
+        }
+        printf( '<%s class="wps-team--member-s-links wps-team--member-element">', esc_attr( $tag ) );
         if ( $args['show_title'] ) {
             self::get_the_social_links_title( $args );
         }
         ?>
 
 			<ul <?php 
-        self::shortcode_loader()->print_attribute_string( 'social' );
+        self::shortcode_loader()->print_attribute_string( $render_string_key );
         ?>>
 				<?php 
         echo self::parse_social_links( $social_links );
+        // phpcs:ignore WordPress.Security.EscapeOutput
         ?>
 			</ul>
 
 		<?php 
-        printf( '</%s>', $tag );
-    }
-
-    public static function get_the_social_links_template( $args = [] ) {
-        $args = shortcode_atts( [
-            'context'    => 'general',
-            'show_title' => false,
-            'title_tag'  => 'h4',
-            'tag'        => 'div',
-        ], $args );
-        if ( !self::is_allowed_render( 'social', $args['context'] ) ) {
-            return '';
-        }
-        $tag = $args['tag'];
-        ?>
-
-		{{? it.social_links }}
-			<?php 
-        printf( '<%s class="wps-team--member-s-links wps-team--member-element">', $tag );
-        if ( $args['show_title'] ) {
-            if ( $args['show_title'] ) {
-                self::get_the_social_links_title( $args );
-            }
-        }
-        ?>
-			<ul <?php 
-        self::shortcode_loader()->print_attribute_string( 'social' );
-        ?>>
-				{{=it.social_links}}
-			</ul>
-			<?php 
-        printf( '</%s>', $tag );
-        ?>
-		{{?}}
-
-		<?php 
+        printf( '</%s>', esc_attr( $tag ) );
     }
 
     public static function get_the_read_more_title() {
-        return plugin()->translations->get( 'read_more_link_text', _x( 'Read More', 'Public', 'wpspeedo-team' ) );
+        return plugin()->translations->get( 'read_more_link_text', _x( 'Read More', 'Public', 'wps-team' ) );
     }
 
     public static function get_the_link_1_title() {
-        return plugin()->translations->get( 'link_1_btn_text', _x( 'My Resume', 'Public', 'wpspeedo-team' ) );
+        return plugin()->translations->get( 'link_1_btn_text', _x( 'My Resume', 'Public', 'wps-team' ) );
     }
 
     public static function get_the_link_2_title() {
-        return plugin()->translations->get( 'link_2_btn_text', _x( 'Hire Me', 'Public', 'wpspeedo-team' ) );
+        return plugin()->translations->get( 'link_2_btn_text', _x( 'Hire Me', 'Public', 'wps-team' ) );
     }
 
     public static function get_the_action_links( $post_id, $args = [] ) {
@@ -2029,142 +2082,61 @@ class Utils {
             'card_action'    => 'single-page',
             'context'        => 'general',
         ], $args );
-        $show_read_more = false;
-        if ( $args['context'] == 'details' ) {
-            $show_link_1 = self::shortcode_loader()->get_setting( 'show_details_link_1' );
-            $show_link_2 = self::shortcode_loader()->get_setting( 'show_details_link_2' );
-        } else {
-            if ( $args['context'] == 'single' ) {
+        switch ( $args['context'] ) {
+            case 'details':
+                $show_link_1 = self::shortcode_loader()->get_setting( 'show_details_link_1' );
+                $show_link_2 = self::shortcode_loader()->get_setting( 'show_details_link_2' );
+                $show_read_more = false;
+                break;
+            case 'single':
                 $show_link_1 = self::get_setting( 'single_link_1' );
                 $show_link_2 = self::get_setting( 'single_link_2' );
-            } else {
+                $show_read_more = false;
+                break;
+            default:
                 $show_link_1 = self::shortcode_loader()->get_setting( 'show_link_1' );
                 $show_link_2 = self::shortcode_loader()->get_setting( 'show_link_2' );
                 $show_read_more = self::shortcode_loader()->get_setting( 'show_read_more' );
-            }
+                break;
         }
-        $show_link_1 = ( $show_link_1 == '' ? $args['link_1'] : wp_validate_boolean( $show_link_1 ) );
-        $show_link_2 = ( $show_link_2 == '' ? $args['link_2'] : wp_validate_boolean( $show_link_2 ) );
-        $show_read_more = ( $show_read_more == '' ? $args['show_read_more'] : wp_validate_boolean( $show_read_more ) );
+        $show_link_1 = ( $show_link_1 === '' ? (bool) $args['link_1'] : wp_validate_boolean( $show_link_1 ) );
+        $show_link_2 = ( $show_link_2 === '' ? (bool) $args['link_2'] : wp_validate_boolean( $show_link_2 ) );
+        $show_read_more = ( $show_read_more === '' ? (bool) $args['show_read_more'] : wp_validate_boolean( $show_read_more ) );
         if ( !$show_link_1 && !$show_link_2 && !$show_read_more ) {
             return '';
         }
-        $link_1 = self::get_item_data( '_link_1' );
-        $link_2 = self::get_item_data( '_link_2' );
-        if ( empty( $link_1 ) && empty( $link_2 ) ) {
+        $link_1_value = self::get_item_data( '_link_1' );
+        $link_2_value = self::get_item_data( '_link_2' );
+        if ( empty( $link_1_value ) && empty( $link_2_value ) && !$show_read_more ) {
             return '';
         }
-        $html = sprintf( '<div class="wps-team--action-links wps-team--member-element">' );
-        if ( $show_link_1 && !empty( $link_1 ) ) {
+        $html = '<div class="wps-team--action-links wps-team--member-element">';
+        if ( $show_link_1 && !empty( $link_1_value ) ) {
+            $ext_params = ( self::is_external_url( $link_1_value ) ? self::get_ext_url_params() : '' );
             $html .= sprintf(
                 '<a href="%s" class="wps-team--btn wps-team--link-1"%s>%s</a>',
-                esc_url_raw( $link_1 ),
-                ( self::is_external_url( $link_1 ) ? self::get_ext_url_params() : '' ),
+                esc_url( $link_1_value ),
+                ( $ext_params ? ' ' . esc_attr( $ext_params ) : '' ),
                 esc_html( self::get_the_link_1_title() )
             );
         }
-        if ( $show_link_2 && !empty( $link_2 ) ) {
+        if ( $show_link_2 && !empty( $link_2_value ) ) {
+            $ext_params = ( self::is_external_url( $link_2_value ) ? self::get_ext_url_params() : '' );
             $html .= sprintf(
                 '<a href="%s" class="wps-team--btn wps-team--link-2"%s>%s</a>',
-                esc_url_raw( $link_2 ),
-                ( self::is_external_url( $link_2 ) ? self::get_ext_url_params() : '' ),
+                esc_url( $link_2_value ),
+                ( $ext_params ? ' ' . esc_attr( $ext_params ) : '' ),
                 esc_html( self::get_the_link_2_title() )
             );
         }
-        if ( $show_read_more && (Utils::has_archive() || $args['card_action'] !== 'single-page') ) {
-            $attrs = self::get_post_link_attrs( $post_id, self::shortcode_loader()->id, $args['card_action'] );
-            $attrs['class'] = trim( 'wps-team--btn wps-team--read-more-btn ' . ($attrs['class'] ?? '') );
-            $html .= sprintf(
-                '<a href="%s" class="%s" %s %s>%s</a>',
-                esc_attr( $attrs['href'] ),
-                esc_attr( $attrs['class'] ),
-                ( empty( $attrs['target'] ) ? '' : sprintf( 'target="%s"', esc_attr( $attrs['target'] ) ) ),
-                ( empty( $attrs['rel'] ) ? '' : sprintf( 'rel="%s"', esc_attr( $attrs['rel'] ) ) ),
-                esc_html( self::get_the_read_more_title() )
-            );
+        $normalized_action = self::normalize_card_action( (string) $args['card_action'], $post_id );
+        if ( $show_read_more && $normalized_action !== 'none' ) {
+            $link_attrs = self::get_link_attrs_for_post( (int) $post_id, $normalized_action, 'wps-team--btn wps-team--read-more-btn' );
+            $html .= self::render_link( $link_attrs, esc_html( self::get_the_read_more_title() ) );
         }
         $html .= '</div>';
-        return $html;
-    }
-
-    public static function get_the_action_links_template( $args = [] ) {
-        $args = shortcode_atts( [
-            'link_1'         => false,
-            'link_2'         => false,
-            'show_read_more' => false,
-            'card_action'    => 'single-page',
-            'context'        => 'general',
-        ], $args );
-        $show_read_more = false;
-        if ( $args['context'] == 'details' ) {
-            $show_link_1 = self::shortcode_loader()->get_setting( 'show_details_link_1' );
-            $show_link_2 = self::shortcode_loader()->get_setting( 'show_details_link_2' );
-        } else {
-            if ( $args['context'] == 'single' ) {
-                $show_link_1 = self::get_setting( 'single_link_1' );
-                $show_link_2 = self::get_setting( 'single_link_2' );
-            } else {
-                $show_link_1 = self::shortcode_loader()->get_setting( 'show_link_1' );
-                $show_link_2 = self::shortcode_loader()->get_setting( 'show_link_2' );
-                $show_read_more = self::shortcode_loader()->get_setting( 'show_read_more' );
-            }
-        }
-        $show_link_1 = ( $show_link_1 == '' ? $args['link_1'] : wp_validate_boolean( $show_link_1 ) );
-        $show_link_2 = ( $show_link_2 == '' ? $args['link_2'] : wp_validate_boolean( $show_link_2 ) );
-        $show_read_more = ( $show_read_more == '' ? $args['show_read_more'] : wp_validate_boolean( $show_read_more ) );
-        if ( !$show_link_1 && !$show_link_2 && !$show_read_more ) {
-            return '';
-        }
-        ?>
-
-		{{? it.link_1 || it.link_2 || it.read_more_btn }}
-
-		<div class="wps-team--action-links wps-team--member-element">
-
-			<?php 
-        if ( $show_link_1 ) {
-            ?>
-				{{? it.link_1 }}
-					<?php 
-            printf( '<a href="%s" class="wps-team--btn wps-team--link-1">%s</a>', '{{=it.link_1}}', esc_html( self::get_the_link_1_title() ) );
-            ?>
-				{{?}}
-			<?php 
-        }
-        ?>
-
-			<?php 
-        if ( $show_link_2 ) {
-            ?>
-				{{? it.link_2 }}
-					<?php 
-            printf( '<a href="%s" class="wps-team--btn wps-team--link-2">%s</a>', '{{=it.link_2}}', esc_html( self::get_the_link_2_title() ) );
-            ?>
-				{{?}}
-			<?php 
-        }
-        ?>
-
-			<?php 
-        if ( $show_read_more && (Utils::has_archive() || $args['card_action'] !== 'single-page') ) {
-            $attrs = self::get_post_link_attrs_template( self::shortcode_loader()->id, $args['card_action'] );
-            $attrs['class'] = trim( 'wps-team--btn wps-team--read-more-btn ' . ($attrs['class'] ?? '') );
-            printf(
-                '<a href="%s" class="%s" %s %s>%s</a>',
-                esc_attr( $attrs['href'] ),
-                esc_attr( $attrs['class'] ),
-                ( empty( $attrs['target'] ) ? '' : sprintf( 'target="%s"', esc_attr( $attrs['target'] ) ) ),
-                ( empty( $attrs['rel'] ) ? '' : sprintf( 'rel="%s"', esc_attr( $attrs['rel'] ) ) ),
-                esc_html( self::get_the_read_more_title() )
-            );
-        }
-        ?>
-
-		</div>
-
-		{{?}}
-
-		<?php 
+        echo $html;
+        // phpcs:ignore WordPress.Security.EscapeOutput
     }
 
     public static function parse_skills( $_skills ) {
@@ -2188,7 +2160,7 @@ class Utils {
         $args = shortcode_atts( [
             'title_tag' => 'h4',
         ], $args );
-        $title_text = plugin()->translations->get( 'skills_title', _x( 'Skills:', 'Public', 'wpspeedo-team' ) );
+        $title_text = plugin()->translations->get( 'skills_title', _x( 'Skills:', 'Public', 'wps-team' ) );
         printf( '<%1$s class="wps-team--block-title team-member--skills-title">%2$s</%1$s>', sanitize_key( $args['title_tag'] ), esc_html( $title_text ) );
     }
 
@@ -2215,7 +2187,7 @@ class Utils {
         ?>
 			<ul class="wps--skills">
 				<?php 
-        echo self::parse_skills( $skills );
+        echo wp_kses_post( self::parse_skills( $skills ) );
         ?>
 			</ul>
 		</div>
@@ -2223,31 +2195,15 @@ class Utils {
 		<?php 
     }
 
-    public static function get_the_skills_template( $args = [] ) {
-        $args = shortcode_atts( [
-            'context'    => 'general',
-            'title_tag'  => 'h4',
-            'show_title' => false,
-        ], $args );
-        if ( !self::is_allowed_render( 'skills', $args['context'] ) ) {
-            return '';
+    public static function get_all_shortcodes() {
+        global $wpdb;
+        $shortcodes = wp_cache_get( 'wps_team_all_shortcodes', 'wps_team' );
+        if ( false === $shortcodes ) {
+            $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A );
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+            wp_cache_set( 'wps_team_all_shortcodes', $shortcodes, 'wps_team' );
         }
-        ?>
-
-		{{? it.skills }}
-
-		<div class="wps-team--member-skills wps-team--member-element">
-			<?php 
-        if ( $args['show_title'] ) {
-            self::get_the_skills_title( $args );
-        }
-        ?>
-			<ul class="wps--skills">{{=it.skills}}</ul>
-		</div>
-
-		{{?}}
-		
-		<?php 
+        return $shortcodes;
     }
 
     public static function get_the_field_label( $field_key, $label_type = '' ) {
@@ -2288,31 +2244,31 @@ class Utils {
         } else {
             switch ( $field_key ) {
                 case '_mobile':
-                    $field_label = plugin()->translations->get( 'mobile_meta_label', _x( 'Mobile:', 'Public', 'wpspeedo-team' ) );
+                    $field_label = plugin()->translations->get( 'mobile_meta_label', _x( 'Mobile:', 'Public', 'wps-team' ) );
                     break;
                 case '_telephone':
-                    $field_label = plugin()->translations->get( 'phone_meta_label', _x( 'Phone:', 'Public', 'wpspeedo-team' ) );
+                    $field_label = plugin()->translations->get( 'phone_meta_label', _x( 'Telephone:', 'Public', 'wps-team' ) );
                     break;
                 case '_fax':
-                    $field_label = plugin()->translations->get( 'fax_meta_label', _x( 'Fax:', 'Public', 'wpspeedo-team' ) );
+                    $field_label = plugin()->translations->get( 'fax_meta_label', _x( 'Fax:', 'Public', 'wps-team' ) );
                     break;
                 case '_email':
-                    $field_label = plugin()->translations->get( 'email_meta_label', _x( 'Email:', 'Public', 'wpspeedo-team' ) );
+                    $field_label = plugin()->translations->get( 'email_meta_label', _x( 'Email:', 'Public', 'wps-team' ) );
                     break;
                 case '_website':
-                    $field_label = plugin()->translations->get( 'website_meta_label', _x( 'Website:', 'Public', 'wpspeedo-team' ) );
+                    $field_label = plugin()->translations->get( 'website_meta_label', _x( 'Website:', 'Public', 'wps-team' ) );
                     break;
                 case '_experience':
-                    $field_label = plugin()->translations->get( 'experience_meta_label', _x( 'Experience:', 'Public', 'wpspeedo-team' ) );
+                    $field_label = plugin()->translations->get( 'experience_meta_label', _x( 'Experience:', 'Public', 'wps-team' ) );
                     break;
                 case '_company':
-                    $field_label = plugin()->translations->get( 'company_meta_label', _x( 'Company:', 'Public', 'wpspeedo-team' ) );
+                    $field_label = plugin()->translations->get( 'company_meta_label', _x( 'Company:', 'Public', 'wps-team' ) );
                     break;
                 case '_address':
-                    $field_label = plugin()->translations->get( 'address_meta_label', _x( 'Address:', 'Public', 'wpspeedo-team' ) );
+                    $field_label = plugin()->translations->get( 'address_meta_label', _x( 'Address:', 'Public', 'wps-team' ) );
                     break;
                 case Utils::get_taxonomy_name( 'group', true ):
-                    $field_label = plugin()->translations->get( 'group_meta_label', _x( 'Group:', 'Public', 'wpspeedo-team' ) );
+                    $field_label = plugin()->translations->get( 'group_meta_label', _x( 'Group:', 'Public', 'wps-team' ) );
                     break;
             }
             if ( !empty( $field_label ) ) {
@@ -2343,8 +2299,7 @@ class Utils {
         $supported_sorted_fields = array_values( $supported_sorted_fields );
         foreach ( $supported_sorted_fields as $s_field ) {
             $s_field_alt = ltrim( $s_field, '_' );
-            $key = (( $args['context'] == 'details' ? 'show_details_' : 'show_' )) . $s_field_alt;
-            $s_field_status = self::shortcode_loader()->get_setting( $key );
+            $s_field_status = self::get_render_info( $s_field_alt, $args['context'] );
             if ( $s_field_status == 'true' || $s_field_status != 'false' && in_array( $s_field, $fields ) ) {
                 $display_fields[] = $s_field;
             }
@@ -2352,7 +2307,69 @@ class Utils {
         return array_intersect( $display_fields, $supported_sorted_fields );
     }
 
+    public static function get_the_taxonomy_values( $tax_values, $separator = ', ' ) {
+        return implode( '', array_map( function ( $i, $name ) use($tax_values, $separator) {
+            $output = '<span class="wps--field-item">' . esc_html( $name ) . '</span>';
+            if ( $i < count( $tax_values ) - 1 ) {
+                $output .= '<span class="wps-field-sep">' . esc_html( $separator ) . '</span>';
+            }
+            return $output;
+        }, array_keys( $tax_values ), $tax_values ) );
+    }
+
+    private static function render_contact_field(
+        $field,
+        $val,
+        $label_html,
+        $format,
+        $protocol,
+        $translation_key,
+        $default_text,
+        $link_attrs = ''
+    ) {
+        $class = esc_attr( 'wps--info-field' . $field );
+        // Sanitize value by type
+        if ( $protocol === 'mailto:' ) {
+            $link_val = antispambot( sanitize_email( $val ) );
+        } elseif ( in_array( $protocol, ['tel:', 'fax:'], true ) ) {
+            $link_val = Utils::sanitize_phone_number( $val );
+        } else {
+            $link_val = esc_url( $val );
+        }
+        if ( $format === 'linked_raw' ) {
+            return sprintf(
+                '<li class="%s">%s<a class="wps--info-text" href="%s%s" %s>%s</a></li>',
+                $class,
+                $label_html,
+                $protocol,
+                $link_val,
+                $link_attrs,
+                esc_html( $val )
+            );
+        }
+        if ( $format === 'linked_text' ) {
+            $text = esc_html( plugin()->translations->get( $translation_key, $default_text ) );
+            return sprintf(
+                '<li class="%s">%s<a class="wps--info-text" href="%s%s" %s>%s</a></li>',
+                $class,
+                $label_html,
+                $protocol,
+                $link_val,
+                $link_attrs,
+                $text
+            );
+        }
+        // No link
+        return sprintf(
+            '<li class="%s">%s<span class="wps--info-text">%s</span></li>',
+            $class,
+            $label_html,
+            esc_html( $val )
+        );
+    }
+
     public static function get_the_extra_info( $post_id, $args = [] ) {
+        // Merge default arguments
         $args = shortcode_atts( [
             'context'            => 'general',
             'fields'             => [],
@@ -2367,16 +2384,18 @@ class Utils {
         if ( empty( $fields ) ) {
             return;
         }
+        // Collect wrapper classes
         $info_classes = ['team-member--info-wrapper'];
-        $info_style = ( empty( $args['info_style'] ) ? $args['info_style_default'] : $args['info_style'] );
-        $label_type = ( empty( $args['label_type'] ) ? $args['label_type_default'] : $args['label_type'] );
+        $info_style = ( $args['info_style'] ?: $args['info_style_default'] );
+        $label_type = ( $args['label_type'] ?: $args['label_type_default'] );
+        $complex_styles = ['start-aligned-alt', 'center-aligned-alt', 'center-aligned-combined'];
         // $info_style = 'start-aligned';
         // $info_style = 'start-aligned-alt';
         // $info_style = 'center-aligned';
         // $info_style = 'center-aligned-alt';
         // $info_style = 'center-aligned-combined';
         // $info_style = 'justify-aligned';
-        if ( in_array( $info_style, ['start-aligned-alt', 'center-aligned-alt', 'center-aligned-combined'] ) ) {
+        if ( in_array( $info_style, $complex_styles, true ) ) {
             $info_classes[] = 'wps-team--info-tabled';
         }
         if ( $args['items_border'] ) {
@@ -2388,149 +2407,94 @@ class Utils {
             if ( empty( $val ) ) {
                 continue;
             }
-            $field_label = Utils::get_the_field_label( $field, $label_type );
-            if ( $field === '_mobile' ) {
-                $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="tel:%s">%s</a>', Utils::sanitize_phone_number( $val ), sanitize_text_field( $val ) ) . '</li>';
-                continue;
-            }
-            if ( $field === '_telephone' ) {
-                $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="tel:%s">%s</a>', Utils::sanitize_phone_number( $val ), sanitize_text_field( $val ) ) . '</li>';
-                continue;
-            }
-            if ( $field === '_fax' ) {
-                $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="fax:%s">%s</a>', sanitize_text_field( $val ), sanitize_text_field( $val ) ) . '</li>';
-                continue;
-            }
-            if ( $field === '_email' ) {
-                $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="mailto:%1$s">%1$s</a>', sanitize_text_field( $val ) ) . '</li>';
-                continue;
-            }
-            if ( $field === '_website' ) {
-                $link_params = ( self::is_external_url( $val ) ? self::get_ext_url_params() : '' );
-                $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="%1$s" %2$s>%1$s</a>', esc_url_raw( $val ), $link_params ) . '</li>';
-                continue;
-            }
-            if ( $field === '_experience' ) {
-                $fields_html .= '<li>' . $field_label . sprintf( '<span class="wps--info-text">%s</span>', sanitize_text_field( $val ) ) . '</li>';
-                continue;
-            }
-            if ( $field === '_company' ) {
-                $fields_html .= '<li>' . $field_label . sprintf( '<span class="wps--info-text">%s</span>', sanitize_text_field( $val ) ) . '</li>';
-                continue;
-            }
-            if ( $field === '_address' ) {
-                $fields_html .= '<li>' . $field_label . sprintf( '<span class="wps--info-text">%s</span>', sanitize_text_field( $val ) ) . '</li>';
-                continue;
-            }
-            $tax_roots = self::get_taxonomy_roots();
-            foreach ( $tax_roots as $taxonomy ) {
-                if ( $field === Utils::get_taxonomy_name( $taxonomy, true ) ) {
-                    $val = wp_list_pluck( $val, 'name' );
-                    $fields_html .= '<li>' . $field_label . sprintf( '<span class="wps--info-text">%s</span>', implode( ', ', $val ) ) . '</li>';
-                    continue;
-                }
-            }
-        }
-        if ( empty( $fields_html ) ) {
-            return '';
-        }
-        $info_classes[] = 'info--' . $info_style;
-        if ( $args['info_top_border'] ) {
-            $info_classes[] = 'wps-team--info-top-border';
-        }
-        return sprintf( '<div class="%s"><ul class="wps--member-info">', esc_attr( implode( ' ', $info_classes ) ) ) . $fields_html . '</ul></div>';
-    }
-
-    public static function get_the_extra_info_template( $args = [] ) {
-        $args = shortcode_atts( [
-            'context'            => 'general',
-            'fields'             => [],
-            'info_style'         => '',
-            'info_style_default' => 'center-aligned',
-            'label_type'         => '',
-            'label_type_default' => 'icon',
-            'items_border'       => false,
-            'info_top_border'    => false,
-        ], $args );
-        $fields = self::get_extra_info_fields( $args );
-        if ( empty( $fields ) ) {
-            return;
-        }
-        $info_classes = ['team-member--info-wrapper'];
-        $info_style = ( empty( $args['info_style'] ) ? $args['info_style_default'] : $args['info_style'] );
-        $label_type = ( empty( $args['label_type'] ) ? $args['label_type_default'] : $args['label_type'] );
-        // $info_style = 'start-aligned';
-        // $info_style = 'start-aligned-alt';
-        // $info_style = 'center-aligned';
-        // $info_style = 'center-aligned-alt';
-        // $info_style = 'center-aligned-combined';
-        // $info_style = 'justify-aligned';
-        if ( in_array( $info_style, ['start-aligned-alt', 'center-aligned-alt', 'center-aligned-combined'] ) ) {
-            $info_classes[] = 'wps-team--info-tabled';
-        }
-        if ( $args['items_border'] ) {
-            $info_classes[] = 'wps-team--info-bordered';
-        }
-        $fields_html = '';
-        foreach ( $fields as $field ) {
-            $val = "{{=it.{$field}}}";
-            $field_label = Utils::get_the_field_label( $field, $label_type );
-            if ( $field === '_mobile' ) {
-                $fields_html .= "{{? it.{$field}}}";
-                $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="tel:%1$s">%1$s</a>', sanitize_text_field( $val ) ) . '</li>';
-                $fields_html .= '{{?}}';
-                continue;
-            }
-            if ( $field === '_telephone' ) {
-                $fields_html .= "{{? it.{$field}}}";
-                $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="tel:%1$s">%1$s</a>', sanitize_text_field( $val ) ) . '</li>';
-                $fields_html .= '{{?}}';
-                continue;
-            }
-            if ( $field === '_fax' ) {
-                $fields_html .= "{{? it.{$field}}}";
-                $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="fax:%1$s">%1$s</a>', sanitize_text_field( $val ) ) . '</li>';
-                $fields_html .= '{{?}}';
-                continue;
-            }
-            if ( $field === '_email' ) {
-                $fields_html .= "{{? it.{$field}}}";
-                $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="mailto:%1$s">%1$s</a>', sanitize_text_field( $val ) ) . '</li>';
-                $fields_html .= '{{?}}';
-                continue;
-            }
-            if ( $field === '_website' ) {
-                $fields_html .= "{{? it.{$field}}}";
-                $fields_html .= '<li>' . $field_label . sprintf( '<a class="wps--info-text" href="%1$s">%1$s</a>', sanitize_text_field( $val ) ) . '</li>';
-                $fields_html .= '{{?}}';
-                continue;
-            }
-            if ( $field === '_experience' ) {
-                $fields_html .= "{{? it.{$field}}}";
-                $fields_html .= '<li>' . $field_label . sprintf( '<span class="wps--info-text">%s</span>', sanitize_text_field( $val ) ) . '</li>';
-                $fields_html .= '{{?}}';
-                continue;
-            }
-            if ( $field === '_company' ) {
-                $fields_html .= "{{? it.{$field}}}";
-                $fields_html .= '<li>' . $field_label . sprintf( '<span class="wps--info-text">%s</span>', sanitize_text_field( $val ) ) . '</li>';
-                $fields_html .= '{{?}}';
-                continue;
-            }
-            if ( $field === '_address' ) {
-                $fields_html .= "{{? it.{$field}}}";
-                $fields_html .= '<li>' . $field_label . sprintf( '<span class="wps--info-text">%s</span>', sanitize_text_field( $val ) ) . '</li>';
-                $fields_html .= '{{?}}';
-                continue;
-            }
-            $tax_roots = self::get_taxonomy_roots();
-            foreach ( $tax_roots as $taxonomy ) {
-                if ( $field === Utils::get_taxonomy_name( $taxonomy, true ) ) {
-                    $fields_html .= "{{? it.{$field}}}";
-                    $fields_html .= '<li>' . $field_label . sprintf( '<span class="wps--info-text">%s</span>', sanitize_text_field( $val ) ) . '</li>';
-                    $fields_html .= "{{?}}";
-                    continue;
-                }
+            $field_label_html = wp_kses_post( Utils::get_the_field_label( $field, $label_type ) );
+            // contains HTML
+            switch ( $field ) {
+                case '_mobile':
+                    $format = self::get_setting( 'mobile_display_format' );
+                    $fields_html .= self::render_contact_field(
+                        $field,
+                        $val,
+                        $field_label_html,
+                        $format,
+                        'tel:',
+                        'mobile_link_text',
+                        _x( 'Call on Mobile', 'Public', 'wps-team' )
+                    );
+                    break;
+                case '_telephone':
+                    $format = self::get_setting( 'telephone_display_format' );
+                    $fields_html .= self::render_contact_field(
+                        $field,
+                        $val,
+                        $field_label_html,
+                        $format,
+                        'tel:',
+                        'phone_link_text',
+                        _x( 'Call on Telephone', 'Public', 'wps-team' )
+                    );
+                    break;
+                case '_fax':
+                    $format = self::get_setting( 'fax_display_format' );
+                    $fields_html .= self::render_contact_field(
+                        $field,
+                        $val,
+                        $field_label_html,
+                        $format,
+                        'fax:',
+                        'fax_link_text',
+                        _x( 'Send Fax', 'Public', 'wps-team' )
+                    );
+                    break;
+                case '_email':
+                    $format = self::get_setting( 'email_display_format' );
+                    $fields_html .= self::render_contact_field(
+                        $field,
+                        $val,
+                        $field_label_html,
+                        $format,
+                        'mailto:',
+                        'email_link_text',
+                        _x( 'Send Email', 'Public', 'wps-team' )
+                    );
+                    break;
+                case '_website':
+                    $format = self::get_setting( 'website_display_format' );
+                    $fields_html .= self::render_contact_field(
+                        $field,
+                        $val,
+                        $field_label_html,
+                        $format,
+                        '',
+                        // protocol not needed for website
+                        'website_link_text',
+                        _x( 'Visit Website', 'Public', 'wps-team' ),
+                        ( self::is_external_url( $val ) ? self::get_ext_url_params() : '' )
+                    );
+                    break;
+                case '_experience':
+                case '_company':
+                case '_address':
+                    $fields_html .= sprintf(
+                        '<li class="%s">%s<span class="wps--info-text">%s</span></li>',
+                        esc_attr( 'wps--info-field' . $field ),
+                        $field_label_html,
+                        esc_html( $val )
+                    );
+                    break;
+                default:
+                    // Handle taxonomy fields dynamically
+                    foreach ( self::get_taxonomy_roots() as $taxonomy ) {
+                        if ( $field === Utils::get_taxonomy_name( $taxonomy, true ) ) {
+                            $fields_html .= sprintf(
+                                '<li class="%s">%s<span class="wps--info-text">%s</span></li>',
+                                esc_attr( 'wps--info-field_' . $taxonomy ),
+                                $field_label_html,
+                                wp_kses_post( Utils::get_the_taxonomy_values( wp_list_pluck( $val, 'name' ) ) )
+                            );
+                        }
+                    }
+                    break;
             }
         }
         if ( empty( $fields_html ) ) {
@@ -2540,7 +2504,7 @@ class Utils {
         if ( $args['info_top_border'] ) {
             $info_classes[] = 'wps-team--info-top-border';
         }
-        return sprintf( '<div class="%s"><ul class="wps--member-info">', esc_attr( implode( ' ', $info_classes ) ) ) . $fields_html . '</ul></div>';
+        printf( '<div class="%s"><ul class="wps--member-info">%s</ul></div>', esc_attr( self::join_classes( $info_classes ) ), $fields_html );
     }
 
     public static function get_strings() {
@@ -2572,7 +2536,7 @@ class Utils {
             return false;
         }
         if ( !is_dir( $dir ) ) {
-            return unlink( $dir );
+            return wp_delete_file( $dir );
         }
         foreach ( scandir( $dir ) as $item ) {
             if ( $item == '.' || $item == '..' ) {
@@ -2582,7 +2546,12 @@ class Utils {
                 return false;
             }
         }
-        return @rmdir( $dir );
+        global $wp_filesystem;
+        if ( empty( $wp_filesystem ) ) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+            WP_Filesystem();
+        }
+        return $wp_filesystem->rmdir( $dir, false );
     }
 
     public static function get_title_from_name_fields( $first_name = '', $last_name = '' ) {
@@ -2648,6 +2617,47 @@ class Utils {
         }
         return $data;
         // return as-is if not serialized or valid JSON
+    }
+
+    public static function db_last_error_message() {
+        global $wpdb;
+        $error_message = ( current_user_can( 'manage_options' ) ? $wpdb->last_error : esc_html__( 'An unexpected database error occurred.', 'wps-team' ) );
+        /* translators: %s: Database error message */
+        return sprintf( esc_html_x( 'Database Error: %s', 'Dashboard', 'wps-team' ), $error_message );
+    }
+
+    public static function sanitize_array_recursive( $array ) {
+        foreach ( $array as $key => $value ) {
+            if ( is_array( $value ) ) {
+                $array[$key] = self::sanitize_array_recursive( $value );
+            } else {
+                $array[$key] = sanitize_text_field( $value );
+            }
+        }
+        return $array;
+    }
+
+    public static function get_meta_box_controls() {
+        static $controls = null;
+        if ( $controls === null ) {
+            $base_meta_box = new Meta_Box_Editor();
+            $controls = $base_meta_box->get_controls();
+        }
+        return $controls;
+    }
+
+    public static function get_public_nonce() {
+        $nonce = wp_create_nonce( '_wpspeedo_team_public_nonce' );
+        do_action( 'litespeed_nonce', '_wpspeedo_team_public_nonce' );
+        return $nonce;
+    }
+
+    public static function prepare_heavy_operation( $seconds = 300, $memory_type = 'admin' ) {
+        // Raise memory limit safely
+        @wp_raise_memory_limit( $memory_type );
+        // Increase max execution time safely
+        @set_time_limit( $seconds );
+        @ini_set( 'max_execution_time', (int) $seconds );
     }
 
 }

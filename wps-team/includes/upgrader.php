@@ -58,7 +58,7 @@ class Upgrader {
 
         global $wpdb;
 
-        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A );
+        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A ); // phpcs:ignore
         
         foreach ( $shortcodes as &$shortcode ) {
 
@@ -69,7 +69,7 @@ class Upgrader {
 
                 $shortcode['settings'] = maybe_serialize( $shortcode['settings'] );
                 $shortcode["updated_at"] = current_time('mysql');
-                $wpdb->update( "{$wpdb->prefix}wps_team" , $shortcode, array( 'id' => $shortcode['id'] ),  plugin()->api->db_columns_format() );
+                $wpdb->update( "{$wpdb->prefix}wps_team" , $shortcode, array( 'id' => $shortcode['id'] ),  plugin()->api->db_columns_format() ); // phpcs:ignore
             }
 
         }
@@ -82,7 +82,7 @@ class Upgrader {
         
         global $wpdb;
         
-        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A );
+        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A ); // phpcs:ignore
         
         foreach ( $shortcodes as &$shortcode ) {
 
@@ -110,7 +110,7 @@ class Upgrader {
 
             $shortcode['settings'] = maybe_serialize( $shortcode['settings'] );
             $shortcode["updated_at"] = current_time('mysql');
-            $wpdb->update( "{$wpdb->prefix}wps_team" , $shortcode, array( 'id' => $shortcode['id'] ),  plugin()->api->db_columns_format() );
+            $wpdb->update( "{$wpdb->prefix}wps_team" , $shortcode, array( 'id' => $shortcode['id'] ),  plugin()->api->db_columns_format() ); // phpcs:ignore
 
         }
 
@@ -122,7 +122,7 @@ class Upgrader {
         
         global $wpdb;
         
-        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A );
+        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A ); // phpcs:ignore
         
         foreach ( $shortcodes as &$shortcode ) {
 
@@ -198,7 +198,7 @@ class Upgrader {
 
             $shortcode['settings'] = maybe_serialize( $shortcode['settings'] );
             $shortcode["updated_at"] = current_time('mysql');
-            $wpdb->update( "{$wpdb->prefix}wps_team" , $shortcode, array( 'id' => $shortcode['id'] ),  plugin()->api->db_columns_format() );
+            $wpdb->update( "{$wpdb->prefix}wps_team" , $shortcode, array( 'id' => $shortcode['id'] ),  plugin()->api->db_columns_format() ); // phpcs:ignore
 
         }
 
@@ -210,7 +210,7 @@ class Upgrader {
         
         global $wpdb;
         
-        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A );
+        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A ); // phpcs:ignore
         
         foreach ( $shortcodes as &$shortcode ) {
 
@@ -239,7 +239,7 @@ class Upgrader {
 
             $shortcode['settings'] = maybe_serialize( $shortcode['settings'] );
             $shortcode["updated_at"] = current_time('mysql');
-            $wpdb->update( "{$wpdb->prefix}wps_team" , $shortcode, array( 'id' => $shortcode['id'] ),  plugin()->api->db_columns_format() );
+            $wpdb->update( "{$wpdb->prefix}wps_team" , $shortcode, array( 'id' => $shortcode['id'] ),  plugin()->api->db_columns_format() ); // phpcs:ignore
 
         }
 
@@ -290,7 +290,7 @@ class Upgrader {
             'post_type' => 'any',
             'posts_per_page' => -1,
             'fields' => 'ids',
-            'meta_query' => [
+            'meta_query' => [ // phpcs:ignore
                 [
                     'key' => '_elementor_data',
                     'compare' => 'EXISTS'
@@ -365,7 +365,7 @@ class Upgrader {
 
         global $wpdb;
 
-        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A );
+        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A ); // phpcs:ignore
         
         foreach ( $shortcodes as &$shortcode ) {
 
@@ -385,7 +385,7 @@ class Upgrader {
 
             $shortcode['settings'] = json_encode( $shortcode['settings'] );
             $shortcode["updated_at"] = current_time('mysql');
-            $wpdb->update( "{$wpdb->prefix}wps_team" , $shortcode, array( 'id' => $shortcode['id'] ),  plugin()->api->db_columns_format() );
+            $wpdb->update( "{$wpdb->prefix}wps_team" , $shortcode, array( 'id' => $shortcode['id'] ),  plugin()->api->db_columns_format() ); // phpcs:ignore
 
         }
 

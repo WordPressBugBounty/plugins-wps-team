@@ -12,10 +12,21 @@ trait Taxonomy
         if ( $pagenow !== 'edit-tags.php' ) {
             return;
         }
-        $taxonomy = $_GET['taxonomy'];
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $taxonomy = ( isset( $_GET['taxonomy'] ) ? sanitize_key( wp_unslash( $_GET['taxonomy'] ) ) : '' );
+        if ( empty( $taxonomy ) ) {
+            return;
+        }
         $this->load_taxonomies_template( $taxonomy );
         ?>
-        <script>window.location.href.indexOf('/edit-tags.php') > -1 && document.querySelector(`a[href='edit.php?post_type=wps-team-members&page=taxonomies']`).parentElement.classList.add('current');</script>
+        <script>
+            if (window.location.href.indexOf('/edit-tags.php') > -1) {
+                const menuItem = document.querySelector(`a[href='edit.php?post_type=wps-team-members&page=taxonomies']`);
+                if (menuItem && menuItem.parentElement) {
+                    menuItem.parentElement.classList.add('current');
+                }
+            }
+        </script>
         <?php 
     }
 
@@ -23,7 +34,7 @@ trait Taxonomy
         if ( empty( Utils::get_active_taxonomies() ) ) {
             return;
         }
-        $taxonomy_menu_title = esc_html_x( 'Taxonomies', 'Menu Label', 'wpspeedo-team' );
+        $taxonomy_menu_title = esc_html_x( 'Taxonomies', 'Menu Label', 'wps-team' );
         add_submenu_page(
             Utils::get_top_label_menu(),
             $taxonomy_menu_title,
@@ -42,7 +53,8 @@ trait Taxonomy
         ?>
         <script>
             window.location.href = '<?php 
-        echo admin_url( sprintf( 'edit-tags.php?taxonomy=%s&post_type=wps-team-members', $taxonomy ) );
+        echo admin_url( sprintf( 'edit-tags.php?taxonomy=%s&post_type=wps-team-members', esc_attr( $taxonomy ) ) );
+        // phpcs:ignore
         ?>';
         </script>
         <?php 
@@ -52,16 +64,14 @@ trait Taxonomy
         $active_taxonomies = Utils::get_active_taxonomies();
         $taxonomy_roots = Utils::get_taxonomy_roots( true );
         if ( empty( $taxonomy ) ) {
-            if ( isset( $_GET['taxonomy'] ) ) {
-                $taxonomy = $_GET['taxonomy'];
-            } else {
-                if ( !empty( $active_taxonomies ) ) {
-                    $taxonomy = $active_taxonomies[0];
-                } else {
-                    $taxonomy = Utils::get_taxonomy_name( $taxonomy_roots[0] );
-                }
+            // phpcs:ignore WordPress.Security.NonceVerification
+            $taxonomy = ( isset( $_GET['taxonomy'] ) ? sanitize_key( wp_unslash( $_GET['taxonomy'] ) ) : '' );
+            if ( empty( $taxonomy ) && !empty( $active_taxonomies ) ) {
+                $taxonomy = $active_taxonomies[0];
+            } elseif ( empty( $taxonomy ) && !empty( $taxonomy_roots ) ) {
+                $taxonomy = Utils::get_taxonomy_name( $taxonomy_roots[0] );
             }
-            if ( in_array( $taxonomy, $active_taxonomies ) ) {
+            if ( in_array( $taxonomy, $active_taxonomies, true ) ) {
                 return $taxonomy;
             }
         }
@@ -94,7 +104,7 @@ trait Taxonomy
                 ( $_taxonomy === $taxonomy ? 'primary' : 'secondary' ),
                 esc_url( $tax_page_url ),
                 esc_html( Utils::get_setting( $tax_root_key . '_plural_name' ) ),
-                $terms_count
+                wp_kses_post( $terms_count )
             );
         }
         ?>
@@ -113,7 +123,7 @@ trait Taxonomy
                         <div class="wps-team--tax_setting--field wps-team--field_switcher wps-team--enable_taxonomy">
                             <label for="wps-team--enable_taxonomy">
                                 <?php 
-            echo esc_html_x( 'Enable Taxonomy:', 'Settings: Taxonomy', 'wpspeedo-team' );
+            echo esc_html_x( 'Enable Taxonomy:', 'Settings: Taxonomy', 'wps-team' );
             ?>
                                 <input type="checkbox" id="wps-team--enable_taxonomy" name="<?php 
             echo esc_attr( $enable_taxonomy );
@@ -128,12 +138,12 @@ trait Taxonomy
             echo ( !$val_enable_taxonomy ? 'wps-team--field-disabled' : '' );
             ?>">
                             <label for="wps-team--tax_plural_name"><?php 
-            echo esc_html_x( 'Plural Name:', 'Settings: Taxonomy', 'wpspeedo-team' );
+            echo esc_html_x( 'Plural Name:', 'Settings: Taxonomy', 'wps-team' );
             ?></label>
                             <input type="text" id="wps-team--tax_plural_name" name="<?php 
             echo esc_attr( $tax_plural_name );
             ?>" value="<?php 
-            echo Utils::get_setting( $page_tax_key . '_plural_name' );
+            echo esc_attr( Utils::get_setting( $page_tax_key . '_plural_name' ) );
             ?>" />
                         </div>
     
@@ -141,12 +151,12 @@ trait Taxonomy
             echo ( !$val_enable_taxonomy ? 'wps-team--field-disabled' : '' );
             ?>">
                             <label for="wps-team--tax_single_name"><?php 
-            echo esc_html_x( 'Single Name:', 'Settings: Taxonomy', 'wpspeedo-team' );
+            echo esc_html_x( 'Single Name:', 'Settings: Taxonomy', 'wps-team' );
             ?></label>
                             <input type="text" id="wps-team--tax_single_name" name="<?php 
             echo esc_attr( $tax_single_name );
             ?>" value="<?php 
-            echo Utils::get_setting( $page_tax_key . '_single_name' );
+            echo esc_attr( Utils::get_setting( $page_tax_key . '_single_name' ) );
             ?>" />
                         </div>
     
@@ -155,7 +165,7 @@ trait Taxonomy
             ?>">
                             <label for="wps-team--enable_tax_archive">
                                 <?php 
-            echo esc_html_x( 'Enable Archive:', 'Settings: Taxonomy', 'wpspeedo-team' );
+            echo esc_html_x( 'Enable Archive:', 'Settings: Taxonomy', 'wps-team' );
             ?>
                                 <input type="checkbox" id="wps-team--enable_tax_archive" name="<?php 
             echo esc_attr( $enable_archive );
@@ -170,18 +180,18 @@ trait Taxonomy
             echo ( !$val_enable_taxonomy || !$val_enable_archive ? 'wps-team--field-disabled' : '' );
             ?>">
                             <label for="wps-team--tax_archive_name"><?php 
-            echo esc_html_x( 'Archive Slug:', 'Settings: Taxonomy', 'wpspeedo-team' );
+            echo esc_html_x( 'Archive Slug:', 'Settings: Taxonomy', 'wps-team' );
             ?></label>
                             <input type="text" id="wps-team--tax_archive_name" name="<?php 
             echo esc_attr( $tax_archive_slug );
             ?>" value="<?php 
-            echo Utils::get_setting( $page_tax_key . '_slug' );
+            echo esc_attr( Utils::get_setting( $page_tax_key . '_slug' ) );
             ?>" />
                         </div>
     
                         <div class="wps-team--tax_setting--field wps-team--tax-save-btn">
                             <button class="button button-primary"><?php 
-            echo esc_html_x( 'Save', 'Settings: Taxonomy', 'wpspeedo-team' );
+            echo esc_html_x( 'Save', 'Settings: Taxonomy', 'wps-team' );
             ?></button>
                         </div>
     
@@ -193,14 +203,14 @@ trait Taxonomy
                     <div class="wps-team--taxonomy-pro_message">
                         <div style="max-width: 300px">
                             <h3 style="margin-top: 0"><?php 
-            echo esc_html_x( 'Pro Feature', 'Settings: Taxonomy', 'wpspeedo-team' );
+            echo esc_html_x( 'Pro Feature', 'Settings: Taxonomy', 'wps-team' );
             ?></h3>
                             <p><?php 
-            echo esc_html_x( 'If you love our work please support us by purchasing our Premium plugin.', 'Settings: Taxonomy', 'wpspeedo-team' );
+            echo esc_html_x( 'If you love our work please support us by purchasing our Premium plugin.', 'Settings: Taxonomy', 'wps-team' );
             ?></p>
                             <a href="https://wpspeedo.com/wps-team-pro/" class="button button-primary" target="_blank">
                                 <?php 
-            echo esc_html_x( 'Upgrade to Pro', 'Settings: Taxonomy', 'wpspeedo-team' );
+            echo esc_html_x( 'Upgrade to Pro', 'Settings: Taxonomy', 'wps-team' );
             ?>
                             </a>
                         </div>
@@ -428,10 +438,10 @@ trait Taxonomy
                         action: 'wpspeedo_team_ajax_handler',
                         route: 'save_taxonomy_settings',
                         taxonomy: '<?php 
-        echo $taxonomy;
+        echo esc_attr( $taxonomy );
         ?>',
                         _wpnonce: '<?php 
-        echo wp_create_nonce( '_wpspeedo_team_nonce' );
+        echo esc_attr( wp_create_nonce( '_wpspeedo_team_nonce' ) );
         ?>',
                         settings: $(this).serializeArray()
                     };
@@ -457,23 +467,23 @@ trait Taxonomy
             'name'                       => $plural_name,
             'singular_name'              => $single_name,
             'menu_name'                  => $plural_name,
-            'all_items'                  => sprintf( _x( 'All %s', 'Team Taxonomy', 'wpspeedo-team' ), $plural_name ),
-            'popular_items'              => sprintf( _x( 'Popular %s', 'Team Taxonomy', 'wpspeedo-team' ), $plural_name ),
-            'search_items'               => sprintf( _x( 'Search %s', 'Team Taxonomy', 'wpspeedo-team' ), $plural_name ),
-            'items_list'                 => sprintf( _x( '%s list', 'Team Taxonomy', 'wpspeedo-team' ), $plural_name ),
-            'items_list_navigation'      => sprintf( _x( '%s list navigation', 'Team Taxonomy', 'wpspeedo-team' ), $plural_name ),
-            'separate_items_with_commas' => sprintf( _x( 'Separate %s with commas', 'Team Taxonomy', 'wpspeedo-team' ), $plural_name_lc ),
-            'no_terms'                   => sprintf( _x( 'No %s', 'Team Taxonomy', 'wpspeedo-team' ), $plural_name_lc ),
-            'add_or_remove_items'        => sprintf( _x( 'Add or remove %s', 'Team Taxonomy', 'wpspeedo-team' ), $plural_name_lc ),
-            'parent_item'                => sprintf( _x( 'Parent %s', 'Team Taxonomy', 'wpspeedo-team' ), $single_name ),
-            'parent_item_colon'          => sprintf( _x( 'Parent %s:', 'Team Taxonomy', 'wpspeedo-team' ), $single_name ),
-            'new_item_name'              => sprintf( _x( 'New %s Name', 'Team Taxonomy', 'wpspeedo-team' ), $single_name ),
-            'add_new_item'               => sprintf( _x( 'Add New %s', 'Team Taxonomy', 'wpspeedo-team' ), $single_name ),
-            'edit_item'                  => sprintf( _x( 'Edit %s', 'Team Taxonomy', 'wpspeedo-team' ), $single_name ),
-            'update_item'                => sprintf( _x( 'Update %s', 'Team Taxonomy', 'wpspeedo-team' ), $single_name ),
-            'view_item'                  => sprintf( _x( 'View %s', 'Team Taxonomy', 'wpspeedo-team' ), $single_name ),
-            'choose_from_most_used'      => _x( 'Choose from the most used', 'Team Taxonomy', 'wpspeedo-team' ),
-            'not_found'                  => _x( 'Not Found', 'Team Taxonomy', 'wpspeedo-team' ),
+            'all_items'                  => sprintf( _x( 'All %s', 'Team Taxonomy', 'wps-team' ), $plural_name ),
+            'popular_items'              => sprintf( _x( 'Popular %s', 'Team Taxonomy', 'wps-team' ), $plural_name ),
+            'search_items'               => sprintf( _x( 'Search %s', 'Team Taxonomy', 'wps-team' ), $plural_name ),
+            'items_list'                 => sprintf( _x( '%s list', 'Team Taxonomy', 'wps-team' ), $plural_name ),
+            'items_list_navigation'      => sprintf( _x( '%s list navigation', 'Team Taxonomy', 'wps-team' ), $plural_name ),
+            'separate_items_with_commas' => sprintf( _x( 'Separate %s with commas', 'Team Taxonomy', 'wps-team' ), $plural_name_lc ),
+            'no_terms'                   => sprintf( _x( 'No %s', 'Team Taxonomy', 'wps-team' ), $plural_name_lc ),
+            'add_or_remove_items'        => sprintf( _x( 'Add or remove %s', 'Team Taxonomy', 'wps-team' ), $plural_name_lc ),
+            'parent_item'                => sprintf( _x( 'Parent %s', 'Team Taxonomy', 'wps-team' ), $single_name ),
+            'parent_item_colon'          => sprintf( _x( 'Parent %s:', 'Team Taxonomy', 'wps-team' ), $single_name ),
+            'new_item_name'              => sprintf( _x( 'New %s Name', 'Team Taxonomy', 'wps-team' ), $single_name ),
+            'add_new_item'               => sprintf( _x( 'Add New %s', 'Team Taxonomy', 'wps-team' ), $single_name ),
+            'edit_item'                  => sprintf( _x( 'Edit %s', 'Team Taxonomy', 'wps-team' ), $single_name ),
+            'update_item'                => sprintf( _x( 'Update %s', 'Team Taxonomy', 'wps-team' ), $single_name ),
+            'view_item'                  => sprintf( _x( 'View %s', 'Team Taxonomy', 'wps-team' ), $single_name ),
+            'choose_from_most_used'      => _x( 'Choose from the most used', 'Team Taxonomy', 'wps-team' ),
+            'not_found'                  => _x( 'Not Found', 'Team Taxonomy', 'wps-team' ),
         );
         $args = array(
             'labels'            => $labels,
@@ -512,14 +522,13 @@ trait Taxonomy
      * Add Term Order Field to Edit Page
      */
     public function add_term_order_field_to_edit_page( $term ) {
-        global $wpdb;
-        $term_order = $wpdb->get_var( $wpdb->prepare( "SELECT term_order FROM {$wpdb->terms} WHERE term_id = %d", $term->term_id ) );
+        $term_order = ( property_exists( $term, 'term_order' ) ? $term->term_order : '' );
         ?>
 
         <tr class="form-field term-order-wrap">
             <th scope="row">
                 <label for="term_order"><?php 
-        echo $this->get_order_title__premium_only();
+        echo esc_html( $this->get_order_title__premium_only() );
         ?></label>
             </th>
             <td>
@@ -527,7 +536,7 @@ trait Taxonomy
         echo esc_attr( $term_order );
         ?>" />
                 <p class="description"><?php 
-        _e( 'Set the order for this term.', 'wpspeedo-team' );
+        esc_html_e( 'Set the order for this term.', 'wps-team' );
         ?></p>
             </td>
         </tr>

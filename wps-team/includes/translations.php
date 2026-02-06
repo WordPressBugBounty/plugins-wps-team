@@ -10,7 +10,7 @@ class Translations {
 
     public function get( $local, $international ) {
         $is_international = Utils::get_setting( 'enable_multilingual' );
-        return $is_international ? $international : Utils::get_setting( $local );
+        return esc_html( $is_international ? $international : Utils::get_setting( $local ) );
     }
 
 }

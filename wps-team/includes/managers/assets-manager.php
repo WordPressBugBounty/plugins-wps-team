@@ -54,7 +54,7 @@ abstract class Assets_Manager extends Style_Manager {
 
     public function ajax_purge_cache() {
         $this->assets_purge_all();
-        $message = _x( 'All cache purged successfully', 'Settings: Tools', 'wpspeedo-team' );
+        $message = _x( 'All cache purged successfully', 'Settings: Tools', 'wps-team' );
         if ( wp_doing_ajax() ) {
             wp_send_json_success( $message, 200 );
         }
@@ -209,21 +209,25 @@ abstract class Assets_Manager extends Style_Manager {
         }
         global $wpdb;
         $ids = $wpdb->get_results( $wpdb->prepare( "SELECT meta_id FROM {$wpdb->postmeta} WHERE meta_key = %s", $this->get_save_key() ) );
+        // phpcs:ignore
         if ( empty( $ids ) ) {
             return;
         }
         $ids = implode( ',', array_map( 'absint', wp_list_pluck( $ids, 'meta_id' ) ) );
         $wpdb->query( "DELETE FROM {$wpdb->postmeta} WHERE meta_id IN({$ids})" );
+        // phpcs:ignore
     }
 
     public final function purge_assets_data_from_options() {
         global $wpdb;
         $ids = $wpdb->get_results( $wpdb->prepare( "SELECT option_id FROM {$wpdb->options} WHERE option_name LIKE %s", '%' . $this->get_save_key() . '%' ) );
+        // phpcs:ignore
         if ( empty( $ids ) ) {
             return;
         }
         $ids = implode( ',', array_map( 'absint', wp_list_pluck( $ids, 'option_id' ) ) );
         $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_id IN({$ids})" );
+        // phpcs:ignore
     }
 
     public final function widget_updated__purge( $instance ) {
@@ -379,9 +383,9 @@ abstract class Assets_Manager extends Style_Manager {
         ?>
         <script>
             var link_id = '<?php 
-        echo $id;
+        echo esc_attr( $id );
         ?>', link_url = '<?php 
-        echo $url;
+        echo esc_url( $url );
         ?>';
             if ( ! document.getElementById( link_id ) ) {
                 var link = document.createElement('link');

@@ -39,10 +39,11 @@ class Plugin {
 
     public function load() {
         $this->set_tabs();
+        new Variables();
         $this->translations = new Translations();
         $this->controls_manager = new Controls_Manager();
         $this->admin = new Admin();
-        new Plugin_Hooks();
+        new Hooks();
         $this->api = new API();
         $this->notifications = new Notifications();
         $this->assets = new Assets();
@@ -50,7 +51,9 @@ class Plugin {
         new Data();
         new Shortcode();
         new Demo_Import();
+        new Compatibility();
         new Export_Import_Manager();
+        new Erase_Reset_Manager();
         do_action( 'wpspeedo_team/loaded', $this );
     }
 

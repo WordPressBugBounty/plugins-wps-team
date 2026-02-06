@@ -12,7 +12,7 @@ class Icon_Manager {
 		$initial_tabs = [
 			'fa-regular' => [
 				'name' => 'fa-regular',
-				'label' => esc_html_x( 'Font Awesome - Regular', 'Editor: Icon', 'wpspeedo-team' ),
+				'label' => esc_html_x( 'Font Awesome - Regular', 'Editor: Icon', 'wps-team' ),
 				'url' => self::get_fa_asset_url( 'regular' ),
 				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
@@ -24,7 +24,7 @@ class Icon_Manager {
 			],
 			'fa-solid' => [
 				'name' => 'fa-solid',
-				'label' => esc_html_x( 'Font Awesome - Solid', 'Editor: Icon', 'wpspeedo-team' ),
+				'label' => esc_html_x( 'Font Awesome - Solid', 'Editor: Icon', 'wps-team' ),
 				'url' => self::get_fa_asset_url( 'solid' ),
 				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
@@ -36,7 +36,7 @@ class Icon_Manager {
 			],
 			'fa-brands' => [
 				'name' => 'fa-brands',
-				'label' => esc_html_x( 'Font Awesome - Brands', 'Editor: Icon', 'wpspeedo-team' ),
+				'label' => esc_html_x( 'Font Awesome - Brands', 'Editor: Icon', 'wps-team' ),
 				'url' => self::get_fa_asset_url( 'brands' ),
 				'enqueue' => [ self::get_fa_asset_url( 'fontawesome' ) ],
 				'prefix' => 'fa-',
@@ -74,7 +74,7 @@ class Icon_Manager {
 		$tabs = [
 			'all' => [
 				'name' => 'all',
-				'label' => esc_html_x( 'All Icons', 'Editor: Icon', 'wpspeedo-team' ),
+				'label' => esc_html_x( 'All Icons', 'Editor: Icon', 'wps-team' ),
 				'labelIcon' => 'fas fa-bars',
 				'native' => true,
 			],
@@ -107,7 +107,11 @@ class Icon_Manager {
 			return '<svg viewBox="0 0 448 512" fill="currentColor"><path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM224 247.4c14.5-30 54-85.8 90.7-113.3c26.5-19.9 69.3-35.2 69.3 13.7c0 9.8-5.6 82.1-8.9 93.8c-11.4 40.8-53 51.2-90 44.9c64.7 11 81.2 47.5 45.6 84c-67.5 69.3-97-17.4-104.6-39.6c0 0 0 0 0 0l-.3-.9c-.9-2.6-1.4-4.1-1.8-4.1s-.9 1.5-1.8 4.1c-.1 .3-.2 .6-.3 .9c0 0 0 0 0 0c-7.6 22.2-37.1 108.8-104.6 39.6c-35.5-36.5-19.1-73 45.6-84c-37 6.3-78.6-4.1-90-44.9c-3.3-11.7-8.9-84-8.9-93.8c0-48.9 42.9-33.5 69.3-13.7c36.7 27.5 76.2 83.4 90.7 113.3z"/></svg>';
 		}
 
-		return '<' . $tag . ' ' . Utils::render_html_attributes( $attributes ) . '></' . $tag . '>';
+		return sprintf(
+			'<%1$s %2$s></%1$s>',
+			esc_attr( $tag ),
+			Utils::render_html_attributes( $attributes ) // phpcs:ignore WordPress.Security.EscapeOutput
+		);
 
 	}
 

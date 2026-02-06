@@ -16,7 +16,7 @@ abstract class Notice extends Notification {
         ?>
         <div class="wpspeedo--notice wpspeedo-team--notice wpspeedo-team--<?php echo esc_attr( $this->get_id() ); ?>">
             <div class="wpspeedo--notice-inner">
-                <div class="wpspeedo--notice-col logo-area"><img src="<?php echo WPS_TEAM_URL . 'images/thumbnail.svg'; ?>" alt=""></div>
+                <div class="wpspeedo--notice-col logo-area"><img src="<?php echo esc_url( WPS_TEAM_URL . 'images/thumbnail.svg' ); ?>" alt=""></div>
                 <div class="wpspeedo--notice-col content-area">
         <?php
     }
@@ -39,9 +39,9 @@ abstract class Notice extends Notification {
 
                 $this.closest('.wpspeedo-team--notice').slideUp(200);
 
-                jQuery.post('<?php echo admin_url('admin-ajax.php'); ?>', {
+                jQuery.post('<?php echo esc_url( admin_url('admin-ajax.php') ); ?>', {
                     action: 'wps_team_notification_action',
-                    _wpnonce: '<?php echo wp_create_nonce( 'wps_team_notification_nonce' ) ?>',
+                    _wpnonce: '<?php echo esc_attr( wp_create_nonce( 'wps_team_notification_nonce' ) ); ?>',
                     action_type: action_type,
                     notification_type: 'notice',
                     trigger_time: '<?php echo esc_html( $trigger_time ); ?>'

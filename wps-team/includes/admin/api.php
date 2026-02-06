@@ -48,9 +48,12 @@ class API {
     }
 
     public function ajax_save_settings() {
-        $this->save_settings( $_REQUEST['settings'] );
+        // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
+        $settings = ( isset( $_REQUEST['settings'] ) ? wp_unslash( $_REQUEST['settings'] ) : [] );
+        // Sanitize, Validate and Save Settings
+        $this->save_settings( $settings );
         wp_send_json_success( [
-            'message' => _x( 'Settings saved successfully', 'Settings', 'wpspeedo-team' ),
+            'message' => _x( 'Settings saved successfully', 'Settings', 'wps-team' ),
             'data'    => get_option( Utils::get_option_name() ),
         ] );
     }
@@ -75,8 +78,10 @@ class API {
     }
 
     public function ajax_save_taxonomy_settings() {
-        $settings = $_REQUEST['settings'];
-        $taxonomy = $_REQUEST['taxonomy'];
+        // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
+        $settings = ( isset( $_REQUEST['settings'] ) ? wp_unslash( $_REQUEST['settings'] ) : [] );
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $taxonomy = ( isset( $_REQUEST['taxonomy'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['taxonomy'] ) ) : '' );
         $tax_key = Utils::get_taxonomy_key( $taxonomy );
         $enable_taxonomy_key = "enable_{$tax_key}_taxonomy";
         $enable_archive_key = "enable_{$tax_key}_archive";
@@ -86,8 +91,8 @@ class API {
         $settings[$enable_archive_key] = isset( $settings[$enable_archive_key] );
         $saved_settings = Utils::get_taxonomies_settings();
         $settings = array_merge( $saved_settings, $settings );
+        // Sanitization & Validation Done
         $settings = $this->sanitize_taxonomy_settings( $settings );
-        // Sanitization & Validation done manually.
         update_option( Utils::get_taxonomies_option_name(), $settings );
         if ( $settings[$enable_taxonomy_key] ) {
             $tax_page_url = admin_url( sprintf( 'edit-tags.php?taxonomy=%s&post_type=%s', esc_attr( $taxonomy ), esc_attr( $post_type_name ) ) );
@@ -100,8 +105,7 @@ class API {
     }
 
     public function ajax_get_shortcodes() {
-        global $wpdb;
-        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A );
+        $shortcodes = Utils::get_all_shortcodes();
         foreach ( $shortcodes as &$shortcode ) {
             $shortcode['settings'] = Utils::maybe_json_decode( $shortcode['settings'] );
             $shortcode['settings'] = $this->validate_shortcode( $shortcode )->get_settings_value();
@@ -116,11 +120,21 @@ class API {
     public function fetch_shortcode( $shortcode_id ) {
         global $wpdb;
         $shortcode_id = abs( $shortcode_id );
-        $shortcode = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}wps_team WHERE id = %d LIMIT 1", $shortcode_id ), ARRAY_A );
+        $shortcode = wp_cache_get( "wps_team_shortcode_{$shortcode_id}", 'wps_team' );
+        if ( false === $shortcode ) {
+            $shortcode = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}wps_team WHERE id = %d LIMIT 1", $shortcode_id ), ARRAY_A );
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+            if ( !empty( $shortcode ) ) {
+                wp_cache_set( "wps_team_shortcode_{$shortcode_id}", $shortcode, 'wps_team' );
+            }
+        }
         if ( empty( $shortcode ) ) {
             return;
         }
         if ( $wpdb->last_error !== '' ) {
+            if ( wp_doing_ajax() ) {
+                wp_send_json_error( Utils::db_last_error_message(), 500 );
+            }
             return false;
         }
         $shortcode['settings'] = Utils::maybe_json_decode( $shortcode['settings'] );
@@ -131,39 +145,48 @@ class API {
 
     public function ajax_update_shortcode() {
         global $wpdb;
-        if ( empty( $_REQUEST['id'] ) ) {
-            new Error();
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $shortcode_id = ( isset( $_REQUEST['id'] ) ? absint( wp_unslash( $_REQUEST['id'] ) ) : 0 );
+        if ( empty( $shortcode_id ) ) {
+            wp_send_json_error( __( 'Invalid Shortcode ID', 'wps-team' ), 400 );
         }
         $data = [];
-        $shortcode_id = abs( $_REQUEST['id'] );
         $shortcode = $this->fetch_shortcode( $shortcode_id );
-        if ( !empty( $_REQUEST['name'] ) ) {
-            $shortcode['name'] = sanitize_text_field( $_REQUEST['name'] );
-            $data['name'] = $shortcode['name'];
+        // Update name if provided
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $name = ( isset( $_REQUEST['name'] ) && $_REQUEST['name'] !== '' ? sanitize_text_field( wp_unslash( $_REQUEST['name'] ) ) : '' );
+        if ( $name !== '' ) {
+            $shortcode['name'] = $name;
+            $data['name'] = $name;
         }
         $return_data = $shortcode;
-        if ( !empty( $_REQUEST['settings'] ) ) {
-            $shortcode['settings'] = $_REQUEST['settings'];
-            // Settings will be Sanitized & Validated by Shortcode_Editor class.
+        // Update settings if provided
+        // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
+        $settings = ( isset( $_REQUEST['settings'] ) ? wp_unslash( $_REQUEST['settings'] ) : '' );
+        if ( !empty( $settings ) ) {
+            $shortcode['settings'] = $settings;
+            // Will be sanitized by Shortcode_Editor class
             $shortcode = $this->validate_shortcode( $shortcode );
             $data['settings'] = Utils::maybe_json_encode( $shortcode->get_settings_value() );
             $return_data = $shortcode->get_data();
         }
-        $data["updated_at"] = current_time( 'mysql' );
+        $data['updated_at'] = current_time( 'mysql' );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
         $wpdb->update(
             "{$wpdb->prefix}wps_team",
             $data,
-            array(
+            [
                 'id' => $shortcode_id,
-            ),
+            ],
             $this->db_columns_format()
         );
         if ( $wpdb->last_error !== '' ) {
-            wp_send_json_error( sprintf( _x( 'Database Error: %s', 'Dashboard', 'wpspeedo-team' ), $wpdb->last_error ), 500 );
+            wp_send_json_error( Utils::db_last_error_message(), 500 );
         }
+        wp_cache_delete( "wps_team_shortcode_{$shortcode_id}", 'wps_team' );
         do_action( 'wps_shortcode_updated', $shortcode_id );
         wp_send_json_success( [
-            'message' => sprintf( '<strong>%s</strong> %s', _x( 'Congrats!', 'Dashboard', 'wpspeedo-team' ), _x( 'Shortcode updated successfully', 'Dashboard', 'wpspeedo-team' ) ),
+            'message' => sprintf( '<strong>%s</strong> %s', esc_html_x( 'Congrats!', 'Dashboard', 'wps-team' ), esc_html_x( 'Shortcode updated successfully', 'Dashboard', 'wps-team' ) ),
             'data'    => $return_data,
         ] );
     }
@@ -182,64 +205,78 @@ class API {
 
     public function ajax_create_shortcode() {
         global $wpdb;
-        if ( empty( $_REQUEST['settings'] ) ) {
-            new Error();
+        // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
+        $raw_settings = ( isset( $_REQUEST['settings'] ) ? wp_unslash( $_REQUEST['settings'] ) : '' );
+        if ( empty( $raw_settings ) ) {
+            wp_send_json_error( esc_html__( 'Invalid settings data.', 'wps-team' ), 400 );
         }
-        $shortcode_name = ( empty( $_REQUEST['name'] ) ? 'Undefined' : sanitize_text_field( $_REQUEST['name'] ) );
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $name = ( isset( $_REQUEST['name'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['name'] ) ) : '' );
+        $shortcode_name = ( $name !== '' ? $name : 'Undefined' );
+        // Validate shortcode (sanitize inside the class)
         $shortcode = $this->validate_shortcode( [
             'id'       => uniqid(),
             'name'     => $shortcode_name,
-            'settings' => $_REQUEST['settings'],
+            'settings' => $raw_settings,
         ] );
-        $data = array(
-            "name"       => $shortcode->get_data( 'name' ),
-            "settings"   => Utils::maybe_json_encode( $shortcode->get_settings_value() ),
-            "created_at" => current_time( 'mysql' ),
-            "updated_at" => current_time( 'mysql' ),
-        );
+        $data = [
+            'name'       => $shortcode->get_data( 'name' ),
+            'settings'   => Utils::maybe_json_encode( $shortcode->get_settings_value() ),
+            'created_at' => current_time( 'mysql' ),
+            'updated_at' => current_time( 'mysql' ),
+        ];
         $wpdb->insert( "{$wpdb->prefix}wps_team", $data, $this->db_columns_format() );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
         if ( $wpdb->last_error !== '' ) {
-            wp_send_json_error( sprintf( _x( 'Database Error: %s', 'Dashboard', 'wpspeedo-team' ), $wpdb->last_error ), 500 );
+            wp_send_json_error( Utils::db_last_error_message(), 500 );
         }
+        $data['id'] = $wpdb->insert_id;
+        wp_cache_set( "wps_team_shortcode_{$wpdb->insert_id}", $data, 'wps_team' );
         do_action( 'wps_shortcode_created', $wpdb->insert_id );
         wp_send_json_success( [
-            'message' => sprintf( '<strong>%s</strong> %s', _x( 'Congrats!', 'Dashboard', 'wpspeedo-team' ), _x( 'Shortcode created successfully', 'Dashboard', 'wpspeedo-team' ) ),
+            'message' => sprintf( '<strong>%s</strong> %s', _x( 'Congrats!', 'Dashboard', 'wps-team' ), _x( 'Shortcode created successfully', 'Dashboard', 'wps-team' ) ),
             'data'    => $this->fetch_shortcode( $wpdb->insert_id ),
         ] );
     }
 
     public function ajax_delete_shortcode() {
         global $wpdb;
-        if ( empty( $_REQUEST['id'] ) ) {
-            new Error();
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $id = ( isset( $_REQUEST['id'] ) ? absint( wp_unslash( $_REQUEST['id'] ) ) : 0 );
+        if ( !$id ) {
+            wp_send_json_error( esc_html__( 'Invalid shortcode ID.', 'wps-team' ), 400 );
         }
-        $data = array(
-            "id" => abs( $_REQUEST['id'] ),
-        );
-        $wpdb->delete( "{$wpdb->prefix}wps_team", $data, ['%d'] );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+        $wpdb->delete( "{$wpdb->prefix}wps_team", [
+            'id' => $id,
+        ], ['%d'] );
         if ( $wpdb->last_error !== '' ) {
-            wp_send_json_error( sprintf( _x( 'Database Error: %s', 'Dashboard', 'wpspeedo-team' ), $wpdb->last_error ), 500 );
+            wp_send_json_error( Utils::db_last_error_message(), 500 );
         }
-        do_action( 'wps_shortcode_deleted', $data['id'] );
+        wp_cache_delete( "wps_team_shortcode_{$id}", 'wps_team' );
+        do_action( 'wps_shortcode_deleted', $id );
         wp_send_json_success( [
-            'message' => sprintf( '<strong>%s</strong> %s', _x( 'Done!', 'Dashboard', 'wpspeedo-team' ), _x( 'Shortcode deleted successfully', 'Dashboard', 'wpspeedo-team' ) ),
-            'data'    => $data,
+            'message' => sprintf( '<strong>%s</strong> %s', esc_html_x( 'Done!', 'Dashboard', 'wps-team' ), esc_html_x( 'Shortcode deleted successfully', 'Dashboard', 'wps-team' ) ),
+            'data'    => [
+                'id' => $id,
+            ],
         ] );
     }
 
     public function ajax_clone_shortcode() {
         global $wpdb;
-        if ( empty( $_REQUEST['clone_id'] ) ) {
-            wp_send_json_error( _x( 'Clone Id not provided', 'Dashboard', 'wpspeedo-team' ), 400 );
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $clone_id = ( isset( $_REQUEST['clone_id'] ) ? absint( wp_unslash( $_REQUEST['clone_id'] ) ) : 0 );
+        if ( !$clone_id ) {
+            wp_send_json_error( _x( 'Clone Id not provided', 'Dashboard', 'wps-team' ), 400 );
         }
-        $clone_id = abs( $_REQUEST['clone_id'] );
         $clone_shortcode = $this->fetch_shortcode( $clone_id );
         if ( empty( $clone_shortcode ) ) {
-            wp_send_json_error( _x( 'Clone shortcode not found', 'Dashboard', 'wpspeedo-team' ), 404 );
+            wp_send_json_error( _x( 'Clone shortcode not found', 'Dashboard', 'wps-team' ), 404 );
         }
         $shortcode = $this->validate_shortcode( [
             'id'       => uniqid(),
-            'name'     => $clone_shortcode['name'] . ' ' . _x( '- Cloned', 'Editor', 'wpspeedo-team' ),
+            'name'     => $clone_shortcode['name'] . ' ' . _x( '- Cloned', 'Editor', 'wps-team' ),
             'settings' => $clone_shortcode['settings'],
         ] );
         $settings_data = $shortcode->get_settings_value();
@@ -249,23 +286,30 @@ class API {
             "created_at" => current_time( 'mysql' ),
             "updated_at" => current_time( 'mysql' ),
         );
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
         $wpdb->insert( "{$wpdb->prefix}wps_team", $data, $this->db_columns_format() );
         if ( $wpdb->last_error !== '' ) {
-            wp_send_json_error( sprintf( _x( 'Database Error: %s', 'Dashboard', 'wpspeedo-team' ), $wpdb->last_error ), 500 );
+            wp_send_json_error( Utils::db_last_error_message(), 500 );
         }
+        $data['id'] = $wpdb->insert_id;
+        wp_cache_set( "wps_team_shortcode_{$wpdb->insert_id}", $data, 'wps_team' );
         do_action( 'wps_shortcode_cloned', $wpdb->insert_id );
         wp_send_json_success( [
-            'message' => sprintf( '<strong>%s</strong> %s', _x( 'Congrats!', 'Dashboard', 'wpspeedo-team' ), _x( 'Shortcode cloned successfully', 'Dashboard', 'wpspeedo-team' ) ),
+            'message' => sprintf( '<strong>%s</strong> %s', esc_html_x( 'Congrats!', 'Dashboard', 'wps-team' ), esc_html_x( 'Shortcode cloned successfully', 'Dashboard', 'wps-team' ) ),
             'data'    => $this->fetch_shortcode( $wpdb->insert_id ),
         ] );
     }
 
     public function ajax_temp_save_settings() {
-        if ( empty( $temp_key = sanitize_key( $_REQUEST['temp_key'] ) ) ) {
-            wp_send_json_error( _x( 'No temp key provide', 'Editor', 'wpspeedo-team' ), 400 );
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $temp_key = ( isset( $_REQUEST['temp_key'] ) ? sanitize_key( wp_unslash( $_REQUEST['temp_key'] ) ) : 0 );
+        // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
+        $settings = ( isset( $_REQUEST['settings'] ) ? wp_unslash( $_REQUEST['settings'] ) : [] );
+        if ( empty( $temp_key ) ) {
+            wp_send_json_error( _x( 'No temp key provide', 'Editor', 'wps-team' ), 400 );
         }
-        if ( empty( $settings = $_REQUEST['settings'] ) ) {
-            wp_send_json_error( _x( 'No temp settings provided', 'Editor', 'wpspeedo-team' ), 400 );
+        if ( empty( $settings ) ) {
+            wp_send_json_error( _x( 'No temp settings provided', 'Editor', 'wps-team' ), 400 );
         }
         $shortcode = $this->validate_shortcode( [
             'id'       => $temp_key,
@@ -274,7 +318,7 @@ class API {
         ] );
         delete_transient( $temp_key );
         $settings_value = $shortcode->get_settings_value();
-        set_transient( $temp_key, $settings_value, HOUR_IN_SECONDS * 6 );
+        set_transient( $temp_key, $settings_value, HOUR_IN_SECONDS );
         wp_send_json_success();
     }
 
@@ -313,7 +357,7 @@ class API {
                 $data[$tax_root_key . '_terms'] = array_map( [$this, 'map_term_for_sort'], $terms );
             }
         }
-        wp_reset_query();
+        wp_reset_postdata();
         wp_send_json_success( $data );
     }
 

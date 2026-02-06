@@ -11,17 +11,17 @@ class Divi_Module extends ET_Builder_Module {
     public $vb_support = 'on';
 
     public function init() {
-        $this->name = esc_html__( 'WPS Team', 'wpspeedo-team' );
+        $this->name = esc_html__( 'WPS Team', 'wps-team' );
     }
 
     public function get_fields() {
 
         return array(
             'shortcode'     => array(
-                'label'           => esc_html__( 'Select Shortcode', 'wpspeedo-team' ),
+                'label'           => esc_html__( 'Select Shortcode', 'wps-team' ),
                 'type'            => 'select',
                 'option_category' => 'basic_option',
-                'description'     => esc_html__( 'Display Team Members', 'wpspeedo-team' ),
+                'description'     => esc_html__( 'Display Team Members', 'wps-team' ),
                 'toggle_slug'     => 'main_content',
                 'options'         => self::get_shortcode_list(),
                 'computed_affects'   => array(

@@ -28,27 +28,43 @@ class Export_Import_Manager {
 
     }
 
+    public function get_wp_filesystem() {
+        if ( ! function_exists( 'WP_Filesystem' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+        }
+        WP_Filesystem();
+        global $wp_filesystem;
+        return $wp_filesystem;
+    }
+    
     public function ajax_export_data() {
-
+        
         // allow for manage_options capability
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( __('You do not have permission to perform this action', 'wpspeedo-team'), 403 );
+            wp_send_json_error( __('You do not have permission to perform this action', 'wps-team'), 403 );
         }
-
+        
         // Check for required data
-        if ( empty( $options = $_REQUEST['options'] ) ) {
-            wp_send_json_error( __('No export data provided', 'wpspeedo-team'), 400 );
-        }
+        // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
+        $options = isset($_REQUEST['options']) ? (array) wp_unslash($_REQUEST['options']) : [];
 
-        // Validate the export data
+        $options = wp_parse_args( $options, [
+            'team_members' => false,
+            'shortcodes'   => false,
+            'settings'     => false,
+        ] );
+
         $export_team_members = wp_validate_boolean( $options['team_members'] );
         $export_shortcodes   = wp_validate_boolean( $options['shortcodes'] );
         $export_settings     = wp_validate_boolean( $options['settings'] );
 
         // Check for valid export data
         if ( ! $export_team_members && ! $export_shortcodes && ! $export_settings ) {
-            wp_send_json_error( __('No export data provided', 'wpspeedo-team'), 400 );
+            wp_send_json_error( __('No export data provided', 'wps-team'), 400 );
         }
+
+        // Prepare for heavy operation
+        Utils::prepare_heavy_operation();
 
         // Init the zip archive
         $this->init_zip_file();
@@ -188,7 +204,7 @@ class Export_Import_Manager {
 
         global $wpdb;
 
-        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A );
+        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A ); // phpcs:ignore
 
         foreach( $shortcodes as &$shortcode ) {
             $shortcode['settings'] = Utils::maybe_json_decode( $shortcode['settings'] );
@@ -199,6 +215,7 @@ class Export_Import_Manager {
         return $shortcodes;
     }
 
+    // phpcs:ignore WordPress.Security.NonceVerification
     public function init_zip_file() {
 
         // Init the zip archive
@@ -208,7 +225,7 @@ class Export_Import_Manager {
         $this->zip_file = get_temp_dir() . 'wpspeedo/wps-team--export.zip';
 
         // Delete the zip file if it exists
-        if ( file_exists( $this->zip_file ) ) unlink( $this->zip_file );
+        if ( file_exists( $this->zip_file ) ) wp_delete_file( $this->zip_file );
 
         // Create the zip file
         wp_mkdir_p( dirname( $this->zip_file ) );
@@ -222,9 +239,12 @@ class Export_Import_Manager {
         // Close the zip file
         $this->zip_instance->close();
 
+        // Initialize WP_Filesystem
+        $wp_filesystem = $this->get_wp_filesystem();
+
         // Check file existence and readability
-        if ( ! file_exists($this->zip_file) || ! is_readable($this->zip_file) ) {
-            wp_send_json_error( __('Export file not found or inaccessible', 'wpspeedo-team'), 500 );
+        if ( ! $wp_filesystem->exists( $this->zip_file ) || ! $wp_filesystem->is_readable( $this->zip_file ) ) {
+            wp_send_json_error( __( 'Export file not found or inaccessible', 'wps-team' ), 500 );
         }
 
         // Send the zip file
@@ -232,13 +252,17 @@ class Export_Import_Manager {
         header( 'Content-Type: application/zip' );
         header( 'Content-Disposition: attachment; filename="wps-team--export.zip"' );
         header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
-        header( 'Content-Length: ' . filesize($this->zip_file) );
         header( 'Pragma: public' );
+        header( 'Content-Length: ' . $wp_filesystem->size( $this->zip_file ) );
 
-        readfile( $this->zip_file );
+        // Output the file contents
+        echo $wp_filesystem->get_contents( $this->zip_file ); // phpcs:ignore WordPress.Security.EscapeOutput
 
-        // Delete the zip file
-        if ( file_exists( $this->zip_file ) ) unlink( $this->zip_file );
+        // Delete the zip file after sending
+        if ( $wp_filesystem->exists( $this->zip_file ) ) {
+            $wp_filesystem->delete( $this->zip_file );
+        }
+
         exit;
     }
 
@@ -246,25 +270,26 @@ class Export_Import_Manager {
 
         // allow for manage_options capability
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_send_json_error( __('You do not have permission to perform this action', 'wpspeedo-team'), 403 );
+            wp_send_json_error( __('You do not have permission to perform this action', 'wps-team'), 403 );
         }
 
         // Check for required data
-        if ( empty($_FILES['import_file']) ) wp_send_json_error( __('No import file provided', 'wpspeedo-team'), 400 );
+        // phpcs:ignore WordPress.Security.NonceVerification
+        if ( empty($_FILES['import_file']) ) wp_send_json_error( __('No import file provided', 'wps-team'), 400 );
 
         // Save the uploaded file
         $this->upload_dir = $this->save_imported_file();
 
         // Check if the data.json file exists
         $json_import_file = $this->upload_dir . '/data.json';
-        if ( ! file_exists( $json_import_file ) ) wp_send_json_error( __('Invalid file', 'wpspeedo-team'), 400 );
+        if ( ! file_exists( $json_import_file ) ) wp_send_json_error( __('Invalid file', 'wps-team'), 400 );
 
         // Read the JSON data
         $json_data = @file_get_contents($this->upload_dir . '/data.json');
         $json_data = json_decode($json_data, true);
 
         // Check for valid JSON data
-        if (empty($json_data)) wp_send_json_error( __('Invalid file content', 'wpspeedo-team'), 400 );
+        if (empty($json_data)) wp_send_json_error( __('Invalid file content', 'wps-team'), 400 );
         
         // Initiate the Import Process
         $this->import__team_data( $json_data );
@@ -273,7 +298,7 @@ class Export_Import_Manager {
         Utils::delete_directory_recursive( $this->upload_dir );
 
         // Send the success message
-        wp_send_json_success( __('Data imported successfully', 'wpspeedo-team'), 200 );
+        wp_send_json_success( __('Data imported successfully', 'wps-team'), 200 );
 
     }
 
@@ -442,7 +467,7 @@ class Export_Import_Manager {
 
         if ( ! $term_id ) return false;
 
-        $term_id = $wpdb->get_var( $wpdb->prepare( "SELECT term_id FROM $wpdb->termmeta WHERE meta_key = '_wps_team_import_id' AND meta_value = %d LIMIT 1", $term_id ) );
+        $term_id = $wpdb->get_var( $wpdb->prepare( "SELECT term_id FROM $wpdb->termmeta WHERE meta_key = '_wps_team_import_id' AND meta_value = %d LIMIT 1", $term_id ) ); // phpcs:ignore
 
         if ( ! $term_id ) return false;
 
@@ -457,7 +482,7 @@ class Export_Import_Manager {
 
         if ( ! $post_id ) return false;
 
-        $post_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wps_team_import_id' AND meta_value = %d LIMIT 1", $post_id ) );
+        $post_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_wps_team_import_id' AND meta_value = %d LIMIT 1", $post_id ) ); // phpcs:ignore
 
         if ( ! $post_id ) return false;
 
@@ -491,7 +516,7 @@ class Export_Import_Manager {
             );
 
             // Insert the shortcode
-            $wpdb->insert( "{$wpdb->prefix}wps_team", $data, plugin()->api->db_columns_format() );
+            $wpdb->insert( "{$wpdb->prefix}wps_team", $data, plugin()->api->db_columns_format() ); // phpcs:ignore
         }
 
     }
@@ -513,34 +538,54 @@ class Export_Import_Manager {
     }
 
     public function save_imported_file() {
+        
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $import_file = ! empty($_FILES['import_file']) && is_array($_FILES['import_file']) 
+            // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
+            ? array_map( fn($v) => is_array($v) ? $v : sanitize_text_field(wp_unslash($v)), $_FILES['import_file'] )
+            : wp_send_json_error( __( 'No file uploaded', 'wps-team' ), 400 );
 
-        $import_file     = $_FILES['import_file'];
-        $file_tmp_path   = $import_file['tmp_name'];
-        $file_name       = $import_file['name'];
-        $file_name_cmps  = explode(".", $file_name);
-        $file_extension  = strtolower(end($file_name_cmps));
+        $file_tmp_path  = $import_file['tmp_name'];
+        $file_name      = sanitize_file_name( $import_file['name'] );
+        $file_extension = strtolower( pathinfo( $file_name, PATHINFO_EXTENSION ) );
 
-        if ( $file_extension != 'zip' ) wp_send_json_error( __('Invalid file type', 'wpspeedo-team'), 400 );
+        if ( $file_extension !== 'zip' ) {
+            wp_send_json_error( __( 'Invalid file type', 'wps-team' ), 400 );
+        }
 
         $upload_file_dir = get_temp_dir() . 'wpspeedo/wps-team';
 
-        if ( is_dir($upload_file_dir) ) Utils::delete_directory_recursive( $upload_file_dir );
+        // Initialize WP_Filesystem
+        $wp_filesystem = $this->get_wp_filesystem();
 
-        wp_mkdir_p($upload_file_dir);
+        // Delete existing directory
+        if ( $wp_filesystem->is_dir( $upload_file_dir ) ) {
+            Utils::delete_directory_recursive( $upload_file_dir );
+        }
 
-        $dest_file_path  = $upload_file_dir . '/' . $file_name;
+        // Create upload directory
+        $wp_filesystem->mkdir( $upload_file_dir );
 
-        if (move_uploaded_file($file_tmp_path, $dest_file_path)) {
-            $zip = new \ZipArchive;
-            if ($zip->open($dest_file_path) === true) {
-                $zip->extractTo($upload_file_dir);
-                $zip->close();
-                unlink($dest_file_path);
-            } else {
-                wp_send_json_error(__('File upload failed', 'wpspeedo-team'), 400);
+        $dest_file_path = $upload_file_dir . '/' . $file_name;
+
+        // Copy uploaded file using WP_Filesystem
+        if ( ! $wp_filesystem->copy( $file_tmp_path, $dest_file_path, true, FS_CHMOD_FILE ) ) {
+            wp_send_json_error( __( 'File upload failed', 'wps-team' ), 400 );
+        }
+
+        // Extract zip
+        $zip = new \ZipArchive();
+        if ( $zip->open( $dest_file_path ) === true ) {
+            $zip->extractTo( $upload_file_dir );
+            $zip->close();
+
+            // Delete the uploaded zip
+            if ( $wp_filesystem->exists( $dest_file_path ) ) {
+                $wp_filesystem->delete( $dest_file_path );
             }
+
         } else {
-            wp_send_json_error(__('File upload failed', 'wpspeedo-team'), 400);
+            wp_send_json_error( __( 'File upload failed', 'wps-team' ), 400 );
         }
 
         return $upload_file_dir;

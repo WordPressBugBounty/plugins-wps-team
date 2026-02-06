@@ -21,7 +21,7 @@ class Integration_Elementor extends Integration {
     public function add_widget_category( $elements_manager ) {
     
         $elements_manager->add_category( 'wpspeedo', [
-            'title' => _x( 'WPSpeedo Widgets', 'Elementor Widget', 'wpspeedo-team' ),
+            'title' => _x( 'WPSpeedo Widgets', 'Elementor Widget', 'wps-team' ),
             'icon' => 'fa fa-plug',
         ]);
     

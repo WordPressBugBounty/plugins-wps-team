@@ -21,9 +21,9 @@ class Fonts {
 	public static function get_font_groups() {
 		if ( null === self::$font_groups ) {
 			$font_groups = [
-				self::SYSTEM => esc_html_x( 'System', 'Editor', 'wpspeedo-team' ),
-				self::GOOGLE => esc_html_x( 'Google', 'Editor', 'wpspeedo-team' ),
-				self::EARLYACCESS => esc_html_x( 'Google Early Access', 'Editor', 'wpspeedo-team' ),
+				self::SYSTEM => esc_html_x( 'System', 'Editor', 'wps-team' ),
+				self::GOOGLE => esc_html_x( 'Google', 'Editor', 'wps-team' ),
+				self::EARLYACCESS => esc_html_x( 'Google Early Access', 'Editor', 'wps-team' ),
 			];
 
 			$font_groups = apply_filters( 'wpspeedo_team/fonts/groups', $font_groups );

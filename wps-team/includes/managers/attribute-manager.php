@@ -82,7 +82,7 @@ class Attribute_Manager {
 	}
 
     public function print_attribute_string( $element ) {
-        echo sanitize_text_field( $this->get_attribute_string( $element ) );
+        echo sanitize_text_field( $this->get_attribute_string( $element ) ); // phpcs:ignore WordPress.Security.EscapeOutput
     }
 
 }

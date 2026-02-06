@@ -11,7 +11,7 @@ class Control_Upgrade_Notice extends Base_Data_Control {
     }
 
     protected function get_notice_text() {
-        return _x( 'Upgrade to Pro', 'Editor: Upgrade Notice', 'wpspeedo-team' );
+        return _x( 'Upgrade to Pro', 'Editor: Upgrade Notice', 'wps-team' );
     }
 
     protected function get_default_settings() {

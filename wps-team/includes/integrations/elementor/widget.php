@@ -9,7 +9,7 @@ class Elementor_Widget extends \Elementor\Widget_Base {
     }
 
     public function get_title() {
-        return __( 'WPS Team', 'wpspeedo-team' );
+        return __( 'WPS Team', 'wps-team' );
     }
 
     public function get_icon() {
@@ -25,7 +25,7 @@ class Elementor_Widget extends \Elementor\Widget_Base {
         $this->start_controls_section(
             'content_section',
             [
-                'label' => __( 'Content', 'wpspeedo-team' ),
+                'label' => __( 'Content', 'wps-team' ),
                 'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
             ]
         );
@@ -33,7 +33,7 @@ class Elementor_Widget extends \Elementor\Widget_Base {
         $this->add_control(
             'shortcode_id',
             [
-                'label' => __( 'Select Shortcode', 'wpspeedo-team' ),
+                'label' => __( 'Select Shortcode', 'wps-team' ),
                 'label_block' => true,
                 'type' => \Elementor\Controls_Manager::SELECT2,
                 'options' => self::get_shortcode_list(),
@@ -71,15 +71,16 @@ class Elementor_Widget extends \Elementor\Widget_Base {
 
         $shortcode_id = $this->get_settings_for_display( 'shortcode_id' );
 
-        if ( ! empty($shortcode_id) ) {
-            $shortcode_id = str_replace( 'shortcode-', '', $shortcode_id );
-            if ( is_numeric($shortcode_id) ) {
-                echo Integration::render_shortcode( (int) $shortcode_id );
-                return;
-            }
+        if ( empty($shortcode_id) ) {
+            echo wp_kses_post( Integration::get_empty_message() );
+            return;
         }
-        
-        echo Integration::display_empty_message();
+
+        $shortcode_id = str_replace( 'shortcode-', '', $shortcode_id );
+        if ( is_numeric($shortcode_id) ) {
+            echo Integration::render_shortcode( (int) $shortcode_id ); // phpcs:ignore WordPress.Security.EscapeOutput
+            return;
+        }
 
     }
 

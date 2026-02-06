@@ -16,13 +16,13 @@ class Group_Control_Text_Shadow extends Group_Base_Control {
 		$controls = [];
 
 		$controls['color'] = [
-			'label' => _x( 'Text Shadow', 'Editor: Text Shadow Control', 'wpspeedo-team' ),
+			'label' => _x( 'Text Shadow', 'Editor: Text Shadow Control', 'wps-team' ),
 			'type' => Controls_Manager::COLOR,
 			'separator' => '',
 		];
 
 		$controls['horizontal'] = [
-			'label' => _x( 'Horizontal', 'Editor: Text Shadow Control', 'wpspeedo-team' ),
+			'label' => _x( 'Horizontal', 'Editor: Text Shadow Control', 'wps-team' ),
 			'type' => Controls_Manager::SLIDER,
 			'separator' => '',
 			'min' => -100,
@@ -30,7 +30,7 @@ class Group_Control_Text_Shadow extends Group_Base_Control {
 		];
 
 		$controls['vertical'] = [
-			'label' => _x( 'Vertical', 'Editor: Text Shadow Control', 'wpspeedo-team' ),
+			'label' => _x( 'Vertical', 'Editor: Text Shadow Control', 'wps-team' ),
 			'type' => Controls_Manager::SLIDER,
 			'separator' => '',
 			'min' => -100,
@@ -38,7 +38,7 @@ class Group_Control_Text_Shadow extends Group_Base_Control {
 		];
 
 		$controls['blur'] = [
-			'label' => _x( 'Blur', 'Editor: Text Shadow Control', 'wpspeedo-team' ),
+			'label' => _x( 'Blur', 'Editor: Text Shadow Control', 'wps-team' ),
 			'type' => Controls_Manager::SLIDER,
 			'separator' => '',
 			'min' => 0,
@@ -51,7 +51,7 @@ class Group_Control_Text_Shadow extends Group_Base_Control {
 	protected function get_default_options() {
 		return [
 			'popover' => [
-				'starter_title' => _x( 'Text Shadow', 'Editor: Text Shadow Control', 'wpspeedo-team' ),
+				'starter_title' => _x( 'Text Shadow', 'Editor: Text Shadow Control', 'wps-team' ),
 				'starter_name' => 'text_shadow_type',
 				'starter_value' => 'yes',
 				'settings' => [

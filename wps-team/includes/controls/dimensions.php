@@ -41,11 +41,11 @@ class Control_Dimensions extends Base_Data_Control {
 				'allowed_dimensions' => 'all',
 				'placeholder' => '',
 				'tooltips' => [
-					'top' => _x('Top', 'Editor: Dimension', 'wpspeedo-team'),
-					'right' => _x('Right', 'Editor: Dimension', 'wpspeedo-team'),
-					'bottom' => _x('Bottom', 'Editor: Dimension', 'wpspeedo-team'),
-					'left' => _x('Left', 'Editor: Dimension', 'wpspeedo-team'),
-					'link' => _x('Link Together', 'Editor: Dimension', 'wpspeedo-team'),
+					'top' => _x('Top', 'Editor: Dimension', 'wps-team'),
+					'right' => _x('Right', 'Editor: Dimension', 'wps-team'),
+					'bottom' => _x('Bottom', 'Editor: Dimension', 'wps-team'),
+					'left' => _x('Left', 'Editor: Dimension', 'wps-team'),
+					'link' => _x('Link Together', 'Editor: Dimension', 'wps-team'),
 				],
 			]
 		);

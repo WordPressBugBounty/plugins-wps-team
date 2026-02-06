@@ -50,7 +50,7 @@ abstract class Notification {
             $data = [ 'days' => $day, 'fired' => false ];
             
             if ( $index == 0 ) {
-                $data['date'] = date( "Y-m-d", time() + ( DAY_IN_SECONDS * $day ) );
+                $data['date'] = gmdate( "Y-m-d", time() + ( DAY_IN_SECONDS * $day ) );
             } else {
                 $data['date'] = $this->date_increment( $this->intervals[ $index-1 ]['date'], $day );
             }

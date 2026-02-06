@@ -28,10 +28,14 @@ trait AJAX_Handler {
             }
         }
 
-        wp_send_json_error( _x('Something is wrong, request not found', 'Dashboard', 'wpspeedo-team'), 404 );
+        wp_send_json_error( _x('Something is wrong, request not found', 'Dashboard', 'wps-team'), 404 );
     }
 
     public function handle_request_route_public() {
+
+        if ( !empty($_GET['route']) && $_GET['route'] === 'get_fresh_nonce' ) {
+            $this->ajax_public_get_fresh_nonce();
+        }
 
         check_ajax_referer( '_' . $this->ajax_key_public . '_nonce' );
 
@@ -42,7 +46,7 @@ trait AJAX_Handler {
             }
         }
 
-        wp_send_json_error( _x('Something is wrong, request not found', 'Public', 'wpspeedo-team'), 404 );
+        wp_send_json_error( _x('Something is wrong, request not found', 'Public', 'wps-team'), 404 );
     }
 
 }

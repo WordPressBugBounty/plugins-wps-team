@@ -17,17 +17,17 @@ class Rating_Notice extends Notice {
         <p class="wpspeedo--notice-actions">
 
             <a class="button button-primary rate-plugin-button wps-team--notice-disable wps--notice-allow-default" href="<?php echo esc_url( $this->plugin_rate_url() ); ?>" rel="nofollow" target="_blank">
-                <?php echo esc_html__('Rate WPS Team', 'wpspeedo-team'); ?>
+                <?php echo esc_html__('Rate WPS Team', 'wps-team'); ?>
             </a>
     
             <a class="button button-flat wps-team--notice-dismiss" href="#">
                 <span class="dashicons dashicons-clock"></span>
-                <?php echo esc_html__('Remind me later', 'wpspeedo-team'); ?>
+                <?php echo esc_html__('Remind me later', 'wps-team'); ?>
             </a>
     
             <a class="button button-flat wps-team--notice-disable" href="#">
                 <span class="dashicons dashicons-yes-alt"></span>
-                <?php echo esc_html__('I already did', 'wpspeedo-team'); ?>
+                <?php echo esc_html__('I already did', 'wps-team'); ?>
             </a>
 
         </p>

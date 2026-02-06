@@ -8,7 +8,7 @@ class Repeater extends Editor_Controls {
 
     private static $counter = 0;
 
-	public function __construct( array $data = [], array $args = null ) {
+	public function __construct( array $data = [], array $args = [] ) {
 		self::$counter++;
 
 		parent::__construct( $data, $args );

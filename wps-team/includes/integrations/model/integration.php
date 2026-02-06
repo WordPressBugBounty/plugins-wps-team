@@ -7,32 +7,39 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 abstract class Integration {
 
     static function get_shortcodes() {
-        global $wpdb;
-        return $wpdb->get_results( "SELECT id, name FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A );
+        return array_map( function( $item ) {
+            return [
+                'name' => $item['name'],
+                'id'   => $item['id']
+            ];
+        }, Utils::get_all_shortcodes() );
     }
     
     static function render_shortcode( $id ) {
         return do_shortcode( sprintf("[wpspeedo-team id=%s]", $id ) );
     }
     
-    static function display_empty_message() {
-        return sprintf( '<div class="wps--empty-message">%s</div>', 'Please Select a Shortcode from the Dropdown' );
+    static function get_empty_message() {
+        return sprintf( '<div class="wps--empty-message">%s</div>', esc_html__( 'Please Select a Shortcode from the Dropdown', 'wps-team' ) );
     }
     
     function load_assets() {
+
         plugin()->assets->register_assets();
+
 		wp_enqueue_style( 'wpspeedo-swiper' );
 		wp_enqueue_style( 'wpspeedo-magnific-popup' );
+        
 		wp_enqueue_script( 'wpspeedo-swiper' );
 		wp_enqueue_script( 'wpspeedo-magnific-popup' );
 		wp_enqueue_script( 'wpspeedo-isotope' );
-		wp_enqueue_script( 'wpspeedo-dot' );
+
 		wp_enqueue_style( plugin()->assets->asset_handler() );
 		wp_enqueue_script( plugin()->assets->asset_handler() );
     }
 
     static function shortcode_default_option() {
-        return __( 'Select a Shortcode', 'wpspeedo-team' );
+        return __( 'Select a Shortcode', 'wps-team' );
     }
 
     // abstract function get_shortcode_options();

@@ -13,7 +13,7 @@ class Control_Code extends Base_Data_Control {
 	public function get_value( $control, $settings ) {
 		$value = parent::get_value( $control, $settings );
 		if ( !empty($value['value']) ) {
-			$value['value'] = Utils::minify_validated_css( $value['value'] );
+			$value['value'] = Utils::validate_css( $value['value'] );
 		}
 		return $value;
 	}

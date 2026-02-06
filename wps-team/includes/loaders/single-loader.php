@@ -35,18 +35,8 @@ class Single_Loader extends Attribute_Manager {
     }
 
     public function set_social_attributes() {
-
-        $theme_defaults = [];
-
-        $setting_atts = [
-            'shape'                 => Utils::get_setting( 'social_links_shape' ),
-            'bg_color_type'         => Utils::get_setting( 'social_links_bg_color_type' ),
-            'bg_color_type_hover'   => Utils::get_setting( 'social_links_bg_color_type_hover' ),
-            'color_type'            => Utils::get_setting( 'social_links_color_type' ),
-            'color_type_hover'      => Utils::get_setting( 'social_links_color_type_hover' )
-        ];
         
-        $social_classes = Utils::get_social_classes( $theme_defaults, $setting_atts );
+        $social_classes = Utils::get_social_classes( false, [], 'single' );
         
         $this->add_attribute( 'social', 'class', $social_classes );
 

@@ -55,7 +55,7 @@ trait Date_Methods {
     }
 
     public function date_increment( $date, $days ) {
-        return date( 'Y-m-d', strtotime( $date. " + $days days" ) );
+        return gmdate( 'Y-m-d', strtotime( $date. " + $days days" ) );
     }
 
 }

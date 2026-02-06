@@ -69,12 +69,12 @@ class Data {
         $date = $columns['date'];
         $cb = $columns['cb'];
         $_columns['cb'] = $cb;
-        $_columns['thumbnail'] = _x( 'Thumbnail', 'Dashboard', 'wpspeedo-team' );
+        $_columns['thumbnail'] = _x( 'Thumbnail', 'Dashboard', 'wps-team' );
         $_columns = array_merge( $_columns, $columns );
-        $_columns['title'] = _x( 'Name', 'Dashboard', 'wpspeedo-team' );
+        $_columns['title'] = _x( 'Name', 'Dashboard', 'wps-team' );
         unset($_columns['date']);
-        $_columns['contact_info'] = _x( 'Contact Info', 'Dashboard', 'wpspeedo-team' );
-        $_columns['other_info'] = _x( 'Other Info', 'Dashboard', 'wpspeedo-team' );
+        $_columns['contact_info'] = _x( 'Contact Info', 'Dashboard', 'wps-team' );
+        $_columns['other_info'] = _x( 'Other Info', 'Dashboard', 'wps-team' );
         $_columns['date'] = $date;
         return $_columns;
     }
@@ -90,17 +90,17 @@ class Data {
             $email = get_post_meta( $post_id, '_email', true );
             $mobile = get_post_meta( $post_id, '_mobile', true );
             $telephone = get_post_meta( $post_id, '_telephone', true );
-            printf( '<div class="wps-post--info"><strong class="wps-post--info-title">%s</strong>&nbsp;&nbsp;<span class="wps-post--info-data">%s</span></div>', _x( 'Email:', 'Dashboard', 'wpspeedo-team' ), $email );
-            printf( '<div class="wps-post--info"><strong class="wps-post--info-title">%s</strong>&nbsp;&nbsp;<span class="wps-post--info-data">%s</span></div>', _x( 'Mobile:', 'Dashboard', 'wpspeedo-team' ), $mobile );
-            printf( '<div class="wps-post--info"><strong class="wps-post--info-title">%s</strong>&nbsp;&nbsp;<span class="wps-post--info-data">%s</span></div>', _x( 'Telephone:', 'Dashboard', 'wpspeedo-team' ), $telephone );
+            printf( '<div class="wps-post--info"><strong class="wps-post--info-title">%s</strong>&nbsp;&nbsp;<span class="wps-post--info-data">%s</span></div>', esc_html_x( 'Email:', 'Dashboard', 'wps-team' ), esc_html( $email ) );
+            printf( '<div class="wps-post--info"><strong class="wps-post--info-title">%s</strong>&nbsp;&nbsp;<span class="wps-post--info-data">%s</span></div>', esc_html_x( 'Mobile:', 'Dashboard', 'wps-team' ), esc_html( $mobile ) );
+            printf( '<div class="wps-post--info"><strong class="wps-post--info-title">%s</strong>&nbsp;&nbsp;<span class="wps-post--info-data">%s</span></div>', esc_html_x( 'Telephone:', 'Dashboard', 'wps-team' ), esc_html( $telephone ) );
         }
         if ( $column == 'other_info' ) {
             $company = get_post_meta( $post_id, '_company', true );
             $designation = get_post_meta( $post_id, '_designation', true );
             $website = get_post_meta( $post_id, '_website', true );
-            printf( '<div class="wps-post--info"><strong class="wps-post--info-title">%s</strong>&nbsp;&nbsp;<span class="wps-post--info-data">%s</span></div>', _x( 'Company:', 'Dashboard', 'wpspeedo-team' ), $company );
-            printf( '<div class="wps-post--info"><strong class="wps-post--info-title">%s</strong>&nbsp;&nbsp;<span class="wps-post--info-data">%s</span></div>', _x( 'Designation:', 'Dashboard', 'wpspeedo-team' ), $designation );
-            printf( '<div class="wps-post--info"><strong class="wps-post--info-title">%s</strong>&nbsp;&nbsp;<span class="wps-post--info-data">%s</span></div>', _x( 'Website:', 'Dashboard', 'wpspeedo-team' ), $website );
+            printf( '<div class="wps-post--info"><strong class="wps-post--info-title">%s</strong>&nbsp;&nbsp;<span class="wps-post--info-data">%s</span></div>', esc_html_x( 'Company:', 'Dashboard', 'wps-team' ), esc_html( $company ) );
+            printf( '<div class="wps-post--info"><strong class="wps-post--info-title">%s</strong>&nbsp;&nbsp;<span class="wps-post--info-data">%s</span></div>', esc_html_x( 'Designation:', 'Dashboard', 'wps-team' ), esc_html( $designation ) );
+            printf( '<div class="wps-post--info"><strong class="wps-post--info-title">%s</strong>&nbsp;&nbsp;<span class="wps-post--info-data">%s</span></div>', esc_html_x( 'Website:', 'Dashboard', 'wps-team' ), esc_html( $website ) );
         }
     }
 
@@ -117,28 +117,28 @@ class Data {
             'singular_name'         => $single_name,
             'menu_name'             => 'Team',
             'name_admin_bar'        => $single_name,
-            'archives'              => sprintf( _x( '%s Archives', 'Team Post Type', 'wpspeedo-team' ), $single_name ),
-            'attributes'            => sprintf( _x( '%s Attributes', 'Team Post Type', 'wpspeedo-team' ), $single_name ),
-            'all_items'             => sprintf( _x( 'All %s', 'Team Post Type', 'wpspeedo-team' ), $plural_name ),
-            'add_new_item'          => sprintf( _x( 'Add %s', 'Team Post Type', 'wpspeedo-team' ), $single_name ),
-            'add_new'               => sprintf( _x( 'Add %s', 'Team Post Type', 'wpspeedo-team' ), $single_name ),
-            'new_item'              => sprintf( _x( 'New %s', 'Team Post Type', 'wpspeedo-team' ), $single_name ),
-            'edit_item'             => sprintf( _x( 'Edit %s', 'Team Post Type', 'wpspeedo-team' ), $single_name ),
-            'update_item'           => sprintf( _x( 'Update %s', 'Team Post Type', 'wpspeedo-team' ), $single_name ),
-            'view_item'             => sprintf( _x( 'View %s', 'Team Post Type', 'wpspeedo-team' ), $single_name ),
-            'search_items'          => sprintf( _x( 'Search %s', 'Team Post Type', 'wpspeedo-team' ), $single_name ),
-            'featured_image'        => sprintf( _x( '%s Image', 'Team Post Type', 'wpspeedo-team' ), $single_name ),
-            'view_items'            => sprintf( _x( 'View %s', 'Team Post Type', 'wpspeedo-team' ), $plural_name ),
-            'items_list'            => sprintf( _x( '%s list', 'Team Post Type', 'wpspeedo-team' ), $plural_name ),
-            'items_list_navigation' => sprintf( _x( '%s list navigation', 'Team Post Type', 'wpspeedo-team' ), $plural_name ),
-            'set_featured_image'    => sprintf( _x( 'Set %s image', 'Team Post Type', 'wpspeedo-team' ), $single_name_lc ),
-            'remove_featured_image' => sprintf( _x( 'Remove %s image', 'Team Post Type', 'wpspeedo-team' ), $single_name_lc ),
-            'use_featured_image'    => sprintf( _x( 'Use as %s image', 'Team Post Type', 'wpspeedo-team' ), $single_name_lc ),
-            'insert_into_item'      => sprintf( _x( 'Insert into %s', 'Team Post Type', 'wpspeedo-team' ), $single_name_lc ),
-            'uploaded_to_this_item' => sprintf( _x( 'Uploaded to this %s', 'Team Post Type', 'wpspeedo-team' ), $single_name_lc ),
-            'filter_items_list'     => sprintf( _x( 'Filter %s list', 'Team Post Type', 'wpspeedo-team' ), $plural_name_lc ),
-            'not_found'             => _x( 'Not found', 'Team Post Type', 'wpspeedo-team' ),
-            'not_found_in_trash'    => _x( 'Not found in Trash', 'Team Post Type', 'wpspeedo-team' ),
+            'archives'              => sprintf( _x( '%s Archives', 'Team Post Type', 'wps-team' ), $single_name ),
+            'attributes'            => sprintf( _x( '%s Attributes', 'Team Post Type', 'wps-team' ), $single_name ),
+            'all_items'             => sprintf( _x( 'All %s', 'Team Post Type', 'wps-team' ), $plural_name ),
+            'add_new_item'          => sprintf( _x( 'Add %s', 'Team Post Type', 'wps-team' ), $single_name ),
+            'add_new'               => sprintf( _x( 'Add %s', 'Team Post Type', 'wps-team' ), $single_name ),
+            'new_item'              => sprintf( _x( 'New %s', 'Team Post Type', 'wps-team' ), $single_name ),
+            'edit_item'             => sprintf( _x( 'Edit %s', 'Team Post Type', 'wps-team' ), $single_name ),
+            'update_item'           => sprintf( _x( 'Update %s', 'Team Post Type', 'wps-team' ), $single_name ),
+            'view_item'             => sprintf( _x( 'View %s', 'Team Post Type', 'wps-team' ), $single_name ),
+            'search_items'          => sprintf( _x( 'Search %s', 'Team Post Type', 'wps-team' ), $single_name ),
+            'featured_image'        => sprintf( _x( '%s Image', 'Team Post Type', 'wps-team' ), $single_name ),
+            'view_items'            => sprintf( _x( 'View %s', 'Team Post Type', 'wps-team' ), $plural_name ),
+            'items_list'            => sprintf( _x( '%s list', 'Team Post Type', 'wps-team' ), $plural_name ),
+            'items_list_navigation' => sprintf( _x( '%s list navigation', 'Team Post Type', 'wps-team' ), $plural_name ),
+            'set_featured_image'    => sprintf( _x( 'Set %s image', 'Team Post Type', 'wps-team' ), $single_name_lc ),
+            'remove_featured_image' => sprintf( _x( 'Remove %s image', 'Team Post Type', 'wps-team' ), $single_name_lc ),
+            'use_featured_image'    => sprintf( _x( 'Use as %s image', 'Team Post Type', 'wps-team' ), $single_name_lc ),
+            'insert_into_item'      => sprintf( _x( 'Insert into %s', 'Team Post Type', 'wps-team' ), $single_name_lc ),
+            'uploaded_to_this_item' => sprintf( _x( 'Uploaded to this %s', 'Team Post Type', 'wps-team' ), $single_name_lc ),
+            'filter_items_list'     => sprintf( _x( 'Filter %s list', 'Team Post Type', 'wps-team' ), $plural_name_lc ),
+            'not_found'             => _x( 'Not found', 'Team Post Type', 'wps-team' ),
+            'not_found_in_trash'    => _x( 'Not found in Trash', 'Team Post Type', 'wps-team' ),
         );
         $args = array(
             'label'                          => $single_name,
@@ -181,13 +181,13 @@ class Data {
     public function register_metaboxes() {
         add_meta_box(
             'member-details',
-            _x( 'Member\'s Details', 'Admin Metabox', 'wpspeedo-team' ),
+            _x( 'Member\'s Details', 'Admin Metabox', 'wps-team' ),
             array($this, 'metabox_content'),
             Utils::post_type_name()
         );
         add_meta_box(
             'member-gallery',
-            _x( 'Member\'s Gallery', 'Admin Metabox', 'wpspeedo-team' ),
+            _x( 'Member\'s Gallery', 'Admin Metabox', 'wps-team' ),
             array($this, 'metabox_gallery_content'),
             Utils::post_type_name(),
             'side',
@@ -210,14 +210,14 @@ class Data {
         $meta_data = $this->get_validated_meta_data( $post->ID );
         // Sanitization & Validation Done
         printf( "<div id='wps-meta-boxes'><meta-box meta_data='%s'></meta-box></div>", esc_attr( json_encode( $meta_data ) ) );
-        $this->print_other_meta_fields( $meta_data );
+        $this->print_education_meta_fields( $meta_data );
         $this->print_nonce();
     }
 
     /*
-     * Print Other Meta Fields
+     * Print Education Meta Fields
      */
-    public function print_other_meta_fields( $meta_data ) {
+    public function print_education_meta_fields( $meta_data ) {
         ?>
 
         <!-- Education -->
@@ -225,7 +225,7 @@ class Data {
             <div class="wps-meta-box--area-inner g-0 mt-0 pt-3 pb-3 flex-wrap">
                 <section class="wps-section wps-section--education_section">
                     <h2 class="wps-section--title d-flex align-items-center justify-content-between"><?php 
-        echo _x( 'Education', 'Admin Metabox', 'wpspeedo-team' );
+        echo esc_html_x( 'Education', 'Admin Metabox', 'wps-team' );
         ?></h2>
                     <div class="wps-section--fields">
                         <div class="wps-field--wrapper">
@@ -277,7 +277,7 @@ class Data {
         if ( empty( $_POST['_wps_meta_nonce'] ) ) {
             return $post_id;
         }
-        if ( !wp_verify_nonce( $_POST['_wps_meta_nonce'], 'wps_save_meta_' . $post_id ) ) {
+        if ( !wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wps_meta_nonce'] ) ), 'wps_save_meta_' . $post_id ) ) {
             return $post_id;
         }
         if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -293,8 +293,8 @@ class Data {
          * Save Gallery Meta Fields
          */
         if ( !empty( $_POST['gallery'] ) ) {
-            $gallery_data = array_map( 'intval', $_POST['gallery'] );
-            $gallery_data = array_filter( $_POST['gallery'] );
+            $gallery_data = ( !empty( $_POST['gallery'] ) && is_array( $_POST['gallery'] ) ? array_map( 'intval', wp_unslash( $_POST['gallery'] ) ) : [] );
+            $gallery_data = array_filter( $gallery_data );
             if ( $gallery_data ) {
                 update_post_meta( $post_id, '_gallery', $gallery_data );
             } else {
@@ -306,25 +306,29 @@ class Data {
         /*
          * Save Details Meta Fields
          */
-        if ( array_key_exists( '_wps_member_meta_data', $_POST ) && !empty( $_POST['_wps_member_meta_data'] ) ) {
-            $meta_data = json_decode( stripslashes( $_POST['_wps_member_meta_data'] ), true );
+        if ( !empty( $_POST['_wps_member_meta_data'] ) ) {
+            $meta_data_raw = wp_unslash( $_POST['_wps_member_meta_data'] );
+            // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+            $meta_data = json_decode( $meta_data_raw, true );
             $meta_data = $this->get_validated_meta_data( $post_id, $meta_data );
             // Sanitization & Validation Done
             // First Name & Last Name
-            if ( array_key_exists( '_first_name', $_POST ) && array_key_exists( '_last_name', $_POST ) ) {
-                $meta_data['_first_name'] = sanitize_text_field( $_POST['_first_name'] );
-                $meta_data['_last_name'] = sanitize_text_field( $_POST['_last_name'] );
+            $first_name = ( isset( $_POST['_first_name'] ) ? sanitize_text_field( wp_unslash( $_POST['_first_name'] ) ) : '' );
+            $last_name = ( isset( $_POST['_last_name'] ) ? sanitize_text_field( wp_unslash( $_POST['_last_name'] ) ) : '' );
+            if ( $first_name !== '' ) {
+                $meta_data['_first_name'] = $first_name;
+            }
+            if ( $last_name !== '' ) {
+                $meta_data['_last_name'] = $last_name;
             }
             // Education
-            if ( array_key_exists( '_education', $_POST ) ) {
-                $meta_data['_education'] = wp_kses_post( $_POST['_education'] );
+            if ( isset( $_POST['_education'] ) ) {
+                $meta_data['_education'] = wp_kses_post( wp_unslash( $_POST['_education'] ) );
             }
             foreach ( $meta_data as $meta_key => $meta_value ) {
                 update_post_meta( $post_id, $meta_key, $meta_value );
                 Utils::update_all_posts_meta_vals();
             }
-            $meta_keys = array_keys( $meta_data );
-            update_post_meta( $post_id, '_wps_member_meta_keys', $meta_keys );
         }
     }
 
@@ -333,9 +337,6 @@ class Data {
      */
     public function get_sanitize_meta_data( $data = [] ) {
         foreach ( $data as $meta_key => $meta_val ) {
-            if ( empty( $meta_val ) ) {
-                continue;
-            }
             if ( in_array( $meta_key, [
                 '_first_name',
                 '_last_name',
@@ -392,12 +393,16 @@ class Data {
      * Get validated meta data
      */
     public function get_validated_meta_data( $post_id, $data = [] ) {
+        $controls = Utils::get_meta_box_controls();
         // Reading the Meta Fields
         if ( empty( $data ) ) {
-            $meta_keys = get_post_meta( $post_id, '_wps_member_meta_keys', true );
+            $meta_keys = Utils::get_meta_field_keys();
             if ( !empty( $meta_keys ) ) {
-                foreach ( $meta_keys as $wps_meta_key ) {
-                    $data[$wps_meta_key] = get_post_meta( $post_id, $wps_meta_key, true );
+                foreach ( $meta_keys as $key ) {
+                    $data[$key] = get_post_meta( $post_id, $key, true );
+                    if ( empty( $data[$key] ) && !empty( $controls[$key] ) && array_key_exists( 'default', $controls[$key] ) ) {
+                        $data[$key] = $controls[$key]['default'];
+                    }
                 }
             }
         }

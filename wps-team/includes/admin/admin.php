@@ -23,7 +23,7 @@ final class Admin {
         add_action( 'template_redirect', function () {
             global $shortcode_loader;
             $settings = (array) Utils::get_temp_settings();
-            $settings = apply_filters( 'wpspeedo_team/shortcode_settings/', $settings, $shortcode_loader );
+            $settings = apply_filters( 'wpspeedo_team/shortcode_settings/', $settings );
             $shortcode_loader = new Shortcode_Loader([
                 'id'       => 'preview',
                 'settings' => $settings,
@@ -45,11 +45,11 @@ final class Admin {
     public function register_admin_menu() {
         $capability = 'manage_options';
         $callback = [$this, 'plugin_admin_page'];
-        $shortcode_menu_title = _x( 'Shortcodes', 'Menu Label', 'wpspeedo-team' );
-        $settings_menu_title = _x( 'Settings', 'Menu Label', 'wpspeedo-team' );
-        $order_menu_title = _x( 'Sort Order', 'Menu Label', 'wpspeedo-team' );
-        $get_help_menu = _x( 'Get Help', 'Menu Label', 'wpspeedo-team' );
-        $tools_menu = _x( 'Tools', 'Menu Label', 'wpspeedo-team' );
+        $shortcode_menu_title = _x( 'Shortcodes', 'Menu Label', 'wps-team' );
+        $settings_menu_title = _x( 'Settings', 'Menu Label', 'wps-team' );
+        $order_menu_title = _x( 'Sort Order', 'Menu Label', 'wps-team' );
+        $get_help_menu = _x( 'Get Help', 'Menu Label', 'wps-team' );
+        $tools_menu = _x( 'Tools', 'Menu Label', 'wps-team' );
         add_submenu_page(
             Utils::get_top_label_menu(),
             $shortcode_menu_title,
@@ -98,8 +98,8 @@ final class Admin {
         if ( wps_team_fs()->is_not_paying() && !wps_team_fs()->is_trial() ) {
             add_submenu_page(
                 Utils::get_top_label_menu(),
-                _x( 'WPS Team - Trial', 'Menu Label', 'wpspeedo-team' ),
-                _x( 'Free Trial', 'Menu Label', 'wpspeedo-team' ),
+                _x( 'WPS Team - Trial', 'Menu Label', 'wps-team' ),
+                _x( 'Free Trial', 'Menu Label', 'wps-team' ),
                 'manage_options',
                 wps_team_fs()->get_trial_url()
             );
@@ -199,14 +199,13 @@ final class Admin {
             ['wpspeedo-fontawesome--all'],
             WPS_TEAM_VERSION
         );
-        $meta_box_editor = new Meta_Box_Editor();
         $data = [
             'nonce'     => wp_create_nonce( '_wpspeedo_team_nonce' ),
             'ajaxurl'   => admin_url( 'admin-ajax.php' ),
             'adminurl'  => admin_url(),
             'siteurl'   => home_url(),
             'action'    => 'wpspeedo_team_ajax_handler',
-            'fields'    => $meta_box_editor->get_controls(),
+            'fields'    => Utils::get_meta_box_controls(),
             'icon_data' => Icon_Manager::get_icon_manager_tabs_config(),
         ];
         wp_register_script(

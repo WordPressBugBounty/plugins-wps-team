@@ -23,10 +23,11 @@ class Assets extends Assets_Manager {
     }
 
     public function asset_handler() {
-        return 'wpspeedo-team';
+        return 'wps-team';
     }
 
     public function is_frame_loading() {
+        // phpcs:ignore WordPress.Security.NonceVerification
         return !empty( $_GET['wps_team_sh_preview'] ) && $_GET['wps_team_sh_preview'] === 'wpspeedo_wps_team_frame_view';
     }
 
@@ -45,6 +46,7 @@ class Assets extends Assets_Manager {
         }
         $css = $this->get_custom_css( $settings['id'] );
         $custom_css = Utils::get_setting( 'custom_css' );
+        $custom_css = Utils::minify_validated_css( $custom_css );
         if ( !empty( $custom_css ) ) {
             $css .= $custom_css;
         }
@@ -58,6 +60,11 @@ class Assets extends Assets_Manager {
         $this->add_item_in_asset_list( 'scripts', $this->asset_handler(), ['jquery', 'wpspeedo-swiper'] );
         if ( plugin()->integrations->is_divi_active() ) {
             $this->add_item_in_asset_list( 'styles', $this->asset_handler(), [$this->asset_handler() . '-divi'] );
+        }
+        $custom_css = Utils::get_setting( 'custom_css' );
+        $custom_css = Utils::minify_validated_css( $custom_css );
+        if ( !empty( $custom_css ) ) {
+            $this->add_item_in_asset_list( 'styles', 'inline', $custom_css );
         }
     }
 
@@ -97,6 +104,7 @@ class Assets extends Assets_Manager {
         $Assets_Singular = new Assets_Singular();
         $css = $Assets_Singular->get_custom_css( null );
         $custom_css = Utils::get_setting( 'custom_css' );
+        $custom_css = Utils::minify_validated_css( $custom_css );
         if ( !empty( $custom_css ) ) {
             $css .= $custom_css;
         }
@@ -173,6 +181,7 @@ class Assets extends Assets_Manager {
         $selector_popup = $this->shortcode_selector_popup( $shortcode_id );
         $selector_expand = $selector . ' .wps-widget-container-expand';
         $selector_side_panel = $this->shortcode_selector_side_panel( $shortcode_id );
+        $selector_side_panel_wrapper = sprintf( '.wps-team--side-panel.wps-team--side-panel-sh-%s', $shortcode_id );
         $selector_group_1 = '';
         $selector_group_2 = '';
         if ( $this->get_setting( 'card_action' ) == 'modal' ) {
@@ -201,6 +210,7 @@ class Assets extends Assets_Manager {
         $this->add_responsive_style( $selector, '--wps-item-col-gap-vert-alt: calc(-{{value}}px)', 'gap_vertical' );
         $this->add_responsive_style( $selector, '--wps-item-col-width: calc(100%/{{value}}*0.9999999)', 'columns' );
         $this->add_background_style( $selector, 'item_background_', '--wps-item-bg-color' );
+        $this->add_background_style( $selector, 'item_background_hover_', '--wps-item-bg-color-hover' );
         $this->add_style( $selector, '--wps-title-color: {{value}}', 'title_color' );
         $this->add_style( $selector, '--wps-title-color-hover: {{value}}', 'title_color_hover' );
         $this->add_style( $selector, '--wps-ribbon-color: {{value}}', 'ribbon_text_color' );

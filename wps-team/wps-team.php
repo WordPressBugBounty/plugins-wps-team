@@ -3,18 +3,22 @@
  * @package         WPSpeedo_Team_Members
  * 
  * Plugin Name: WPS Team
- * Description: The Ultimate Team Plugin to Elevate Your Website
  * Plugin URI: https://wpspeedo.com/wps-team-pro?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
+ * Description: The Ultimate Team Plugin to Elevate Your Website
+ * Version: 3.5.6
  * Author: WPSpeedo
  * Author URI: https://wpspeedo.com?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
- * Version: 3.4.7
+ * License:     GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Text Domain: wps-team
  * Domain Path: /languages
- * Text Domain: wpspeedo-team
+ * Requires PHP: 7.0
+ * Requires at least: 5.9
   */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'WPS_TEAM_VERSION', '3.4.7' );
+define( 'WPS_TEAM_VERSION', '3.5.6' );
 
 define( 'WPS_TEAM_FILE', __FILE__ );
 

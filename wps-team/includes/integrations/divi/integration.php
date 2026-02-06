@@ -29,9 +29,8 @@ class Integration_Divi extends Integration {
 
         $icon = WPS_TEAM_URL . '/images/icon.svg';
 
-        ob_start();
-
         ?>
+
         <style>
 
             .et-db #et-boc .et-l .et-fb-modules-list ul > li.wps_team_divi:before {
@@ -46,9 +45,8 @@ class Integration_Divi extends Integration {
             }
 
         </style>
-        <?php
 
-        echo ob_get_clean();
+        <?php
 
     }
 

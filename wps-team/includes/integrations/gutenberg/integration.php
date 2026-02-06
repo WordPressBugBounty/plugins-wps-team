@@ -23,6 +23,7 @@ class Integration_Gutenberg extends Integration {
 
     public function render_wpspeedo_block( $attributes ) {
 
+        // phpcs:ignore WordPress.Security.NonceVerification
         if ( !empty($_REQUEST['action']) && $_REQUEST['action'] == 'wps_team_block_data' ) {
             global $wps_team_is_builder;
             $wps_team_is_builder = true;
@@ -30,12 +31,12 @@ class Integration_Gutenberg extends Integration {
 
         $shortcode_id = ( ! empty($attributes) && ! empty($attributes['shortcode']) ) ? (int) $attributes['shortcode'] : '';
 
+        
         if ( empty($shortcode_id) ) {
-            return Integration::display_empty_message();
+            return Integration::get_empty_message();
         } else {
             return Integration::render_shortcode( $shortcode_id );
         }
-
 
     }
 
@@ -52,9 +53,9 @@ class Integration_Gutenberg extends Integration {
         wp_add_inline_style( 'wp-block-editor', $this->get_block_css() );
 
         $wps_widget_block_data = array(
-            'title' => __( 'WPS Team Members', 'wpspeedo-team' ),
-            'description' => __( 'Display Team Members in Grid, Carousel & Filter Layouts', 'wpspeedo-team' ),
-            'select_shortcode' => __( 'Select Shortcode', 'wpspeedo-team' ),
+            'title' => __( 'WPS Team Members', 'wps-team' ),
+            'description' => __( 'Display Team Members in Grid, Carousel & Filter Layouts', 'wps-team' ),
+            'select_shortcode' => __( 'Select Shortcode', 'wps-team' ),
             'shortcodes' => (object) self::get_shortcode_list()
 		);
 
@@ -65,7 +66,7 @@ class Integration_Gutenberg extends Integration {
     public static function get_shortcode_list( $reverse = false ) {
 
         $shortcodes = Integration::get_shortcodes();
-        
+
         if ( !empty($shortcodes) ) {
 
             $shortcodes = [ Integration::shortcode_default_option() ] + wp_list_pluck( $shortcodes, 'name', 'id' );

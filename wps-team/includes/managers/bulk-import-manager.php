@@ -23,8 +23,11 @@ class Bulk_Import_Manager {
     public function ajax_parse_csv() {
 
         $rows = $this->get_file_rows();
-            
+
         if ( is_wp_error($rows) ) wp_send_json_error( $rows->get_error_message(), 400 );
+
+        // Prepare for heavy operation
+        Utils::prepare_heavy_operation();
         
         set_transient( 'wps_team_csv_rows', $rows, DAY_IN_SECONDS );
 
@@ -33,22 +36,26 @@ class Bulk_Import_Manager {
         $rows = array_map(function( $row ) use ($allowed) {
             return array_intersect_key( $row, array_flip($allowed) );
         }, $rows );
-
+        
         wp_send_json_success( $rows );
 
     }
 
     public function ajax_import_csv() {
 
+        // phpcs:ignore WordPress.Security.NonceVerification
         $index = isset( $_REQUEST['index'] ) ? (int) $_REQUEST['index'] : null;
 
-        if ( ! is_numeric($index) ) wp_send_json_error( _x( 'Row not found', 'Bulk Import', 'wpspeedo-team' ), 400 );
+        if ( ! is_numeric($index) ) wp_send_json_error( _x( 'Row not found', 'Bulk Import', 'wps-team' ), 400 );
+
+        // Prepare for heavy operation
+        Utils::prepare_heavy_operation();
 
         $rows = get_transient( 'wps_team_csv_rows', [] );
 
         $row = $this->map_row_data( $rows[$index] );
 
-        if ( empty($row['first_name']) || empty($row['last_name']) ) wp_send_json_error( _x( 'Row name not found', 'Bulk Import', 'wpspeedo-team' ), 400 );
+        if ( empty($row['first_name']) || empty($row['last_name']) ) wp_send_json_error( _x( 'Row name not found', 'Bulk Import', 'wps-team' ), 400 );
 
         $item = [
             'post_title'    => Utils::get_title_from_name_fields( $row['first_name'], $row['last_name'] ),
@@ -61,7 +68,7 @@ class Bulk_Import_Manager {
 
         $post_id = wp_insert_post( $item );
 
-        if ( is_wp_error( $post_id ) ) wp_send_json_error( _x( "Couldn't insert post", 'Bulk Import', 'wpspeedo-team' ), 400 );
+        if ( is_wp_error( $post_id ) ) wp_send_json_error( _x( "Couldn't insert post", 'Bulk Import', 'wps-team' ), 400 );
 
         wp_send_json_success();
 
@@ -128,16 +135,16 @@ class Bulk_Import_Manager {
         $tax_extra_four  = Utils::get_taxonomy_name( 'extra-four' );
         $tax_extra_five  = Utils::get_taxonomy_name( 'extra-five' );
 
-        if ( !empty($row['groups']) )       $tax_input[ $tax_group ]        = $this->get_row_term_ids( $row['groups'], $tax_group );
-        if ( !empty($row['locations']) )    $tax_input[ $tax_location ]     = $this->get_row_term_ids( $row['locations'], $tax_location );
-        if ( !empty($row['languages']) )    $tax_input[ $tax_language ]     = $this->get_row_term_ids( $row['languages'], $tax_language );
-        if ( !empty($row['specialties']) )  $tax_input[ $tax_specialty ]    = $this->get_row_term_ids( $row['specialties'], $tax_specialty );
-        if ( !empty($row['genders']) )      $tax_input[ $tax_gender ]       = $this->get_row_term_ids( $row['genders'], $tax_gender );
-        if ( !empty($row['extra_one']) )    $tax_input[ $tax_extra_one ]    = $this->get_row_term_ids( $row['extra_one'], $tax_extra_one );
-        if ( !empty($row['extra_two']) )    $tax_input[ $tax_extra_two ]    = $this->get_row_term_ids( $row['extra_two'], $tax_extra_two );
-        if ( !empty($row['extra_three']) )  $tax_input[ $tax_extra_three ]  = $this->get_row_term_ids( $row['extra_three'], $tax_extra_three );
-        if ( !empty($row['extra_four']) )   $tax_input[ $tax_extra_four ]   = $this->get_row_term_ids( $row['extra_four'], $tax_extra_four );
-        if ( !empty($row['extra_five']) )   $tax_input[ $tax_extra_five ]   = $this->get_row_term_ids( $row['extra_five'], $tax_extra_five );
+        if ( ! empty($row['groups']) )       $tax_input[ $tax_group ]        = $this->get_row_term_ids( $row['groups'], $tax_group );
+        if ( ! empty($row['locations']) )    $tax_input[ $tax_location ]     = $this->get_row_term_ids( $row['locations'], $tax_location );
+        if ( ! empty($row['languages']) )    $tax_input[ $tax_language ]     = $this->get_row_term_ids( $row['languages'], $tax_language );
+        if ( ! empty($row['specialties']) )  $tax_input[ $tax_specialty ]    = $this->get_row_term_ids( $row['specialties'], $tax_specialty );
+        if ( ! empty($row['genders']) )      $tax_input[ $tax_gender ]       = $this->get_row_term_ids( $row['genders'], $tax_gender );
+        if ( ! empty($row['extra_one']) )    $tax_input[ $tax_extra_one ]    = $this->get_row_term_ids( $row['extra_one'], $tax_extra_one );
+        if ( ! empty($row['extra_two']) )    $tax_input[ $tax_extra_two ]    = $this->get_row_term_ids( $row['extra_two'], $tax_extra_two );
+        if ( ! empty($row['extra_three']) )  $tax_input[ $tax_extra_three ]  = $this->get_row_term_ids( $row['extra_three'], $tax_extra_three );
+        if ( ! empty($row['extra_four']) )   $tax_input[ $tax_extra_four ]   = $this->get_row_term_ids( $row['extra_four'], $tax_extra_four );
+        if ( ! empty($row['extra_five']) )   $tax_input[ $tax_extra_five ]   = $this->get_row_term_ids( $row['extra_five'], $tax_extra_five );
 
         return $tax_input;
 
@@ -166,70 +173,99 @@ class Bulk_Import_Manager {
 
     }
 
+    public function empty( $data ) {
+
+        if ( empty( $data ) ) return true;
+        if ( is_array( $data ) ) return false;
+
+        $str = trim( (string) $data );
+        if ( $str === '' ) return true;
+
+        if ( strtolower( $str ) === 'na' ) return true;
+
+        return false;
+    }
+
     public function get_row_meta_input( $row ) {
 
         $meta_input = [];
 
-        if ( !empty($row['first_name']) )   $meta_input['_first_name']      = sanitize_text_field( $row['first_name'] );
-        if ( !empty($row['last_name']) )    $meta_input['_last_name']       = sanitize_text_field( $row['last_name'] );
-        if ( !empty($row['designation']) )  $meta_input['_designation']     = sanitize_text_field( $row['designation'] );
-        if ( !empty($row['email']) )        $meta_input['_email']           = sanitize_email( $row['email'] );
-        if ( !empty($row['mobile']) )       $meta_input['_mobile']          = sanitize_text_field( $row['mobile'] );
-        if ( !empty($row['telephone']) )    $meta_input['_telephone']       = sanitize_text_field( $row['telephone'] );
-        if ( !empty($row['fax']) )          $meta_input['_fax']             = sanitize_text_field( $row['fax'] );
-        if ( !empty($row['experience']) )   $meta_input['_experience']      = sanitize_text_field( $row['experience'] );
-        if ( !empty($row['website']) )      $meta_input['_website']         = esc_url_raw( $row['website'] );
-        if ( !empty($row['company']) )      $meta_input['_company']         = sanitize_text_field( $row['company'] );
-        if ( !empty($row['address']) )      $meta_input['_address']         = sanitize_text_field( $row['address'] );
-        if ( !empty($row['ribbon']) )       $meta_input['_ribbon']          = sanitize_text_field( $row['ribbon'] );
-        if ( !empty($row['link_one']) )     $meta_input['_link_1']          = esc_url_raw( $row['link_one'] );
-        if ( !empty($row['link_two']) )     $meta_input['_link_2']          = esc_url_raw( $row['link_two'] );
-        if ( !empty($row['color']) )        $meta_input['_color']           = sanitize_text_field( $row['color'] );
-        if ( !empty($row['education']) )    $meta_input['_education']       = wp_kses_post( $row['education'] );
-        if ( !empty($row['thumbnail']) )    $meta_input['_thumbnail_id']    = (int) $this->get_thumbnail_id( $row['thumbnail'] );
-        if ( !empty($row['gallery']) )      $meta_input['_gallery']         = (array) $this->get_gallery_ids( $row['gallery'] );
-        if ( !empty($row['social_links']) ) $meta_input['_social_links']    = (array) $row['social_links'];
-        if ( !empty($row['skills']) )       $meta_input['_skills']          = (array) $row['skills'];
-
-        $meta_input['_wps_member_meta_keys'] = Utils::get_meta_field_keys();
+        if ( ! $this->empty($row['first_name']) )   $meta_input['_first_name']      = sanitize_text_field( $row['first_name'] );
+        if ( ! $this->empty($row['last_name']) )    $meta_input['_last_name']       = sanitize_text_field( $row['last_name'] );
+        if ( ! $this->empty($row['designation']) )  $meta_input['_designation']     = sanitize_text_field( $row['designation'] );
+        if ( ! $this->empty($row['email']) )        $meta_input['_email']           = sanitize_email( $row['email'] );
+        if ( ! $this->empty($row['mobile']) )       $meta_input['_mobile']          = sanitize_text_field( $row['mobile'] );
+        if ( ! $this->empty($row['telephone']) )    $meta_input['_telephone']       = sanitize_text_field( $row['telephone'] );
+        // if ( ! $this->empty($row['fax']) )          $meta_input['_fax']             = sanitize_text_field( $row['fax'] );
+        if ( ! $this->empty($row['experience']) )   $meta_input['_experience']      = sanitize_text_field( $row['experience'] );
+        if ( ! $this->empty($row['website']) )      $meta_input['_website']         = esc_url_raw( $row['website'] );
+        if ( ! $this->empty($row['company']) )      $meta_input['_company']         = sanitize_text_field( $row['company'] );
+        if ( ! $this->empty($row['address']) )      $meta_input['_address']         = sanitize_text_field( $row['address'] );
+        if ( ! $this->empty($row['ribbon']) )       $meta_input['_ribbon']          = sanitize_text_field( $row['ribbon'] );
+        if ( ! $this->empty($row['link_one']) )     $meta_input['_link_1']          = esc_url_raw( $row['link_one'] );
+        if ( ! $this->empty($row['link_two']) )     $meta_input['_link_2']          = esc_url_raw( $row['link_two'] );
+        if ( ! $this->empty($row['color']) )        $meta_input['_color']           = sanitize_text_field( $row['color'] );
+        if ( ! $this->empty($row['education']) )    $meta_input['_education']       = wp_kses_post( $row['education'] );
+        if ( ! $this->empty($row['thumbnail']) )    $meta_input['_thumbnail_id']    = (int) $this->get_thumbnail_id( $row['thumbnail'] );
+        if ( ! $this->empty($row['gallery']) )      $meta_input['_gallery']         = (array) $this->get_gallery_ids( $row['gallery'] );
+        if ( ! $this->empty($row['social_links']) ) $meta_input['_social_links']    = (array) $row['social_links'];
+        if ( ! $this->empty($row['skills']) )       $meta_input['_skills']          = (array) $row['skills'];
 
         return $meta_input;
 
     }
 
     public function get_file_rows() {
-
         $items = [];
 
-        // File extension
-        $extension = pathinfo( $_FILES['file']['name'], PATHINFO_EXTENSION );
+        // phpcs:ignore WordPress.Security.NonceVerification
+        if ( empty( $file = $_FILES['file'] ) || ! is_array( $file ) ) {
+            return new WP_Error( 'no_file', __( 'No file uploaded', 'wps-team' ) );
+        }
 
-        // If file extension is 'csv'
-        if ( !empty($_FILES['file']['name']) && $extension == 'csv' ) {
+        $import_file = array_map( function( $value ) {
+            return is_array( $value ) ? $value : sanitize_text_field( wp_unslash( $value ) );
+        }, $file );
 
-            // Open file in read mode
-            $csv_file = fopen($_FILES['file']['tmp_name'], 'r');
+        if ( empty( $import_file['name'] ) || empty( $import_file['tmp_name'] ) ) {
+            return new WP_Error( 'invalid_file', __( 'Invalid file upload', 'wps-team' ) );
+        }
 
-            // Header Row
-            $header_row = fgetcsv( $csv_file );
+        $extension = strtolower( pathinfo( $import_file['name'], PATHINFO_EXTENSION ) );
+        if ( $extension !== 'csv' ) {
+            return new WP_Error( 'invalid_file', __( 'Only CSV files are allowed', 'wps-team' ) );
+        }
 
-            $header_row = array_map( [ $this, 'sanitize_header_row' ], $header_row );
+        // Use SplFileObject for proper CSV parsing (handles quotes & newlines)
+        $file = new \SplFileObject( $import_file['tmp_name'] );
+        $file->setFlags( \SplFileObject::READ_CSV | \SplFileObject::SKIP_EMPTY );
+        $file->setCsvControl( ',', '"', '\\' );
 
-            if ( count($header_row) !== 30 ) return new WP_Error('invalid_file', _x('Invalid File Content', 'Bulk Import', 'wpspeedo-team') );
-    
-            // Read file
-            while ( ( $csv_data = fgetcsv($csv_file) ) !== false ) {
+        // Header row
+        $header_row = $file->fgetcsv();
+        $header_row = array_map( [ $this, 'sanitize_header_row' ], $header_row );
 
-                if ( count($csv_data) !== 30 ) return new WP_Error('invalid_file', _x('Invalid File Content', 'Bulk Import', 'wpspeedo-team') );
+        if ( count( $header_row ) !== 30 ) {
+            return new WP_Error( 'invalid_file', _x( 'Invalid File Content (header)', 'Bulk Import', 'wps-team' ) );
+        }
 
-                $csv_data = array_map( function( $column ) {
-                    return _wp_json_convert_string( trim($column) );
-                }, $csv_data );
-    
-                $items[] = array_combine( $header_row, $csv_data );
-    
-            }
+        foreach ( $file as $index => $csv_data ) {
 
+            // Skip header row
+            if ( $index === 0 ) continue;
+
+            // skip empty rows
+            if ( empty( $csv_data ) || ( count( $csv_data ) === 1 && $csv_data[0] === null ) ) continue;
+
+            // Pad/trim to 30 columns
+            $csv_data = array_pad( $csv_data, 30, '' );
+            $csv_data = array_slice( $csv_data, 0, 30 );
+
+            $csv_data = array_map( function( $column ) {
+                return _wp_json_convert_string( trim( (string) $column ) );
+            }, $csv_data );
+
+            $items[] = array_combine( $header_row, $csv_data );
         }
 
         return $items;
@@ -241,59 +277,94 @@ class Bulk_Import_Manager {
         return preg_replace('/[^A-Za-z0-9\_]/', '', $string); // Removes special chars.
     }
 
-    public function parse_to_array( $array ) {
-        return array_map( 'trim', explode( ',', str_replace(', ', ',', $array) ) );
+    public function parse_to_array( $data ) {
+        if ( $this->empty($data) ) return [];
+        return array_map( 'trim', explode( ',', str_replace(', ', ',', $data) ) );
     }
 
-    public function parse_to_array_deep( $array, $columns ) {
+    public function parse_to_array_deep( $data, $columns ) {
 
-        if ( empty($array) ) return [];
+        if ( $this->empty($data) ) return [];
 
-        $array = $this->parse_to_array( $array );
+        $data = $this->parse_to_array( $data );
 
-        return array_map( function( $data ) use ( $columns ) {
-            $data = array_map( 'trim', explode( '=>', $data ) );
-            return array_combine( $columns, $data );
-        }, $array );
+        return array_map( function( $single_data ) use ( $columns ) {
+            $single_data = array_map( 'trim', explode( '=>', $single_data ) );
+            return array_combine( $columns, $single_data );
+        }, $data );
 
     }
 
     public function get_thumbnail_id( $thumbnail ) {
 
-        if ( intval( $thumbnail ) ) return $thumbnail;
+        // 1. If it's already an ID (numeric string or int)
+        if ( is_numeric( $thumbnail ) && intval( $thumbnail ) > 0 ) {
+            return intval( $thumbnail );
+        }
 
-        wp_raise_memory_limit( 'image' );
+        // 2. Normalize: trim + remove spaces
+        $thumbnail = trim( $thumbnail );
+        if ( $thumbnail === '' ) return '';
 
-        $thumbnail = media_sideload_image( $thumbnail, 0, null, 'id' );
+        // 3. CASE: Local wp-content path (e.g. /wp-content/uploads/file.jpg)
+        if ( strpos( $thumbnail, '/wp-content/' ) === 0 ) {
 
-        if ( is_wp_error( $thumbnail ) ) return '';
+            // Build absolute path
+            $absolute_path = ABSPATH . ltrim( $thumbnail, '/' );
 
-        return $thumbnail;
+            if ( file_exists( $absolute_path ) ) {
+                // Convert path to URL
+                $upload_dir = wp_upload_dir();
+                $url = str_replace( realpath( $upload_dir['basedir'] ), $upload_dir['baseurl'], realpath( $absolute_path ) );
 
+                // Get attachment ID
+                $id = attachment_url_to_postid( $url );
+
+                if ( $id ) return $id;
+            }
+
+            // If file exists but no attachment found
+            return '';
+        }
+
+        // 4. CASE: Valid URL (starts with http or https)
+        if ( filter_var( $thumbnail, FILTER_VALIDATE_URL ) ) {
+
+            $id = media_sideload_image( $thumbnail, 0, null, 'id' );
+
+            if ( is_wp_error( $id ) ) {
+                return '';
+            }
+
+            return $id;
+        }
+
+        // 5. Anything else is invalid
+        return '';
     }
 
     public function get_gallery_ids( $thumbnail_ids ) {
 
+        // Convert to array (your existing helper)
         $thumbnail_ids = $this->parse_to_array( $thumbnail_ids );
         $thumbnail_ids = array_filter( $thumbnail_ids );
 
-        if ( empty($thumbnail_ids) ) return [];
+        if ( empty( $thumbnail_ids ) ) {
+            return [];
+        }
 
-        if ( intval( $thumbnail_ids[0] ) ) return array_map( 'intval', $thumbnail_ids );
+        $ids = [];
 
-        wp_raise_memory_limit( 'image' );
+        foreach ( $thumbnail_ids as $thumb ) {
 
-        $_thumbnail_ids = [];
+            $id = $this->get_thumbnail_id( $thumb ); // Reuse your improved function
 
-        foreach ( $thumbnail_ids as $thumbnail ) {
-            $_thumbnail = media_sideload_image( $thumbnail, 0, null, 'id' );
-            if ( ! is_wp_error( $_thumbnail ) ) {
-                $_thumbnail_ids[] = $_thumbnail;
+            if ( ! empty( $id ) && is_numeric( $id ) ) {
+                $ids[] = intval( $id );
             }
         }
 
-        return $_thumbnail_ids;
-
+        return $ids;
     }
 
 }

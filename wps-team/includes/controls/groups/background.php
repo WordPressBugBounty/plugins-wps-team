@@ -24,11 +24,11 @@ class Group_Control_Background extends Group_Base_Control {
 	private static function get_default_background_types() {
 		return [
 			'classic' => [
-				'title' => _x( 'Classic', 'Editor: BG Control', 'wpspeedo-team' ),
+				'title' => _x( 'Classic', 'Editor: BG Control', 'wps-team' ),
 				'icon' => 'fas fa-paint-brush',
 			],
 			'gradient' => [
-				'title' => _x( 'Gradient', 'Editor: BG Control', 'wpspeedo-team' ),
+				'title' => _x( 'Gradient', 'Editor: BG Control', 'wps-team' ),
 				'icon' => 'fas fa-palette',
 			]
 		];
@@ -38,24 +38,24 @@ class Group_Control_Background extends Group_Base_Control {
 		$fields = [];
 
 		$fields['type'] = [
-			'label' => _x( 'Background Type', 'Editor: BG Control', 'wpspeedo-team' ),
+			'label' => _x( 'Background Type', 'Editor: BG Control', 'wps-team' ),
 			'type' => Controls_Manager::CHOOSE,
 			'separator' => '',
 		];
 
 		$fields['color'] = [
-			'label' => _x( 'Color', 'Editor: BG Control', 'wpspeedo-team' ),
+			'label' => _x( 'Color', 'Editor: BG Control', 'wps-team' ),
 			'type' => Controls_Manager::COLOR,
 			'separator' => '',
 			'default' => '',
-			'title' => _x( 'Background Color', 'Editor: BG Control', 'wpspeedo-team' ),
+			'title' => _x( 'Background Color', 'Editor: BG Control', 'wps-team' ),
 			'condition' => [
 				'type' => [ 'classic', 'gradient' ],
 			],
 		];
 
 		$fields['color_stop'] = [
-			'label' => _x( 'Location', 'Editor: BG Control', 'wpspeedo-team' ),
+			'label' => _x( 'Location', 'Editor: BG Control', 'wps-team' ),
 			'type' => Controls_Manager::SLIDER,
 			'separator' => '',
 			'unit' => '%',
@@ -69,7 +69,7 @@ class Group_Control_Background extends Group_Base_Control {
 		];
 
 		$fields['color_b'] = [
-			'label' => _x( 'Second Color', 'Editor: BG Control', 'wpspeedo-team' ),
+			'label' => _x( 'Second Color', 'Editor: BG Control', 'wps-team' ),
 			'type' => Controls_Manager::COLOR,
 			'separator' => '',
 			'default' => '#f2295b',
@@ -80,7 +80,7 @@ class Group_Control_Background extends Group_Base_Control {
 		];
 
 		$fields['color_b_stop'] = [
-			'label' => _x( 'Location', 'Editor: BG Control', 'wpspeedo-team' ),
+			'label' => _x( 'Location', 'Editor: BG Control', 'wps-team' ),
 			'type' => Controls_Manager::SLIDER,
 			'separator' => '',
 			'unit' => '%',
@@ -94,13 +94,13 @@ class Group_Control_Background extends Group_Base_Control {
 		];
 
 		$fields['gradient_type'] = [
-			'label' => _x( 'Type', 'Editor: BG Control', 'wpspeedo-team' ),
+			'label' => _x( 'Type', 'Editor: BG Control', 'wps-team' ),
 			'type' => Controls_Manager::SELECT,
 			'separator' => '',
 			'label_block' => false,
 			'options' => [
-				[ 'label' => _x( 'Linear', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'linear' ],
-				[ 'label' => _x( 'Radial', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'radial' ],
+				[ 'label' => _x( 'Linear', 'Editor: BG Control', 'wps-team' ), 'value' => 'linear' ],
+				[ 'label' => _x( 'Radial', 'Editor: BG Control', 'wps-team' ), 'value' => 'radial' ],
 			],
 			'default' => 'linear',
 			'condition' => [
@@ -111,7 +111,7 @@ class Group_Control_Background extends Group_Base_Control {
 		];
 
 		$fields['gradient_angle'] = [
-			'label' => _x( 'Angle', 'Editor: BG Control', 'wpspeedo-team' ),
+			'label' => _x( 'Angle', 'Editor: BG Control', 'wps-team' ),
 			'type' => Controls_Manager::SLIDER,
 			'separator' => '',
 			'unit' => 'deg',
@@ -126,21 +126,21 @@ class Group_Control_Background extends Group_Base_Control {
 		];
 
 		$fields['gradient_position'] = [
-			'label' => _x( 'Position', 'Editor: BG Control', 'wpspeedo-team' ),
+			'label' => _x( 'Position', 'Editor: BG Control', 'wps-team' ),
 			'type' => Controls_Manager::SELECT,
 			'separator' => '',
 			'class' => 'wps-field--arrange-3',
 			'label_block' => false,
 			'options' => [
-				[ 'label' => _x( 'Center Center', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'center center' ],
-				[ 'label' => _x( 'Center Left', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'center left' ],
-				[ 'label' => _x( 'Center Right', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'center right' ],
-				[ 'label' => _x( 'Top Center', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'top center' ],
-				[ 'label' => _x( 'Top Left', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'top left' ],
-				[ 'label' => _x( 'Top Right', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'top right' ],
-				[ 'label' => _x( 'Bottom Center', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'bottom center' ],
-				[ 'label' => _x( 'Bottom Left', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'bottom left' ],
-				[ 'label' => _x( 'Bottom Right', 'Editor: BG Control', 'wpspeedo-team' ), 'value' => 'bottom right' ],
+				[ 'label' => _x( 'Center Center', 'Editor: BG Control', 'wps-team' ), 'value' => 'center center' ],
+				[ 'label' => _x( 'Center Left', 'Editor: BG Control', 'wps-team' ), 'value' => 'center left' ],
+				[ 'label' => _x( 'Center Right', 'Editor: BG Control', 'wps-team' ), 'value' => 'center right' ],
+				[ 'label' => _x( 'Top Center', 'Editor: BG Control', 'wps-team' ), 'value' => 'top center' ],
+				[ 'label' => _x( 'Top Left', 'Editor: BG Control', 'wps-team' ), 'value' => 'top left' ],
+				[ 'label' => _x( 'Top Right', 'Editor: BG Control', 'wps-team' ), 'value' => 'top right' ],
+				[ 'label' => _x( 'Bottom Center', 'Editor: BG Control', 'wps-team' ), 'value' => 'bottom center' ],
+				[ 'label' => _x( 'Bottom Left', 'Editor: BG Control', 'wps-team' ), 'value' => 'bottom left' ],
+				[ 'label' => _x( 'Bottom Right', 'Editor: BG Control', 'wps-team' ), 'value' => 'bottom right' ],
 			],
 			'default' => 'center center',
 			'condition' => [
@@ -239,7 +239,7 @@ class Group_Control_Background extends Group_Base_Control {
 	protected function get_default_options() {
 		return [
 			'popover' => [
-				'starter_title' => _x( 'Background', 'Editor: BG Control', 'wpspeedo-team' ),
+				'starter_title' => _x( 'Background', 'Editor: BG Control', 'wps-team' ),
 				'starter_name' => 'background',
 				'starter_value' => 'yes',
 				'settings' => [

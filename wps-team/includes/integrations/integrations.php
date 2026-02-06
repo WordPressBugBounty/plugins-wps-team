@@ -5,17 +5,12 @@ namespace WPSpeedo_Team;
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 class Integrations {
-
-    public $elementor;
-    public $gutenberg;
-    public $divi;
     
     public function __construct() {
-
-        $this->elementor = new Integration_Elementor();
-        $this->gutenberg = new Integration_Gutenberg();
-        $this->divi = new Integration_Divi();
-
+        new Integration_Elementor();
+        new Integration_Gutenberg();
+        new Integration_Divi();
+        new Integration_WPBakery();
     }
 
     function is_divi_active() {
