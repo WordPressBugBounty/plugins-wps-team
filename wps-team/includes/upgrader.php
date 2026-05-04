@@ -26,7 +26,7 @@ class Upgrader {
     }
 
     public function upgrade_paths() {
-        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.1', '3.3.1', '3.4.5', '3.4.6' ];
+        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.1', '3.3.1', '3.4.5', '3.4.6', '3.5.7' ];
     }
 
     public function run() {
@@ -395,6 +395,13 @@ class Upgrader {
 
         $this->_v_3_4_5();
 
+    }
+
+    public function _v_3_5_7() {
+        // copy the value from enable_archive to enable_singular_page
+        $settings = Utils::get_general_settings();
+        $settings['enable_singular_page'] = $settings['enable_archive'];
+        update_option( Utils::get_option_name(), $settings ); // phpcs:ignore
     }
 
 }

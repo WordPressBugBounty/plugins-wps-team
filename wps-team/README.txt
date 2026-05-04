@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team members, team showcase, WordPress team plugin, staff directory, team slider
 Requires at least: 5.9
 Tested up to: 6.9
-Stable tag: 3.5.6
+Stable tag: 3.5.7
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -250,6 +250,16 @@ Using the [WordPress.org](https://wordpress.org/support/plugin/wps-team/) suppor
 15. Plugin Settings Panel – Configure the Team Members WordPress plugin options
 
 == Changelog ==
+
+3.5.7 - 04-05-2026
+* Added: Alphabet Filter.
+* Added: Option to allow group filter deselection for users.
+* Added: Option to enable/disable both archive and singular page.
+* Fixed: Images cut off issue on safari browser.
+* Fixed: Shortcode deletion issue.
+* Fixed: Displaying wrong items per page on AJAX filter.
+* Tweak: Improved Filtering mechanism.
+* Tweak: Upgraded Freemius.
 
 3.5.6 - 09-12-2025
 * Added: Erase/Reset data tool.

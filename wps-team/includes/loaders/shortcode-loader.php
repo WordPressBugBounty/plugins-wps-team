@@ -289,9 +289,9 @@ class Shortcode_Loader extends Attribute_Manager {
         // Set posts_per_page
         if ( !$this->get_setting( 'show_all' ) ) {
             $query_args['posts_per_page'] = (int) $this->get_setting( 'limit' );
-        }
-        if ( isset( $this->ajax_query_args['posts_per_page'] ) ) {
-            $query_args['posts_per_page'] = $this->ajax_query_args['posts_per_page'];
+            if ( isset( $this->ajax_query_args['posts_per_page'] ) ) {
+                $query_args['posts_per_page'] = (int) $this->ajax_query_args['posts_per_page'];
+            }
         }
         // Set Include/Exclude Tax Queries
         $tax_queries_include_exclude = $this->get_tax_queries_include_exclude();

@@ -17,24 +17,25 @@ if ( !function_exists( 'wps_team_fs' ) ) {
             // Include Freemius SDK.
             require_once WPS_TEAM_INC_PATH . 'freemius/start.php';
             $wps_team_fs = fs_dynamic_init( array(
-                'id'             => '10548',
-                'slug'           => 'wps-team',
-                'premium_slug'   => 'wps-team-pro',
-                'type'           => 'plugin',
-                'public_key'     => 'pk_18753df98c36bc34e975fda5f111c',
-                'is_premium'     => false,
-                'premium_suffix' => 'Pro',
-                'has_addons'     => false,
-                'has_paid_plans' => true,
-                'trial'          => array(
+                'id'               => '10548',
+                'slug'             => 'wps-team',
+                'premium_slug'     => 'wps-team-pro',
+                'type'             => 'plugin',
+                'public_key'       => 'pk_18753df98c36bc34e975fda5f111c',
+                'is_premium'       => false,
+                'premium_suffix'   => 'Pro',
+                'has_addons'       => false,
+                'has_paid_plans'   => true,
+                'trial'            => array(
                     'days'               => 10,
                     'is_require_payment' => true,
                 ),
-                'menu'           => array(
+                'menu'             => array(
                     'slug'       => 'edit.php?post_type=wps-team-members',
                     'first-path' => 'edit.php?post_type=wps-team-members&page=wps-team#/get-help',
                 ),
-                'is_live'        => true,
+                'is_live'          => true,
+                'is_org_compliant' => true,
             ) );
         }
         return $wps_team_fs;

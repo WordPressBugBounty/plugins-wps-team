@@ -64,11 +64,18 @@ class Settings_Editor extends Editor_Controls {
             'default'     => Utils::get_default( 'member_plural_name' ),
         ] );
         $this->add_control( 'enable_archive', [
-            'label'       => _x( 'Enable Single/Archive Page', 'Settings: General', 'wps-team' ),
+            'label'       => _x( 'Enable Archive Page', 'Settings: General', 'wps-team' ),
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::SWITCHER,
             'default'     => Utils::get_default( 'enable_archive' ),
+        ] );
+        $this->add_control( 'enable_singular_page', [
+            'label'       => _x( 'Enable Singular Page', 'Settings: General', 'wps-team' ),
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::SWITCHER,
+            'default'     => Utils::get_default( 'enable_singular_page' ),
         ] );
         $this->add_control( 'post_type_slug', [
             'label'       => _x( 'Archive Slug', 'Settings: General', 'wps-team' ),
@@ -76,9 +83,6 @@ class Settings_Editor extends Editor_Controls {
             'separator'   => 'none',
             'type'        => Controls_Manager::TEXT,
             'default'     => Utils::get_archive_slug(),
-            'condition'   => [
-                'enable_archive' => true,
-            ],
         ] );
         $this->add_control( 'with_front', [
             'label'       => _x( 'Include Base Slug in URLs', 'Settings: General', 'wps-team' ),
@@ -86,9 +90,6 @@ class Settings_Editor extends Editor_Controls {
             'separator'   => 'none',
             'type'        => Controls_Manager::SWITCHER,
             'default'     => Utils::get_default( 'with_front' ),
-            'condition'   => [
-                'enable_archive' => true,
-            ],
         ] );
     }
 

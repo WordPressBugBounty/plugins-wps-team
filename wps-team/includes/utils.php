@@ -547,6 +547,7 @@ class Utils {
             'detail_thumbnail_size_custom' => [],
             'detail_thumbnail_type'        => 'image',
             'enable_archive'               => true,
+            'enable_singular_page'         => true,
             'with_front'                   => true,
             'post_type_slug'               => 'wps-members',
             'member_plural_name'           => 'Members',
@@ -761,6 +762,10 @@ class Utils {
             return wp_validate_boolean( self::get_setting( 'enable_' . self::to_field_key( $taxonomy ) . '_archive' ) );
         }
         return wp_validate_boolean( self::get_setting( 'enable_archive' ) );
+    }
+
+    public static function has_singular_page() {
+        return wp_validate_boolean( self::get_setting( 'enable_singular_page' ) );
     }
 
     public static function get_taxonomy_roots( $with_pro_taxonomies = false ) {
@@ -1392,6 +1397,87 @@ class Utils {
 
     public static function get_group_terms( $args = [] ) {
         return self::get_terms( self::get_taxonomy_name( 'group' ), $args );
+    }
+
+    /**
+     * Group terms for filter UI / queries (same constraints as template-filter-header).
+     *
+     * @param object $shortcode_loader Object with get_setting().
+     */
+    public static function get_group_terms_for_shortcode_filter( $shortcode_loader ) {
+        $args = [
+            'orderby'    => $shortcode_loader->get_setting( 'group_orderby' ),
+            'order'      => $shortcode_loader->get_setting( 'group_order' ),
+            'hide_empty' => true,
+        ];
+        $include = $shortcode_loader->get_setting( 'include_by_group' );
+        if ( !empty( $include ) ) {
+            $args['include'] = (array) $include;
+        }
+        $exclude = $shortcode_loader->get_setting( 'exclude_by_group' );
+        if ( !empty( $exclude ) ) {
+            $args['exclude'] = (array) $exclude;
+            // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
+        }
+        return self::get_group_terms( $args );
+    }
+
+    /**
+     * Resolve group filter initial UI and AJAX tax restriction from shortcode settings.
+     *
+     * @param object $shortcode_loader Object with get_setting().
+     * @param array  $groups           Group terms from get_group_terms_for_shortcode_filter().
+     * @return array{all_active:bool,active_term_id:?int,ajax_tax_term_ids:int[]}
+     */
+    public static function resolve_group_filter_initial_state( $shortcode_loader, array $groups ) {
+        $show_filter_all = wp_validate_boolean( $shortcode_loader->get_setting( 'show_filter_all' ) );
+        $allow_deselect = wp_validate_boolean( $shortcode_loader->get_setting( 'allow_group_deselect' ) );
+        $raw = $shortcode_loader->get_setting( 'initial_filter' );
+        if ( $raw === '' || $raw === null ) {
+            $raw = '*';
+        }
+        if ( $raw !== '*' && is_numeric( $raw ) ) {
+            $raw = (int) $raw;
+        }
+        $term_ids = array_map( 'intval', wp_list_pluck( $groups, 'term_id' ) );
+        if ( empty( $term_ids ) ) {
+            return [
+                'all_active'        => false,
+                'active_term_id'    => null,
+                'ajax_tax_term_ids' => [],
+            ];
+        }
+        if ( $raw !== '*' && !in_array( (int) $raw, $term_ids, true ) ) {
+            $raw = (int) $term_ids[0];
+        }
+        if ( $raw === '*' ) {
+            if ( $show_filter_all ) {
+                return [
+                    'all_active'        => true,
+                    'active_term_id'    => null,
+                    'ajax_tax_term_ids' => [],
+                ];
+            }
+            if ( $allow_deselect ) {
+                return [
+                    'all_active'        => false,
+                    'active_term_id'    => null,
+                    'ajax_tax_term_ids' => [],
+                ];
+            }
+            $first = (int) $term_ids[0];
+            return [
+                'all_active'        => false,
+                'active_term_id'    => $first,
+                'ajax_tax_term_ids' => [$first],
+            ];
+        }
+        $tid = (int) $raw;
+        return [
+            'all_active'        => false,
+            'active_term_id'    => $tid,
+            'ajax_tax_term_ids' => [$tid],
+        ];
     }
 
     public static function get_term_options( $terms ) {

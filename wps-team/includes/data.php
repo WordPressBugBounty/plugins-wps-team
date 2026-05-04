@@ -164,9 +164,12 @@ class Data {
             'wpml_cf_fields'                 => true,
             'show_in_wpml_language_switcher' => true,
         );
-        if ( Utils::has_archive() ) {
+        if ( Utils::has_archive() || Utils::has_singular_page() ) {
             $args['public'] = true;
-            $args['has_archive'] = Utils::get_setting( 'enable_archive' );
+            $args['publicly_queryable'] = true;
+            if ( Utils::has_archive() ) {
+                $args['has_archive'] = Utils::get_setting( 'enable_archive' );
+            }
             $args['rewrite'] = [
                 'slug'       => Utils::get_archive_slug(),
                 'with_front' => Utils::get_setting( 'with_front' ),
