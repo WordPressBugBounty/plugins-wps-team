@@ -5,6 +5,14 @@ namespace WPSpeedo_Team;
 if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
+/**
+ * Single member content.
+ *
+ * Override: copy to `wpspeedo-team/` (mu-plugins, child, or parent theme; see {@link https://wpspeedo.com/docs/team-template-override/}).
+ * Folder: filter `wpspeedo_team/template/folder`, {@see Utils::load_template()}.
+ *
+ * @version 1.0.0 Bump when this file changes; compare after updates if you override.
+ */
 $shortcode_loader = new Single_Loader();
 $detail_thumbnail_size = Utils::get_setting( 'detail_thumbnail_size' );
 $detail_thumbnail_size_custom = Utils::get_setting( 'detail_thumbnail_size_custom' );

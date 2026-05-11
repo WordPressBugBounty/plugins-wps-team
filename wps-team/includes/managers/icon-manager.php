@@ -125,4 +125,36 @@ class Icon_Manager {
 
 	}
 
+	/**
+	 * Build full Font Awesome class string from stored term icon data (matches Vue input-icon fill logic).
+	 *
+	 * @param array $icon { icon: string, library: string }
+	 * @return string Full class list e.g. "fas fa-utensils"
+	 */
+	public static function get_term_icon_class_string( array $icon ) {
+
+		if ( empty( $icon['library'] ) || ! isset( $icon['icon'] ) || $icon['icon'] === '' ) {
+			return '';
+		}
+
+		$tabs = self::get_icon_manager_tabs();
+
+		if ( ! isset( $tabs[ $icon['library'] ] ) ) {
+			return '';
+		}
+
+		$meta           = $tabs[ $icon['library'] ];
+		$display_prefix = isset( $meta['displayPrefix'] ) ? (string) $meta['displayPrefix'] : '';
+		$prefix         = isset( $meta['prefix'] ) ? (string) $meta['prefix'] : 'fa-';
+		$icon_part      = trim( (string) $icon['icon'] );
+
+		if ( $display_prefix !== '' && str_contains( $icon_part, $display_prefix ) ) {
+			return $icon_part;
+		}
+
+		$icon_part = preg_replace( '/^' . preg_quote( $prefix, '/' ) . '/', '', $icon_part );
+
+		return trim( $display_prefix . ' ' . $prefix . $icon_part );
+	}
+
 }

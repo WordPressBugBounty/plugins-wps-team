@@ -302,6 +302,15 @@ class Settings_Editor extends Editor_Controls {
                 'enable_multilingual' => false,
             ],
         ] );
+        $this->add_control( 'filter_reset_button_text', [
+            'label'       => _x( 'Reset Filters Text', 'Settings: Translation', 'wps-team' ),
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
         foreach ( Utils::get_taxonomy_roots() as $tax_root ) {
             $tax_root_key = Utils::to_field_key( $tax_root );
             $tax_single_name = Utils::get_setting( $tax_root_key . '_single_name' );
@@ -309,7 +318,7 @@ class Settings_Editor extends Editor_Controls {
                 continue;
             }
             $this->add_control( 'filter_all_' . $tax_root_key . '_text', [
-                'label'       => $tax_single_name . ' ' . Variables::get( 'all_filter_txt' ),
+                'label'       => $tax_single_name . ' ' . Variables::get( 'filter_all_txt' ),
                 'label_block' => false,
                 'separator'   => 'none',
                 'type'        => Controls_Manager::UPGRADE_NOTICE,
@@ -329,6 +338,17 @@ class Settings_Editor extends Editor_Controls {
         ] );
         $this->add_control( 'read_more_link_text', [
             'label'       => 'Read More Link Text',
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::TEXT,
+            'placeholder' => Utils::get_default( 'read_more_link_text' ),
+            'default'     => Utils::get_default( 'read_more_link_text' ),
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
+        $this->add_control( 'read_more_btn_text', [
+            'label'       => 'Read More Button Text',
             'label_block' => false,
             'separator'   => 'none',
             'type'        => Controls_Manager::UPGRADE_NOTICE,
@@ -528,47 +548,6 @@ class Settings_Editor extends Editor_Controls {
                 'enable_multilingual' => false,
             ],
         ] );
-        $this->add_control( 'taxonomy_fields_labels_title', [
-            'label'       => 'Public: Taxonomy Field Labels',
-            'label_block' => false,
-            'separator'   => 'before',
-            'type'        => Controls_Manager::HEADING,
-            'condition'   => [
-                'enable_multilingual' => false,
-            ],
-        ] );
-        if ( Utils::get_setting( 'enable_group_taxonomy' ) ) {
-            $this->add_control( 'group_meta_label', [
-                'label'       => Variables::get( 'group_single_name' ) . ' ' . Variables::get( 'label_txt' ),
-                'label_block' => false,
-                'separator'   => 'none',
-                'type'        => Controls_Manager::TEXT,
-                'placeholder' => Utils::get_default( 'group_meta_label' ),
-                'default'     => Utils::get_default( 'group_meta_label' ),
-                'condition'   => [
-                    'enable_multilingual' => false,
-                ],
-            ] );
-        }
-        foreach ( Utils::get_taxonomy_roots() as $tax_root ) {
-            if ( $tax_root === 'group' ) {
-                continue;
-            }
-            $tax_root_key = Utils::to_field_key( $tax_root );
-            if ( !Utils::get_setting( 'enable_' . $tax_root_key . '_taxonomy' ) ) {
-                continue;
-            }
-            $tax_single_name = Utils::get_setting( $tax_root_key . '_single_name' );
-            $this->add_control( $tax_root_key . '_meta_label', [
-                'label'       => $tax_single_name . ' ' . Variables::get( 'label_txt' ),
-                'label_block' => false,
-                'separator'   => 'none',
-                'type'        => Controls_Manager::UPGRADE_NOTICE,
-                'condition'   => [
-                    'enable_multilingual' => false,
-                ],
-            ] );
-        }
         $this->add_control( 'other_translations', [
             'label'       => 'Public: Others',
             'label_block' => false,
@@ -666,6 +645,10 @@ class Settings_Editor extends Editor_Controls {
             'condition'   => [
                 'detail_thumbnail_size' => 'custom',
             ],
+        ] );
+        $this->add_control( 'responsive_breakpoints_bar', [
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+            'label_block' => false,
         ] );
         $this->end_controls_section();
     }

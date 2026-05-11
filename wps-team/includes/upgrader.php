@@ -26,7 +26,7 @@ class Upgrader {
     }
 
     public function upgrade_paths() {
-        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.1', '3.3.1', '3.4.5', '3.4.6', '3.5.7' ];
+        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.1', '3.3.1', '3.4.5', '3.4.6', '3.5.7', '4.0.0' ];
     }
 
     public function run() {
@@ -402,6 +402,73 @@ class Upgrader {
         $settings = Utils::get_general_settings();
         $settings['enable_singular_page'] = $settings['enable_archive'];
         update_option( Utils::get_option_name(), $settings ); // phpcs:ignore
+    }
+
+    public function _v_4_0_0() {
+        $settings       = Utils::get_general_settings();
+        $general_dirty  = false;
+
+        if ( array_key_exists( 'read_more_link_text', $settings ) ) {
+            $settings['read_more_btn_text'] = $settings['read_more_link_text'];
+            $general_dirty = true;
+        }
+
+        foreach ( Utils::get_taxonomy_roots( true ) as $tax_root ) {
+            $meta_key = Utils::to_field_key( $tax_root ) . '_meta_label';
+            if ( array_key_exists( $meta_key, $settings ) ) {
+                unset( $settings[ $meta_key ] );
+                $general_dirty = true;
+            }
+        }
+
+        if ( $general_dirty ) {
+            update_option( Utils::get_option_name(), $settings ); // phpcs:ignore
+        }
+
+        global $wpdb;
+
+        $shortcodes = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wps_team ORDER BY created_at DESC", ARRAY_A ); // phpcs:ignore
+
+        foreach ( $shortcodes as $shortcode ) {
+            $decoded = Utils::maybe_decoded_data( $shortcode['settings'] );
+            if ( ! is_array( $decoded ) ) {
+                continue;
+            }
+
+            $changed = false;
+
+            if ( array_key_exists( 'add_read_more', $decoded ) ) {
+                $old   = $decoded['add_read_more'];
+                $raw   = is_array( $old ) ? ( $old['value'] ?? '' ) : $old;
+                $is_on = wp_validate_boolean( $raw );
+
+                $decoded['show_read_more_link'] = [
+                    'value' => $is_on ? 'true' : 'false',
+                ];
+                unset( $decoded['add_read_more'] );
+                $changed = true;
+            }
+
+            if ( array_key_exists( 'show_read_more', $decoded ) ) {
+                $decoded['show_read_more_btn'] = $decoded['show_read_more'];
+                unset( $decoded['show_read_more'] );
+                $changed = true;
+            }
+
+            if ( array_key_exists( 'order_read_more', $decoded ) ) {
+                $decoded['order_read_more_btn'] = $decoded['order_read_more'];
+                unset( $decoded['order_read_more'] );
+                $changed = true;
+            }
+
+            if ( ! $changed ) {
+                continue;
+            }
+
+            $shortcode['settings']   = wp_json_encode( $decoded );
+            $shortcode['updated_at'] = current_time( 'mysql' );
+            $wpdb->update( "{$wpdb->prefix}wps_team", $shortcode, [ 'id' => $shortcode['id'] ], plugin()->api->db_columns_format() ); // phpcs:ignore
+        }
     }
 
 }

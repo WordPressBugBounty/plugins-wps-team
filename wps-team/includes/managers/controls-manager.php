@@ -13,6 +13,11 @@ class Controls_Manager {
 	const CUSTOM_IMAGE_SIZE = 'custom_image_size';
 
 	/**
+	 * Responsive breakpoint bar (Settings UI).
+	 */
+	const BREAKPOINT_BAR = 'breakpoint_bar';
+
+	/**
 	 * Text control.
 	 */
 	const UPGRADE_NOTICE = 'upgrade_notice';
@@ -354,7 +359,8 @@ class Controls_Manager {
 			self::CHOOSE,
 			self::FONT,
 			self::CUSTOM_IMAGE_SIZE,
-			
+			self::BREAKPOINT_BAR,
+
 			self::TAB,
 			self::TABS,
 			self::POPOVER_TOGGLE,

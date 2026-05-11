@@ -119,6 +119,11 @@ class Hooks {
             <div class="wps-carousel--inner">
         <?php 
         }
+        if ( $display_type === 'ticker' && $card_action !== 'expand' ) {
+            ?>
+            <div class="wps-ticker--inner">
+        <?php 
+        }
     }
 
     public function add_shortcode_edit_link( $shortcode_loader ) {
@@ -149,6 +154,9 @@ class Hooks {
         $detail_thumbnail_size = $shortcode_loader->get_setting( 'detail_thumbnail_size' );
         $detail_thumbnail_size_custom = $shortcode_loader->get_setting( 'detail_thumbnail_size_custom' );
         $detail_thumbnail_type = $shortcode_loader->get_setting( 'detail_thumbnail_type' );
+        if ( $display_type === 'ticker' && $card_action !== 'expand' ) {
+            print '</div>';
+        }
         if ( $display_type === 'carousel' && $card_action !== 'expand' ) {
             if ( $shortcode_loader->get_setting( 'navs' ) ) {
                 ?>

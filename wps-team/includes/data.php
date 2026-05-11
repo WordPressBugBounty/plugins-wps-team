@@ -212,7 +212,12 @@ class Data {
         global $post;
         $meta_data = $this->get_validated_meta_data( $post->ID );
         // Sanitization & Validation Done
-        printf( "<div id='wps-meta-boxes'><meta-box meta_data='%s'></meta-box></div>", esc_attr( json_encode( $meta_data ) ) );
+        $meta_json = wp_json_encode( $meta_data );
+        if ( !is_string( $meta_json ) ) {
+            $meta_json = '{}';
+        }
+        // Double-quoted attribute + esc_attr so JSON is safe; single-quoted attrs break on apostrophes in values (e.g. social/education text).
+        printf( '<div id="wps-meta-boxes"><meta-box meta_data="%s"></meta-box></div>', esc_attr( $meta_json ) );
         $this->print_education_meta_fields( $meta_data );
         $this->print_nonce();
     }
@@ -356,6 +361,10 @@ class Data {
                 $data[$meta_key] = sanitize_text_field( $meta_val );
                 continue;
             }
+            if ( $meta_key == '_skills_with_value' ) {
+                $data[$meta_key] = wp_validate_boolean( $meta_val );
+                continue;
+            }
             if ( $meta_key == '_email' ) {
                 $data[$meta_key] = sanitize_email( $meta_val );
                 continue;
@@ -365,7 +374,12 @@ class Data {
                 continue;
             }
             if ( $meta_key == '_social_links' ) {
+                if ( !is_array( $meta_val ) ) {
+                    $data[$meta_key] = [];
+                    continue;
+                }
                 foreach ( $meta_val as &$s_link ) {
+                    unset($s_link['_wpsRowKey']);
                     if ( !empty( $s_link['social_icon'] ) ) {
                         $s_link['social_icon'] = array_map( 'sanitize_text_field', $s_link['social_icon'] );
                     }
@@ -373,18 +387,42 @@ class Data {
                         $s_link['social_link'] = sanitize_url( $s_link['social_link'] );
                     }
                 }
+                unset($s_link);
+                $meta_val = array_values( array_filter( $meta_val, function ( $s_link ) {
+                    return !empty( $s_link['social_icon'] ) || !empty( $s_link['social_link'] );
+                } ) );
                 $data[$meta_key] = $meta_val;
                 continue;
             }
             if ( $meta_key == '_skills' ) {
+                if ( !is_array( $meta_val ) ) {
+                    $data[$meta_key] = [];
+                    continue;
+                }
+                $skills_with_values = true;
+                if ( array_key_exists( '_skills_with_value', $data ) ) {
+                    $skills_with_values = wp_validate_boolean( $data['_skills_with_value'] );
+                }
                 foreach ( $meta_val as &$skill ) {
+                    unset($skill['_wpsRowKey']);
                     if ( !empty( $skill['skill_name'] ) ) {
                         $skill['skill_name'] = sanitize_text_field( $skill['skill_name'] );
                     }
-                    if ( !empty( $skill['skill_val'] ) ) {
-                        $skill['skill_val'] = (int) $skill['skill_val'];
+                    $has_name = !empty( $skill['skill_name'] );
+                    $raw_val = $skill['skill_val'] ?? null;
+                    if ( is_string( $raw_val ) ) {
+                        $raw_val = trim( $raw_val );
+                    }
+                    if ( $skills_with_values && $has_name && (null === $raw_val || '' === $raw_val || !is_numeric( $raw_val )) ) {
+                        $skill['skill_val'] = 100;
+                    } elseif ( is_numeric( $raw_val ) ) {
+                        $skill['skill_val'] = min( 100, max( 0, (int) round( (float) $raw_val ) ) );
                     }
                 }
+                unset($skill);
+                $meta_val = array_values( array_filter( $meta_val, function ( $skill ) {
+                    return !empty( $skill['skill_name'] ) || !empty( $skill['skill_val'] );
+                } ) );
                 $data[$meta_key] = $meta_val;
                 continue;
             }
@@ -403,7 +441,9 @@ class Data {
             if ( !empty( $meta_keys ) ) {
                 foreach ( $meta_keys as $key ) {
                     $data[$key] = get_post_meta( $post_id, $key, true );
-                    if ( empty( $data[$key] ) && !empty( $controls[$key] ) && array_key_exists( 'default', $controls[$key] ) ) {
+                    // Use metadata_exists so stored false / 0 / '' are not replaced by control defaults
+                    // (empty() treats false as missing, which broke _skills_with_value and similar switchers).
+                    if ( !metadata_exists( 'post', $post_id, $key ) && !empty( $controls[$key] ) && array_key_exists( 'default', $controls[$key] ) ) {
                         $data[$key] = $controls[$key]['default'];
                     }
                 }

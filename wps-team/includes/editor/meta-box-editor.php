@@ -184,6 +184,13 @@ class Meta_Box_Editor extends Editor_Controls {
             'label' => _x( 'Skills', 'Admin Metabox', 'wps-team' ),
         ] );
         $repeater = new Repeater();
+        $this->add_control( '_skills_with_value', [
+            'label'       => _x( 'Skills With Value', 'Admin Metabox', 'wps-team' ),
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::SWITCHER,
+            'default'     => true,
+        ] );
         $repeater->add_control( 'skill_name', [
             'type'        => Controls_Manager::TEXT,
             'label_block' => true,
@@ -197,6 +204,9 @@ class Meta_Box_Editor extends Editor_Controls {
             'min'         => 0,
             'max'         => 100,
             'step'        => 5,
+            'condition'   => [
+                '_skills_with_value' => true,
+            ],
         ] );
         $this->add_control( '_skills', [
             'type'    => Controls_Manager::REPEATER,

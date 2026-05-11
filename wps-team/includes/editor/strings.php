@@ -10,6 +10,8 @@ return [
     'small-tablet' => _x('Small Tablet', 'Editor', 'wps-team'),
     'mobile' => _x('Mobile', 'Editor', 'wps-team'),
 
+    'responsive-breakpoint-max' => _x('Max', 'Settings: responsive breakpoint bar (desktop range end)', 'wps-team'),
+
     'something-wrong' => _x('Something went wrong!', 'Editor', 'wps-team'),
 
     'this-is-pro' => _x('Pro feature', 'Editor', 'wps-team'),
@@ -58,6 +60,7 @@ return [
     'bulk-import' => _x('Bulk Import', 'Editor', 'wps-team'),
     'export-import' => _x('Export/Import', 'Editor', 'wps-team'),
     'erase-reset' => _x('Erase/Reset', 'Editor', 'wps-team'),
+    'template-status' => _x('Template Status', 'Editor', 'wps-team'),
     'tools' => _x('Tools', 'Editor', 'wps-team'),
     'members' => Utils::get_setting( 'member_plural_name' ),
     'group' => Utils::get_setting( 'group_plural_name' ),

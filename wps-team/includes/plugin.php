@@ -51,6 +51,7 @@ class Plugin {
         new Data();
         new Shortcode();
         new Demo_Import();
+        new Template_Status();
         new Compatibility();
         new Export_Import_Manager();
         new Erase_Reset_Manager();

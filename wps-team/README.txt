@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team members, team showcase, WordPress team plugin, staff directory, team slider
 Requires at least: 5.9
 Tested up to: 6.9
-Stable tag: 3.5.7
+Stable tag: 4.0.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -250,6 +250,26 @@ Using the [WordPress.org](https://wordpress.org/support/plugin/wps-team/) suppor
 15. Plugin Settings Panel – Configure the Team Members WordPress plugin options
 
 == Changelog ==
+
+4.0.0 - 12-05-2026
+* Added: Custom responsive breakpoints (Settings → Advance).
+* Added: Reset Filters button for the Filter layouts.
+* Added: Taxonomy icon picker.
+* Added: Ticker view (Pro).
+* Added: Template Status tool.
+* Added: Few layouts for Carousel.
+* Added: Export/Import conflict policies (Upsert, Skip Existing, Duplicate).
+* Added: Bulk Import CSV and validation improvements.
+* Added: Bulk update existing members from CSV (post_id or id column).
+* Added: Bulk Import tag-style skills (no numbers).
+* Added: Bulk Import notice + one-click enable for disabled taxonomies.
+* Fixed: Bulk Import invalid taxonomy notices when CSV uses disabled taxonomies.
+* Fixed: Same-site image URLs reuse existing attachments (thumbnail & gallery).
+* Fixed: Read More migration and backward compatibility.
+* Fixed: Meta keys caching issue.
+* Fixed: Security issue.
+* Tweak: Taxonomy labels use singular/plural by term count.
+* Tweak: Editor fields performance improvements.
 
 3.5.7 - 04-05-2026
 * Added: Alphabet Filter.

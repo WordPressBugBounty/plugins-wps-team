@@ -35,6 +35,8 @@ class Autoloader {
 			'Date_Methods' => 'includes/traits/date-methods.php',
 
 			'Currency' => 'includes/traits/currency.php',
+			'Utils_Options' => 'includes/traits/utils-options.php',
+			'Utils_Template_Elements' => 'includes/traits/utils-template-elements.php',
 			'Utils' => 'includes/utils.php',
 			'Compatibility' => 'includes/compatibility.php',
 			'Assets' => 'includes/assets.php',
@@ -111,6 +113,7 @@ class Autoloader {
 			'Control_Tabs' => 'includes/controls/tabs.php',
 			'Control_Tab' => 'includes/controls/tab.php',
 			'Control_Custom_Image_Size' => 'includes/controls/custom-image-size.php',
+			'Control_Breakpoint_Bar' => 'includes/controls/breakpoint-bar.php',
 			'Control_Popover_Toggle' => 'includes/controls/popover-toggle.php',
 			'Group_Control_Background' => 'includes/controls/groups/background.php',
 			'Group_Control_Typography' => 'includes/controls/groups/typography.php',
@@ -125,8 +128,9 @@ class Autoloader {
 			'Settings_Editor' => 'includes/editor/settings-editor.php',
 
 			'Shortcode' => 'includes/shortcode.php',
-			'Demo_Import' => 'includes/demo-import/demo-import.php'
-			
+			'Demo_Import' => 'includes/demo-import/demo-import.php',
+			'Template_Status' => 'includes/admin/template-status.php',
+
 		];
 
 	}

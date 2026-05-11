@@ -151,18 +151,19 @@ final class Admin {
         $shortcode_editor = new Shortcode_Editor();
         $settings_editor = new Settings_Editor();
         $data = array(
-            'nonce'     => wp_create_nonce( '_wpspeedo_team_nonce' ),
-            'ajaxurl'   => admin_url( 'admin-ajax.php' ),
-            'adminurl'  => admin_url(),
-            'siteurl'   => home_url(),
-            'pluginurl' => WPS_TEAM_URL,
-            'version'   => WPS_TEAM_VERSION,
-            'action'    => 'wpspeedo_team_ajax_handler',
-            'fields'    => $shortcode_editor->get_controls(),
-            'tabs'      => plugin()->tabs,
-            'settings'  => $settings_editor->get_controls(),
-            'icon_data' => Icon_Manager::get_icon_manager_tabs_config(),
-            'is_pro'    => false,
+            'nonce'       => wp_create_nonce( '_wpspeedo_team_nonce' ),
+            'ajaxurl'     => admin_url( 'admin-ajax.php' ),
+            'adminurl'    => admin_url(),
+            'siteurl'     => home_url(),
+            'pluginurl'   => WPS_TEAM_URL,
+            'version'     => WPS_TEAM_VERSION,
+            'action'      => 'wpspeedo_team_ajax_handler',
+            'fields'      => $shortcode_editor->get_controls(),
+            'tabs'        => plugin()->tabs,
+            'settings'    => $settings_editor->get_controls(),
+            'icon_data'   => Icon_Manager::get_icon_manager_tabs_config(),
+            'is_pro'      => false,
+            'breakpoints' => Utils::get_breakpoints_for_client(),
         );
         $is_whitelabeled = wps_team_fs()->is_whitelabeled();
         $is_paying_or_trial = wps_team_fs()->is_paying_or_trial();
@@ -181,10 +182,13 @@ final class Admin {
     }
 
     public function meta_box_scripts( $hook ) {
-        if ( !in_array( $hook, ['post.php', 'post-new.php'] ) ) {
+        $is_member_edit = in_array( $hook, ['post.php', 'post-new.php'], true ) && Utils::post_type_name() === get_post_type();
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $is_team_taxonomy_screen = 'edit-tags.php' === $hook && isset( $_GET['taxonomy'] ) && in_array( sanitize_key( wp_unslash( $_GET['taxonomy'] ) ), Utils::get_active_taxonomies(), true );
+        if ( !$is_member_edit && !$is_team_taxonomy_screen ) {
             return;
         }
-        if ( Utils::post_type_name() !== get_post_type() ) {
+        if ( $is_member_edit && Utils::post_type_name() !== get_post_type() ) {
             return;
         }
         wp_register_style(
@@ -211,7 +215,7 @@ final class Admin {
         wp_register_script(
             'wpspeedo-team--meta-box',
             WPS_TEAM_ADMIN_ASSET_URL . 'js/meta-box.min.js',
-            ['jquery', 'underscore'],
+            ['jquery', 'underscore', 'jquery-ui-sortable'],
             WPS_TEAM_VERSION,
             true
         );

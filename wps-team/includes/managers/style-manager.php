@@ -222,9 +222,16 @@ abstract class Style_Manager extends Attribute_Manager {
         $css = str_replace( ';;', ';', $css );
         $css = str_replace( ';}', '}', $css );
 
-        if ( $device == 'tablet' ) $css = sprintf( '@media screen and (max-width: 1024px){%s}', $css );
-        if ( $device == 'small_tablet' ) $css = sprintf( '@media screen and (max-width: 767px){%s}', $css );
-        if ( $device == 'mobile' ) $css = sprintf( '@media screen and (max-width: 480px){%s}', $css );
+        if ( $device == 'tablet' || $device == 'small_tablet' || $device == 'mobile' ) {
+            $bp = Utils::get_breakpoint_widths();
+            if ( $device == 'tablet' ) {
+                $css = sprintf( '@media screen and (max-width: %dpx){%s}', (int) $bp['tablet_max'], $css );
+            } elseif ( $device == 'small_tablet' ) {
+                $css = sprintf( '@media screen and (max-width: %dpx){%s}', (int) $bp['small_tablet_max'], $css );
+            } else {
+                $css = sprintf( '@media screen and (max-width: %dpx){%s}', (int) $bp['mobile_max'], $css );
+            }
+        }
 
         return $css;
     }

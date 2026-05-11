@@ -5,6 +5,23 @@ namespace WPSpeedo_Team;
 if ( !defined( 'ABSPATH' ) ) {
     exit;
 }
+/**
+ * Team card — Square 05.
+ *
+ * Override: copy to `wpspeedo-team/` (mu-plugins, child, or parent theme; see {@link https://wpspeedo.com/docs/team-template-override/}).
+ * Folder: filter `wpspeedo_team/template/folder`, {@see Utils::load_template()}.
+ *
+ * @version 1.0.0 Bump when this file changes; compare after updates if you override.
+ *
+ * {@see Shortcode_Loader::init_template()} — scope vars (not set here):
+ *
+ * @var string      $card_action
+ * @var string      $thumbnail_size
+ * @var string      $thumbnail_size_custom
+ * @var string      $thumbnail_type
+ * @var int         $description_length
+ * @var string|bool $show_read_more_link
+ */
 $this->add_attribute( 'wrapper', 'class', ['wps--thumb-round', 'wps-team--social-hover-up', 'wps-team--thumb-zoom-in'] );
 ?>
 
@@ -67,10 +84,9 @@ if ( $this->get_posts()->have_posts() ) {
         ] );
         Utils::get_the_divider();
         Utils::get_the_excerpt( get_the_ID(), [
-            'description_length' => $description_length,
-            'add_read_more'      => $add_read_more,
-            'card_action'        => $card_action,
-            'read_more_text'     => $read_more_text,
+            'description_length'  => $description_length,
+            'show_read_more_link' => $show_read_more_link,
+            'card_action'         => $card_action,
         ] );
         Utils::get_the_social_links( get_the_ID() );
         ?>

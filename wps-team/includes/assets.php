@@ -41,6 +41,10 @@ class Assets extends Assets_Manager {
             $this->add_item_in_asset_list( 'styles', $this->asset_handler(), ['wpspeedo-swiper'] );
             $this->add_item_in_asset_list( 'scripts', $this->asset_handler(), ['wpspeedo-swiper'] );
         }
+        if ( wps_team_fs()->can_use_premium_code__premium_only() && $display_type === 'ticker' ) {
+            $this->add_item_in_asset_list( 'styles', $this->asset_handler(), ['wpspeedo-ticker'] );
+            $this->add_item_in_asset_list( 'scripts', $this->asset_handler(), ['wpspeedo-ticker'] );
+        }
         if ( plugin()->integrations->is_divi_active() ) {
             $this->add_item_in_asset_list( 'styles', $this->asset_handler(), [$this->asset_handler() . '-divi'] );
         }
@@ -146,8 +150,9 @@ class Assets extends Assets_Manager {
             WPS_TEAM_VERSION
         );
         $data = [
-            'version' => WPS_TEAM_VERSION,
-            'is_pro'  => wps_team_fs()->can_use_premium_code__premium_only(),
+            'version'     => WPS_TEAM_VERSION,
+            'is_pro'      => wps_team_fs()->can_use_premium_code__premium_only(),
+            'breakpoints' => Utils::get_breakpoints_for_client(),
         ];
         wp_register_script(
             $this->asset_handler(),
@@ -171,7 +176,8 @@ class Assets extends Assets_Manager {
             true
         );
         $preview_data = [
-            'is_pro' => wps_team_fs()->can_use_premium_code__premium_only(),
+            'is_pro'      => wps_team_fs()->can_use_premium_code__premium_only(),
+            'breakpoints' => Utils::get_breakpoints_for_client(),
         ];
         wp_localize_script( $this->asset_handler() . '-preview', '_wps_team_preview_data', $preview_data );
     }

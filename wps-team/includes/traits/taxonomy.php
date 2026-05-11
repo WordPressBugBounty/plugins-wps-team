@@ -159,6 +159,41 @@ trait Taxonomy
             echo esc_attr( Utils::get_setting( $page_tax_key . '_single_name' ) );
             ?>" />
                         </div>
+
+                        <?php 
+            $taxonomy_icon_key = $page_tax_key . '_taxonomy_icon';
+            $saved_tax_icon = Utils::get_setting( $taxonomy_icon_key );
+            $tax_icon_initial = wp_json_encode( [
+                'icon'    => '',
+                'library' => '',
+            ] );
+            if ( is_string( $saved_tax_icon ) && $saved_tax_icon !== '' ) {
+                $decoded_icon = json_decode( $saved_tax_icon, true );
+                if ( is_array( $decoded_icon ) ) {
+                    $tax_icon_initial = wp_json_encode( array_merge( [
+                        'icon'    => '',
+                        'library' => '',
+                    ], $decoded_icon ) );
+                }
+            }
+            ?>
+                        <div class="wps-team--tax_setting--field wps-team--taxonomy_icon_field <?php 
+            echo ( !$val_enable_taxonomy ? 'wps-team--field-disabled' : '' );
+            ?>">
+                            <label for="wps-team--tax_single_name"><?php 
+            echo esc_html_x( 'Taxonomy Icon:', 'Settings: Taxonomy', 'wps-team' );
+            ?></label>
+                            <div
+                                class="wps-taxonomy-settings-icon-root"
+                                data-label=""
+                                data-input-name="<?php 
+            echo esc_attr( $taxonomy_icon_key );
+            ?>"
+                                data-initial="<?php 
+            echo esc_attr( $tax_icon_initial );
+            ?>"
+                            ></div>
+                        </div>
     
                         <div class="wps-team--tax_setting--field wps-team--field_switcher wps-team--enable_tax_archive <?php 
             echo ( !$val_enable_taxonomy ? 'wps-team--field-disabled' : '' );
@@ -274,11 +309,30 @@ trait Taxonomy
                 margin-top: 30px;
                 padding: 20px;
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
                 background: #fff;
                 border: 1px solid #c3c4c7;
                 border-radius: 4px;
                 gap: 30px;
+                flex-wrap: wrap;
+            }
+
+            .wps-team--taxonomy_icon_field {
+                flex: 0 0 180px;
+                width: 180px;
+                max-width: 180px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .wps-team--taxonomy_icon_field .wps-field {
+                margin: 0;
+            }
+
+            .wps-team--taxonomy_icon_field .txc-icon-picker-wrapper,
+            .wps-team--taxonomy_icon_field .txc-media__wrapper {
+                max-width: 180px;
             }
 
             .wps-team--taxonomy-pro_message {

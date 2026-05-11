@@ -36,7 +36,14 @@ class API {
             'settings' => $settings,
         ]);
         // This class will handle the Sanitization & Validation.
-        return $settings_editor->get_display_formated_values();
+        $settings = $settings_editor->get_display_formated_values();
+        if ( isset( $settings['breakpoint_mobile_max'], $settings['breakpoint_small_tablet_max'], $settings['breakpoint_tablet_max'] ) ) {
+            $normalized = Utils::normalize_breakpoint_widths( (int) $settings['breakpoint_mobile_max'], (int) $settings['breakpoint_small_tablet_max'], (int) $settings['breakpoint_tablet_max'] );
+            $settings['breakpoint_mobile_max'] = $normalized['mobile_max'];
+            $settings['breakpoint_small_tablet_max'] = $normalized['small_tablet_max'];
+            $settings['breakpoint_tablet_max'] = $normalized['tablet_max'];
+        }
+        return $settings;
     }
 
     public function save_settings( $settings ) {
@@ -70,7 +77,11 @@ class API {
                 if ( str_contains( $tax_key, '_slug' ) ) {
                     $settings[$tax_key] = sanitize_title( $settings[$tax_key] );
                 } else {
-                    $settings[$tax_key] = sanitize_text_field( $settings[$tax_key] );
+                    if ( substr( $tax_key, -14 ) === '_taxonomy_icon' ) {
+                        $settings[$tax_key] = Utils::sanitize_taxonomy_icon_setting_value( $settings[$tax_key] ?? '' );
+                    } else {
+                        $settings[$tax_key] = sanitize_text_field( $settings[$tax_key] );
+                    }
                 }
             }
         }

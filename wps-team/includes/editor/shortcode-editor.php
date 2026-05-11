@@ -161,23 +161,6 @@ class Shortcode_Editor extends Editor_Controls {
             'step'        => 10,
             'default'     => 110,
         ] );
-        $this->add_control( 'add_read_more', [
-            'label'       => _x( 'Read More Link', 'Editor', 'wps-team' ),
-            'label_block' => false,
-            'type'        => Controls_Manager::SWITCHER,
-            'default'     => false,
-            'render_type' => 'template',
-        ] );
-        $this->add_control( 'read_more_text', [
-            'label'       => _x( 'Read More Text', 'Editor', 'wps-team' ),
-            'label_block' => true,
-            'type'        => Controls_Manager::TEXT,
-            'default'     => Utils::get_default( 'read_more_text' ),
-            'render_type' => 'template',
-            'condition'   => [
-                'add_read_more' => true,
-            ],
-        ] );
         $this->end_controls_section();
     }
 
@@ -188,6 +171,15 @@ class Shortcode_Editor extends Editor_Controls {
             'condition' => [
                 'display_type' => 'carousel',
             ],
+        ] );
+        $this->add_control( 'carousel_layout', [
+            'label'       => _x( 'Carousel layout', 'Editor', 'wps-team' ),
+            'label_block' => false,
+            'type'        => Controls_Manager::SELECT,
+            'default'     => 'layout-01',
+            'render_type' => 'template',
+            'class'       => 'wps-field--arrange-2',
+            'options'     => Utils::get_control_options( 'carousel_layout' ),
         ] );
         $this->add_control( 'speed', [
             'label'       => _x( 'Carousel Speed', 'Editor', 'wps-team' ),
@@ -248,6 +240,55 @@ class Shortcode_Editor extends Editor_Controls {
             'label'       => Variables::get( 'keyboard_navigation' ),
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
+        ] );
+        $this->end_controls_section();
+    }
+
+    // Ticker Section
+    protected function ticker_section() {
+        $this->start_controls_section( 'ticker_section', [
+            'label'     => _x( 'Ticker Settings', 'Editor', 'wps-team' ),
+            'condition' => [
+                'display_type' => 'ticker',
+            ],
+        ] );
+        $this->add_control( 'ticker_speed', [
+            'label'       => _x( 'Scroll speed', 'Editor', 'wps-team' ),
+            'label_block' => true,
+            'type'        => Controls_Manager::SLIDER,
+            'min'         => 5,
+            'max'         => 200,
+            'step'        => 5,
+            'default'     => 50,
+        ] );
+        $this->add_control( 'ticker_pause_on_hover', [
+            'label'       => _x( 'Pause on hover', 'Editor', 'wps-team' ),
+            'label_block' => false,
+            'type'        => Controls_Manager::SWITCHER,
+            'default'     => true,
+            'render_type' => 'template',
+        ] );
+        $this->add_control( 'ticker_drag', [
+            'label'       => _x( 'Drag to scrub', 'Editor', 'wps-team' ),
+            'label_block' => false,
+            'type'        => Controls_Manager::SWITCHER,
+            'default'     => true,
+            'render_type' => 'template',
+        ] );
+        $this->add_control( 'ticker_reverse', [
+            'label'       => _x( 'Reverse direction', 'Editor', 'wps-team' ),
+            'label_block' => false,
+            'type'        => Controls_Manager::SWITCHER,
+            'default'     => false,
+            'render_type' => 'template',
+        ] );
+        $this->add_control( 'ticker_loop', [
+            'label'       => _x( 'Infinite loop', 'Editor', 'wps-team' ),
+            'description' => _x( 'Scroll continuously in one direction. When off, the track reverses at each end (ping-pong).', 'Editor', 'wps-team' ),
+            'label_block' => false,
+            'type'        => Controls_Manager::SWITCHER,
+            'default'     => false,
+            'render_type' => 'template',
         ] );
         $this->end_controls_section();
     }
@@ -722,7 +763,7 @@ class Shortcode_Editor extends Editor_Controls {
             'render_type' => 'template',
             'type'        => Controls_Manager::SWITCHER,
             'separator'   => 'none',
-            'default'     => true,
+            'default'     => false,
         ] );
         $this->add_control( 'limit', [
             'label'       => _x( 'Display Limit', 'Editor', 'wps-team' ),

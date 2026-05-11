@@ -103,15 +103,19 @@ class Shortcode_Loader extends Attribute_Manager {
             $this->add_attribute( 'single_item_row', 'class', 'wps-row' );
             $this->add_attribute( 'single_item_col', 'class', 'wps-col' );
         }
+        if ( $display_type === 'ticker' && !wps_team_fs()->can_use_premium_code__premium_only() ) {
+            $display_type = 'grid';
+            $this->set_setting( 'display_type', $display_type );
+        }
         if ( in_array( $theme, Utils::get_group_themes( 'table' ) ) ) {
             $this->add_attribute( 'single_item_row', 'class', 'wps-row wps-table' );
             $this->add_attribute( 'single_item_col', 'class', 'wps-col' );
-            if ( in_array( $display_type, ['carousel', 'masonry'] ) ) {
+            if ( in_array( $display_type, ['carousel', 'masonry', 'ticker'] ) ) {
                 $display_type = 'grid';
                 $this->set_setting( 'display_type', $display_type );
             }
         }
-        if ( $card_action == 'expand' && in_array( $display_type, ['carousel'] ) ) {
+        if ( $card_action == 'expand' && in_array( $display_type, ['carousel', 'ticker'] ) ) {
             $card_action = 'none';
             $this->set_setting( 'card_action', $card_action );
         }
@@ -126,12 +130,18 @@ class Shortcode_Loader extends Attribute_Manager {
             $this->add_attribute( 'wrapper_inner', 'class', 'swiper' );
             $this->add_attribute( 'single_item_row', 'class', 'swiper-wrapper' );
             $this->add_attribute( 'single_item_col', 'class', 'swiper-slide' );
+            $carousel_layout = $this->get_setting( 'carousel_layout' );
+            if ( !is_string( $carousel_layout ) || !in_array( $carousel_layout, Utils::get_active_carousel_layouts(), true ) ) {
+                $carousel_layout = 'layout-01';
+            }
+            $this->add_attribute( 'wrapper', 'class', 'wps-team--carousel-layout-' . substr( $carousel_layout, -2 ) );
             if ( wp_validate_boolean( $this->get_setting( 'dots' ) ) ) {
                 $this->add_attribute( 'wrapper', 'class', 'wps-team--carousel-has-dots' );
             }
             if ( wp_validate_boolean( $this->get_setting( 'navs' ) ) ) {
                 $this->add_attribute( 'wrapper', 'class', 'wps-team--carousel-has-navs' );
             }
+            $bp_client = Utils::get_breakpoints_for_client();
             $carousel_settings = [
                 'columns'              => (int) $this->get_setting( 'columns' ),
                 'columns_tablet'       => (int) $this->get_setting( 'columns_tablet' ),
@@ -145,8 +155,48 @@ class Shortcode_Loader extends Attribute_Manager {
                 'dots'                 => wp_validate_boolean( $this->get_setting( 'dots' ) ),
                 'navs'                 => wp_validate_boolean( $this->get_setting( 'navs' ) ),
                 'loop'                 => wp_validate_boolean( $this->get_setting( 'loop' ) ),
+                'breakpoints'          => [
+                    'swiper_sm' => (int) $bp_client['swiper_sm'],
+                    'swiper_md' => (int) $bp_client['swiper_md'],
+                    'swiper_lg' => (int) $bp_client['swiper_lg'],
+                ],
             ];
             $this->add_attribute( 'wrapper', 'data-carousel-settings', json_encode( $carousel_settings ) );
+        }
+        if ( $display_type === 'ticker' ) {
+            $this->add_attribute( 'wrapper_inner', 'class', 'wps-ticker wps-ticker--viewport' );
+            $this->add_attribute( 'single_item_row', 'class', 'wps-ticker__track' );
+            $this->add_attribute( 'single_item_col', 'class', 'wps-ticker__item' );
+            $ticker_speed = $this->get_setting( 'ticker_speed' );
+            if ( is_array( $ticker_speed ) && isset( $ticker_speed['size'] ) ) {
+                $ticker_speed = (int) $ticker_speed['size'];
+            } else {
+                $ticker_speed = (int) $ticker_speed;
+            }
+            if ( $ticker_speed < 5 ) {
+                $ticker_speed = 55;
+            }
+            $t_pause = $this->get_setting( 'ticker_pause_on_hover' );
+            $t_drag = $this->get_setting( 'ticker_drag' );
+            $t_loop = $this->get_setting( 'ticker_loop' );
+            $t_rev = $this->get_setting( 'ticker_reverse' );
+            $ticker_settings = [
+                'speed'              => $ticker_speed,
+                'loop'               => ( null === $t_loop ? false : wp_validate_boolean( $t_loop ) ),
+                'reverse'            => ( null === $t_rev ? false : wp_validate_boolean( $t_rev ) ),
+                'pauseOnHover'       => ( null === $t_pause ? true : wp_validate_boolean( $t_pause ) ),
+                'drag'               => ( null === $t_drag ? true : wp_validate_boolean( $t_drag ) ),
+                'columns'            => (int) $this->get_setting( 'columns' ),
+                'columnsTablet'      => (int) $this->get_setting( 'columns_tablet' ),
+                'columnsSmallTablet' => (int) $this->get_setting( 'columns_small_tablet' ),
+                'columnsMobile'      => (int) $this->get_setting( 'columns_mobile' ),
+                'gap'                => ( $this->get_setting( 'gap' ) === '' || null === $this->get_setting( 'gap' ) ? 24 : (int) $this->get_setting( 'gap' ) ),
+                'gapTablet'          => ( $this->get_setting( 'gap_tablet' ) === '' || null === $this->get_setting( 'gap_tablet' ) ? 24 : (int) $this->get_setting( 'gap_tablet' ) ),
+                'gapSmallTablet'     => ( $this->get_setting( 'gap_small_tablet' ) === '' || null === $this->get_setting( 'gap_small_tablet' ) ? 16 : (int) $this->get_setting( 'gap_small_tablet' ) ),
+                'gapMobile'          => ( $this->get_setting( 'gap_mobile' ) === '' || null === $this->get_setting( 'gap_mobile' ) ? 16 : (int) $this->get_setting( 'gap_mobile' ) ),
+                'breakpoints'        => Utils::get_breakpoints_for_client(),
+            ];
+            $this->add_attribute( 'wrapper_inner', 'data-wps-ticker', wp_json_encode( $ticker_settings ) );
         }
         $this->set_social_attributes();
     }
@@ -321,8 +371,11 @@ class Shortcode_Loader extends Attribute_Manager {
         $thumbnail_size_custom = $this->get_setting( 'thumbnail_size_custom' );
         $description_length = Utils::get_description_length();
         $detail_thumbnail_type = $this->get_setting( 'detail_thumbnail_type' );
-        $add_read_more = $this->get_setting( 'add_read_more' );
-        $read_more_text = $this->get_setting( 'read_more_text' );
+        $show_read_more_link = $this->get_setting( 'show_read_more_link' );
+        if ( $show_read_more_link === null || $show_read_more_link === '' ) {
+            $show_read_more_link = $this->get_setting( 'add_read_more' );
+        }
+        $show_read_more_link = wp_validate_boolean( $show_read_more_link );
         add_filter( 'excerpt_length', [$this, 'modify_excerpt_length'], 999 );
         $shortcode_loader = $this;
         include Utils::load_template( sprintf( 'template-%s.php', sanitize_key( $theme ) ) );
