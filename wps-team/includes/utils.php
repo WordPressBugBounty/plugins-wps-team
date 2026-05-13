@@ -74,7 +74,7 @@ class Utils {
         return $meta;
     }
 
-    public static function elementor_update_post_meta( int $post_id, mixed $value ) {
+    public static function elementor_update_post_meta( int $post_id, $value ) {
         update_metadata(
             'post',
             $post_id,
@@ -278,7 +278,7 @@ class Utils {
         // phpcs:ignore WordPress.Security.EscapeOutput
     }
 
-    public static function get_paged_var( mixed $id ) {
+    public static function get_paged_var( $id ) {
         return 'wps-team-' . $id . '-paged';
     }
 
@@ -1035,14 +1035,14 @@ class Utils {
         return $title;
     }
 
-    public static function maybe_json_encode( mixed $data ) {
+    public static function maybe_json_encode( $data ) {
         if ( is_array( $data ) || is_object( $data ) ) {
             return wp_json_encode( $data );
         }
         return $data;
     }
 
-    public static function maybe_json_decode( mixed $data, $assoc = true ) {
+    public static function maybe_json_decode( $data, $assoc = true ) {
         if ( !is_string( $data ) || trim( $data ) === '' ) {
             return $data;
         }
@@ -1053,7 +1053,7 @@ class Utils {
         return $data;
     }
 
-    public static function maybe_decoded_data( mixed $data ) {
+    public static function maybe_decoded_data( $data ) {
         if ( !is_string( $data ) || trim( $data ) === '' ) {
             return $data;
         }
@@ -1095,7 +1095,7 @@ class Utils {
      * @param mixed $value Raw POST value.
      * @return string JSON or empty string.
      */
-    public static function sanitize_taxonomy_icon_setting_value( mixed $value ) {
+    public static function sanitize_taxonomy_icon_setting_value( $value ) {
         if ( !is_string( $value ) || $value === '' ) {
             return '';
         }

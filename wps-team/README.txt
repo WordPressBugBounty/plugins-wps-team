@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team members, team showcase, WordPress team plugin, staff directory, team slider
 Requires at least: 5.9
 Tested up to: 6.9
-Stable tag: 4.0.0
+Stable tag: 4.0.1
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -250,6 +250,10 @@ Using the [WordPress.org](https://wordpress.org/support/plugin/wps-team/) suppor
 15. Plugin Settings Panel – Configure the Team Members WordPress plugin options
 
 == Changelog ==
+
+4.0.1 - 14-05-2026
+* Fixed: Fatal error on PHP 7.x during upgrade to 4.0.0 (incorrect `mixed` type hints in namespaced code). Sites stuck in recovery mode can update to this version to complete migration safely.
+* Fixed: AJAX load more querying draft posts in admin-ajax context.
 
 4.0.0 - 12-05-2026
 * Added: Custom responsive breakpoints (Settings → Advance).

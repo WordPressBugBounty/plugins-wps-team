@@ -351,6 +351,23 @@ class Shortcode_Loader extends Attribute_Manager {
         if ( !empty( $query_args['orderby'] ) && $query_args['orderby'] === 'menu_order' ) {
             $query_args['orderby'] = 'date';
         }
+        // admin-ajax.php sets is_admin() true, so WP_Query would otherwise include draft/pending
+        // (show_in_admin_all_list). Mirror front-end visibility for public/preview AJAX loads.
+        if ( $this->is_ajax && in_array( $this->mode, ['public', 'preview'], true ) ) {
+            $post_status = get_post_stati( [
+                'public' => true,
+            ], 'names' );
+            if ( is_user_logged_in() ) {
+                $post_type_object = get_post_type_object( Utils::post_type_name() );
+                if ( $post_type_object instanceof WP_Post_Type ) {
+                    $post_status = array_merge( $post_status, get_post_stati( [
+                        'private' => true,
+                    ], 'names' ) );
+                    $query_args['perm'] = 'readable';
+                }
+            }
+            $query_args['post_status'] = array_unique( array_map( 'sanitize_key', $post_status ) );
+        }
         $this->query_args = $query_args;
     }
 
