@@ -6,7 +6,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-13 18:48+0000\n"
+"POT-Creation-Date: 2026-05-17 01:28+0000\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -229,12 +229,12 @@ msgstr ""
 msgid "Single WPS Team Member"
 msgstr ""
 
-#: ../includes/hooks.php:356
+#: ../includes/hooks.php:366
 msgctxt "Public"
 msgid "No Results Found"
 msgstr ""
 
-#: ../includes/hooks.php:398
+#: ../includes/hooks.php:408
 msgctxt "Public: Pagination"
 msgid "Load More"
 msgstr ""
@@ -643,37 +643,139 @@ msgctxt "Admin Metabox"
 msgid "Max Price"
 msgstr ""
 
-#: ../includes/admin/admin.php:60
+#: ../includes/admin/admin-sortable.php:190, ../includes/admin/admin-sortable.php:249
+msgctxt "Admin column"
+msgid "Order"
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:325, ../includes/admin/admin-sortable.php:609
+msgid "Drag to reorder"
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:326
+msgid "Drag to reorder is a Pro feature"
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:394
+msgid "Global order position"
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:395
+msgid "Global order position (Pro feature)"
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:405
+msgid "Type a number and press Enter to move this item to that global position"
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:403
+msgid "Editing the order is a Pro feature"
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:606
+msgid "Saving order…"
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:607, ../includes/admin/admin-sortable.php:797, ../includes/admin/admin-sortable.php:827
+msgid "Order saved successfully."
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:608
+msgid "Could not save order. Please try again."
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:610, ../includes/admin/admin-sortable.php:735
+msgid "Drag-and-drop ordering is a Pro feature."
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:611
+msgid "Child terms can only be reordered within their own parent."
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:612
+msgid "Please enter a valid order number."
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:613
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:727
+msgid "Security check failed."
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:731
+msgid "You are not allowed to perform this action."
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:744
+msgid "Unsupported sort type."
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:759
+msgid "Unsupported taxonomy."
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:752
+msgid "Unsupported post type."
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:784
+msgid "Invalid move payload."
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:818
+msgid "Invalid sort payload."
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:860
+msgid "There is nothing to reorder yet."
+msgstr ""
+
+#: ../includes/admin/admin-sortable.php:864
+msgid "The selected item is not part of this list."
+msgstr ""
+
+#. translators: 1: term name 2: taxonomy singular label
+#: ../includes/admin/admin-sortable.php:1522
+msgctxt "Admin notice"
+msgid "You are ordering members <strong>within \"%1$s\"</strong> (%2$s). Drag or edit the position to save a custom order for this term only. Global ordering is not affected."
+msgstr ""
+
+#: ../includes/admin/admin.php:31
+msgid "You do not have permission to preview this shortcode."
+msgstr ""
+
+#: ../includes/admin/admin.php:32
+msgid "Forbidden"
+msgstr ""
+
+#: ../includes/admin/admin.php:68
 msgctxt "Menu Label"
 msgid "Shortcodes"
 msgstr ""
 
-#: ../includes/admin/admin.php:61
+#: ../includes/admin/admin.php:69
 msgctxt "Menu Label"
 msgid "Settings"
 msgstr ""
 
-#: ../includes/admin/admin.php:62
-msgctxt "Menu Label"
-msgid "Sort Order"
-msgstr ""
-
-#: ../includes/admin/admin.php:63
+#: ../includes/admin/admin.php:70
 msgctxt "Menu Label"
 msgid "Get Help"
 msgstr ""
 
-#: ../includes/admin/admin.php:64
+#: ../includes/admin/admin.php:71
 msgctxt "Menu Label"
 msgid "Tools"
 msgstr ""
 
-#: ../includes/admin/admin.php:73
+#: ../includes/admin/admin.php:79
 msgctxt "Menu Label"
 msgid "WPS Team - Trial"
 msgstr ""
 
-#: ../includes/admin/admin.php:73
+#: ../includes/admin/admin.php:79
 msgctxt "Menu Label"
 msgid "Free Trial"
 msgstr ""
@@ -1805,107 +1907,112 @@ msgctxt "Editor"
 msgid "Display Limit"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2178
+#: ../includes/editor/shortcode-editor.php:2173
+msgctxt "Editor"
+msgid "Enable custom order when filtering"
+msgstr ""
+
+#: ../includes/editor/shortcode-editor.php:2226
 msgctxt "Editor"
 msgid "Filters Order"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2232
+#: ../includes/editor/shortcode-editor.php:2280
 msgctxt "Editor"
 msgid "Paging / Loading"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2271
+#: ../includes/editor/shortcode-editor.php:2319
 msgctxt "Editor"
 msgid "Pagination"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2272
+#: ../includes/editor/shortcode-editor.php:2320
 msgctxt "Editor"
 msgid "Pagination - AJAX"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2273
+#: ../includes/editor/shortcode-editor.php:2321
 msgctxt "Editor"
 msgid "Load More - AJAX"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2274
+#: ../includes/editor/shortcode-editor.php:2322
 msgctxt "Editor"
 msgid "Infinite Scroll - AJAX"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2385
+#: ../includes/editor/shortcode-editor.php:2433
 msgctxt "Editor"
 msgid "Include"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2434
+#: ../includes/editor/shortcode-editor.php:2482
 msgctxt "Editor"
 msgid "Exclude"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2496
+#: ../includes/editor/shortcode-editor.php:2544
 msgctxt "Editor"
 msgid "Card Typography"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2570
+#: ../includes/editor/shortcode-editor.php:2618
 msgctxt "Editor"
 msgid "Detail Typography"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2648, ../includes/traits/utils-options.php:684
+#: ../includes/editor/shortcode-editor.php:2696, ../includes/traits/utils-options.php:684
 msgctxt "Editor"
 msgid "Thumbnail"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2653
+#: ../includes/editor/shortcode-editor.php:2701
 msgctxt "Editor"
 msgid "Thumbnail Type"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2662
+#: ../includes/editor/shortcode-editor.php:2710
 msgctxt "Editor"
 msgid "Details Thumbnail Type"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2671
+#: ../includes/editor/shortcode-editor.php:2719
 msgctxt "Editor"
 msgid "Thumbnail Aspect Ratio"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2679
+#: ../includes/editor/shortcode-editor.php:2727
 msgctxt "Editor"
 msgid "Member Image Size"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2680
+#: ../includes/editor/shortcode-editor.php:2728
 msgctxt "Editor"
 msgid "This image size is used for general layout."
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2714
+#: ../includes/editor/shortcode-editor.php:2762
 msgctxt "Editor"
 msgid "Member Detail's Image Size"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2715
+#: ../includes/editor/shortcode-editor.php:2763
 msgctxt "Editor"
 msgid "This image size is used for modal, expand & panel layouts."
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2749
+#: ../includes/editor/shortcode-editor.php:2797
 msgctxt "Editor"
 msgid "Thumbnail Position"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2750
+#: ../includes/editor/shortcode-editor.php:2798
 msgctxt "Editor"
 msgid "This position is used for alignment of the thumbnail."
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2765
+#: ../includes/editor/shortcode-editor.php:2813
 msgctxt "Editor"
 msgid "Container Settings"
 msgstr ""
@@ -2330,6 +2437,10 @@ msgctxt "Settings: Tools"
 msgid "Never show again"
 msgstr ""
 
+#: ../includes/notifications/notifications.php:86, ../includes/traits/ajax-handler.php:61
+msgid "You do not have permission to perform this action."
+msgstr ""
+
 #: ../includes/notifications/rating-notice.php:20
 msgid "Rate WPS Team"
 msgstr ""
@@ -2342,12 +2453,12 @@ msgstr ""
 msgid "I already did"
 msgstr ""
 
-#: ../includes/traits/ajax-handler.php:31
+#: ../includes/traits/ajax-handler.php:71
 msgctxt "Dashboard"
 msgid "Something is wrong, request not found"
 msgstr ""
 
-#: ../includes/traits/ajax-handler.php:49
+#: ../includes/traits/ajax-handler.php:89
 msgctxt "Public"
 msgid "Something is wrong, request not found"
 msgstr ""
@@ -3084,166 +3195,166 @@ msgctxt "Dual Currency Format"
 msgid "around"
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:35
+#: ../includes/traits/taxonomy.php:44
 msgctxt "Menu Label"
 msgid "Taxonomies"
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:180
+#: ../includes/traits/taxonomy.php:189
 msgctxt "Settings: Taxonomy"
 msgid "Pro Feature"
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:181
+#: ../includes/traits/taxonomy.php:190
 msgctxt "Settings: Taxonomy"
 msgid "If you love our work please support us by purchasing our Premium plugin."
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:183
+#: ../includes/traits/taxonomy.php:192
 msgctxt "Settings: Taxonomy"
 msgid "Upgrade to Pro"
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:121
+#: ../includes/traits/taxonomy.php:130
 msgctxt "Settings: Taxonomy"
 msgid "Enable Taxonomy:"
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:128
+#: ../includes/traits/taxonomy.php:137
 msgctxt "Settings: Taxonomy"
 msgid "Plural Name:"
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:133
+#: ../includes/traits/taxonomy.php:142
 msgctxt "Settings: Taxonomy"
 msgid "Single Name:"
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:149
+#: ../includes/traits/taxonomy.php:158
 msgctxt "Settings: Taxonomy"
 msgid "Taxonomy Icon:"
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:160
+#: ../includes/traits/taxonomy.php:169
 msgctxt "Settings: Taxonomy"
 msgid "Enable Archive:"
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:167
+#: ../includes/traits/taxonomy.php:176
 msgctxt "Settings: Taxonomy"
 msgid "Archive Slug:"
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:172
+#: ../includes/traits/taxonomy.php:181
 msgctxt "Settings: Taxonomy"
 msgid "Save"
 msgstr ""
 
 #. translators: %s: Plural name of the taxonomy
-#: ../includes/traits/taxonomy.php:456
+#: ../includes/traits/taxonomy.php:465
 msgctxt "Team Taxonomy"
 msgid "All %s"
 msgstr ""
 
 #. translators: %s: Plural name of the taxonomy
-#: ../includes/traits/taxonomy.php:459
+#: ../includes/traits/taxonomy.php:468
 msgctxt "Team Taxonomy"
 msgid "Popular %s"
 msgstr ""
 
 #. translators: %s: Plural name of the taxonomy
-#: ../includes/traits/taxonomy.php:462
+#: ../includes/traits/taxonomy.php:471
 msgctxt "Team Taxonomy"
 msgid "Search %s"
 msgstr ""
 
 #. translators: %s: Plural name of the taxonomy
-#: ../includes/traits/taxonomy.php:465
+#: ../includes/traits/taxonomy.php:474
 msgctxt "Team Taxonomy"
 msgid "%s list"
 msgstr ""
 
 #. translators: %s: Plural name of the taxonomy
-#: ../includes/traits/taxonomy.php:468
+#: ../includes/traits/taxonomy.php:477
 msgctxt "Team Taxonomy"
 msgid "%s list navigation"
 msgstr ""
 
 #. translators: %s: Lowercase plural name of the taxonomy
-#: ../includes/traits/taxonomy.php:471
+#: ../includes/traits/taxonomy.php:480
 msgctxt "Team Taxonomy"
 msgid "Separate %s with commas"
 msgstr ""
 
 #. translators: %s: Lowercase plural name of the taxonomy
-#: ../includes/traits/taxonomy.php:474
+#: ../includes/traits/taxonomy.php:483
 msgctxt "Team Taxonomy"
 msgid "No %s"
 msgstr ""
 
 #. translators: %s: Lowercase plural name of the taxonomy
-#: ../includes/traits/taxonomy.php:477
+#: ../includes/traits/taxonomy.php:486
 msgctxt "Team Taxonomy"
 msgid "Add or remove %s"
 msgstr ""
 
 #. translators: %s: Single name of the taxonomy
-#: ../includes/traits/taxonomy.php:480
+#: ../includes/traits/taxonomy.php:489
 msgctxt "Team Taxonomy"
 msgid "Parent %s"
 msgstr ""
 
 #. translators: %s: Single name of the taxonomy
-#: ../includes/traits/taxonomy.php:483
+#: ../includes/traits/taxonomy.php:492
 msgctxt "Team Taxonomy"
 msgid "Parent %s:"
 msgstr ""
 
 #. translators: %s: Single name of the taxonomy
-#: ../includes/traits/taxonomy.php:486
+#: ../includes/traits/taxonomy.php:495
 msgctxt "Team Taxonomy"
 msgid "New %s Name"
 msgstr ""
 
 #. translators: %s: Single name of the taxonomy
-#: ../includes/traits/taxonomy.php:489
+#: ../includes/traits/taxonomy.php:498
 msgctxt "Team Taxonomy"
 msgid "Add New %s"
 msgstr ""
 
 #. translators: %s: Single name of the taxonomy
-#: ../includes/traits/taxonomy.php:492
+#: ../includes/traits/taxonomy.php:501
 msgctxt "Team Taxonomy"
 msgid "Edit %s"
 msgstr ""
 
 #. translators: %s: Single name of the taxonomy
-#: ../includes/traits/taxonomy.php:495
+#: ../includes/traits/taxonomy.php:504
 msgctxt "Team Taxonomy"
 msgid "Update %s"
 msgstr ""
 
 #. translators: %s: Single name of the taxonomy
-#: ../includes/traits/taxonomy.php:498
+#: ../includes/traits/taxonomy.php:507
 msgctxt "Team Taxonomy"
 msgid "View %s"
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:500
+#: ../includes/traits/taxonomy.php:509
 msgctxt "Team Taxonomy"
 msgid "Choose from the most used"
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:501
+#: ../includes/traits/taxonomy.php:510
 msgctxt "Team Taxonomy"
 msgid "Not Found"
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:709
+#: ../includes/traits/taxonomy.php:722
 msgid "Set the order for this term."
 msgstr ""
 
-#: ../includes/traits/taxonomy.php:736
+#: ../includes/traits/taxonomy.php:749
 msgctxt "Taxonomy Column"
 msgid "Order"
 msgstr ""
@@ -3854,7 +3965,7 @@ msgctxt "Public"
 msgid "Read More about %s."
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:350, ../includes/traits/utils-template-elements.php:509
+#: ../includes/traits/utils-template-elements.php:350, ../includes/traits/utils-template-elements.php:534
 msgctxt "Public"
 msgid "Read More"
 msgstr ""
@@ -3864,87 +3975,91 @@ msgctxt "Public"
 msgid "Education:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:470
+#: ../includes/traits/utils-template-elements.php:479
+msgid "Social Link"
+msgstr ""
+
+#: ../includes/traits/utils-template-elements.php:493
 msgctxt "Public"
 msgid "Connect with me:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:513
+#: ../includes/traits/utils-template-elements.php:538
 msgctxt "Public"
 msgid "My Resume"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:517
+#: ../includes/traits/utils-template-elements.php:542
 msgctxt "Public"
 msgid "Hire Me"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:676
+#: ../includes/traits/utils-template-elements.php:701
 msgctxt "Public"
 msgid "Skills:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:847
+#: ../includes/traits/utils-template-elements.php:872
 msgctxt "Public"
 msgid "Mobile:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:850
+#: ../includes/traits/utils-template-elements.php:875
 msgctxt "Public"
 msgid "Telephone:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:853
+#: ../includes/traits/utils-template-elements.php:878
 msgctxt "Public"
 msgid "Fax:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:856
+#: ../includes/traits/utils-template-elements.php:881
 msgctxt "Public"
 msgid "Email:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:859
+#: ../includes/traits/utils-template-elements.php:884
 msgctxt "Public"
 msgid "Website:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:862
+#: ../includes/traits/utils-template-elements.php:887
 msgctxt "Public"
 msgid "Experience:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:865
+#: ../includes/traits/utils-template-elements.php:890
 msgctxt "Public"
 msgid "Company:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:868
+#: ../includes/traits/utils-template-elements.php:893
 msgctxt "Public"
 msgid "Address:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:1058
+#: ../includes/traits/utils-template-elements.php:1083
 msgctxt "Public"
 msgid "Call on Mobile"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:1066
+#: ../includes/traits/utils-template-elements.php:1091
 msgctxt "Public"
 msgid "Call on Telephone"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:1074
+#: ../includes/traits/utils-template-elements.php:1099
 msgctxt "Public"
 msgid "Send Fax"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:1082
+#: ../includes/traits/utils-template-elements.php:1107
 msgctxt "Public"
 msgid "Send Email"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:1091
+#: ../includes/traits/utils-template-elements.php:1116
 msgctxt "Public"
 msgid "Visit Website"
 msgstr ""
@@ -4317,13 +4432,13 @@ msgid "Select Shortcode"
 msgstr ""
 
 #. translators: %s: Required PHP version
-#: ../initialize.php:53
+#: ../initialize.php:51
 msgctxt "Dashboard"
 msgid "plugin requires PHP version %s+, plugin is currently NOT RUNNING."
 msgstr ""
 
 #. translators: %s: Required WordPress version
-#: ../initialize.php:67
+#: ../initialize.php:65
 msgctxt "Dashboard"
 msgid "plugin requires WordPress version %s+. Because you are using an earlier version, the plugin is currently NOT RUNNING."
 msgstr ""

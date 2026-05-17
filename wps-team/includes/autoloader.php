@@ -44,6 +44,8 @@ class Autoloader {
 			'Plugin' => 'includes/plugin.php',
 			'Upgrader' => 'includes/upgrader.php',
 			'Admin' => 'includes/admin/admin.php',
+			'Admin_Sortable' => 'includes/admin/admin-sortable.php',
+			'Term_Order_Resolver' => 'includes/admin/term-order-resolver.php',
 			'API' => 'includes/admin/api.php',
 			'AJAX_Loading' => 'includes/ajax-loading.php',
 			'Translations' => 'includes/translations.php',

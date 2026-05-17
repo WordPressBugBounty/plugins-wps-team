@@ -81,6 +81,10 @@ class Notifications {
 
     public function check_security() {
         check_ajax_referer('wps_team_notification_nonce');
+
+        if ( ! current_user_can( 'edit_posts' ) ) {
+            wp_send_json_error( esc_html__( 'You do not have permission to perform this action.', 'wps-team' ), 403 );
+        }
     }
 
     public function setup_notifications_by_type( $type ) {

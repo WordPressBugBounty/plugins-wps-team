@@ -44,6 +44,19 @@ class Plugin {
         $this->controls_manager = new Controls_Manager();
         $this->admin = new Admin();
         new Hooks();
+        // Drag-and-drop ordering directly on native admin list screens.
+        // Replaces the legacy "Team → Sort Order" page while reusing the
+        // same storage (menu_order / term_order) so existing ordering for
+        // posts, taxonomy terms, frontend, shortcodes, sliders & filters
+        // continues to work unchanged.
+        if ( is_admin() ) {
+            new Admin_Sortable();
+        }
+        // Resolves per-term effective ordering for frontend queries
+        // (shortcodes, AJAX filters, archives). Handles single-term and
+        // multi-term selection using SQL FIELD()+LEAST() — no PHP sorting.
+        // PRO-only; the constructor bails on free installs.
+        new Term_Order_Resolver();
         $this->api = new API();
         $this->notifications = new Notifications();
         $this->assets = new Assets();

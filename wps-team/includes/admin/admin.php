@@ -21,6 +21,11 @@ final class Admin {
         }
         Utils::do_not_cache();
         add_action( 'template_redirect', function () {
+            if ( !is_user_logged_in() || !current_user_can( 'edit_posts' ) ) {
+                wp_die( esc_html__( 'You do not have permission to preview this shortcode.', 'wps-team' ), esc_html__( 'Forbidden', 'wps-team' ), [
+                    'response' => 403,
+                ] );
+            }
             global $shortcode_loader;
             $settings = (array) Utils::get_temp_settings();
             $settings = apply_filters( 'wpspeedo_team/shortcode_settings/', $settings );
@@ -47,7 +52,6 @@ final class Admin {
         $callback = [$this, 'plugin_admin_page'];
         $shortcode_menu_title = _x( 'Shortcodes', 'Menu Label', 'wps-team' );
         $settings_menu_title = _x( 'Settings', 'Menu Label', 'wps-team' );
-        $order_menu_title = _x( 'Sort Order', 'Menu Label', 'wps-team' );
         $get_help_menu = _x( 'Get Help', 'Menu Label', 'wps-team' );
         $tools_menu = _x( 'Tools', 'Menu Label', 'wps-team' );
         add_submenu_page(
@@ -67,15 +71,6 @@ final class Admin {
             'wps-team#/settings',
             $callback,
             60
-        );
-        add_submenu_page(
-            Utils::get_top_label_menu(),
-            $order_menu_title,
-            $order_menu_title,
-            $capability,
-            'wps-team#/custom-order',
-            $callback,
-            70
         );
         add_submenu_page(
             Utils::get_top_label_menu(),

@@ -359,7 +359,7 @@ class Shortcode_Loader extends Attribute_Manager {
             ], 'names' );
             if ( is_user_logged_in() ) {
                 $post_type_object = get_post_type_object( Utils::post_type_name() );
-                if ( $post_type_object instanceof WP_Post_Type ) {
+                if ( $post_type_object instanceof \WP_Post_Type ) {
                     $post_status = array_merge( $post_status, get_post_stati( [
                         'private' => true,
                     ], 'names' ) );
@@ -368,7 +368,85 @@ class Shortcode_Loader extends Attribute_Manager {
             }
             $query_args['post_status'] = array_unique( array_map( 'sanitize_key', $post_status ) );
         }
+        $this->apply_filter_ordering_to_query_args( $query_args );
         $this->query_args = $query_args;
+    }
+
+    /**
+     * When display type is "filter" and custom filter ordering is enabled,
+     * swap in filter_orderby / filter_order while a taxonomy filter is active.
+     * Otherwise the main orderby / order fields continue to apply.
+     *
+     * @param array $query_args Query args passed to WP_Query (by reference).
+     */
+    protected function apply_filter_ordering_to_query_args( array &$query_args ) {
+        return;
+        if ( $this->get_setting( 'display_type' ) !== 'filter' ) {
+            return;
+        }
+        $tax_query = ( isset( $query_args['tax_query'] ) ? $query_args['tax_query'] : [] );
+        if ( !$this->has_active_filter_tax_query( $tax_query ) ) {
+            return;
+        }
+        if ( !$this->get_setting( 'enable_filter_custom_order' ) ) {
+            // Explicitly block Term_Order_Resolver while a filter is active but
+            // the toggle is off — keep the main orderby / order unchanged.
+            $query_args['_wps_filter_custom_order'] = false;
+            return;
+        }
+        $filter_orderby = $this->get_setting( 'filter_orderby' );
+        if ( empty( $filter_orderby ) ) {
+            $filter_orderby = 'menu_order';
+        }
+        $filter_order = $this->get_setting( 'filter_order' );
+        if ( empty( $filter_order ) ) {
+            $filter_order = 'ASC';
+        }
+        $query_args['orderby'] = $filter_orderby;
+        $query_args['order'] = $filter_order;
+        if ( $filter_orderby === 'menu_order' ) {
+            $query_args['_wps_filter_custom_order'] = true;
+        } else {
+            $query_args['_wps_filter_custom_order'] = false;
+        }
+    }
+
+    /**
+     * True when the tax_query contains rows from the live filter UI (not
+     * include / exclude constraints from the shortcode query settings).
+     *
+     * @param array $tax_query
+     * @return bool
+     */
+    protected function has_active_filter_tax_query( array $tax_query ) : bool {
+        if ( empty( $tax_query ) ) {
+            return false;
+        }
+        $active_taxonomies = Utils::get_active_taxonomies();
+        foreach ( $tax_query as $row ) {
+            if ( !is_array( $row ) || empty( $row['taxonomy'] ) ) {
+                continue;
+            }
+            if ( !in_array( $row['taxonomy'], $active_taxonomies, true ) ) {
+                continue;
+            }
+            if ( isset( $row['operator'] ) && 'NOT IN' === strtoupper( (string) $row['operator'] ) ) {
+                continue;
+            }
+            // Initial group filter on first paint (AJAX filter mode).
+            if ( !empty( $row['is_initial'] ) ) {
+                return true;
+            }
+            // Rows pushed by filter.js during AJAX filtering.
+            if ( array_key_exists( 'include_children', $row ) && false === $row['include_children'] ) {
+                return true;
+            }
+            // Include / exclude rows always set field => term_id.
+            if ( !isset( $row['field'] ) ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function get_posts() {
@@ -395,7 +473,11 @@ class Shortcode_Loader extends Attribute_Manager {
         $show_read_more_link = wp_validate_boolean( $show_read_more_link );
         add_filter( 'excerpt_length', [$this, 'modify_excerpt_length'], 999 );
         $shortcode_loader = $this;
-        include Utils::load_template( sprintf( 'template-%s.php', sanitize_key( $theme ) ) );
+        $template_path = Utils::load_template( sprintf( 'template-%s.php', sanitize_key( $theme ) ) );
+        if ( $template_path instanceof \WP_Error ) {
+            return;
+        }
+        include $template_path;
         remove_filter( 'excerpt_length', [$this, 'modify_excerpt_length'], 999 );
         wp_reset_postdata();
     }

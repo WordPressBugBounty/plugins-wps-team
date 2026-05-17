@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team members, team showcase, WordPress team plugin, staff directory, team slider
 Requires at least: 5.9
 Tested up to: 6.9
-Stable tag: 4.0.1
+Stable tag: 4.1.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -222,9 +222,31 @@ Program. The Patchstack team helps validate, triage, and handle any security
 vulnerabilities.
 [Report a security vulnerability.](https://patchstack.com/database/vdp/wps-team)
 
+== External services ==
+
+This plugin may connect to third-party services when certain features are enabled.
+
+= Google Fonts =
+* **What:** When typography uses Google Fonts and loading is not disabled in settings, the visitor or admin browser requests font CSS files from Google.
+* **When:** On pages that display a team shortcode/block using those fonts, in the shortcode preview iframe, and on plugin admin screens that load the bundled admin stylesheet.
+* **Provider:** Google LLC
+* **Terms:** https://policies.google.com/terms
+* **Privacy:** https://policies.google.com/privacy
+* **Data sent:** Standard HTTP request data (IP address, user agent, referrer, requested font families). No member content is uploaded to Google.
+
+= Freemius (optional) =
+* **What:** License activation, updates, opt-in usage analytics, and in-dashboard upgrade/checkout flows when you interact with those features.
+* **When:** Only when you connect a license, open upgrade/pricing screens, or opt in to Freemius communications—not on every page load.
+* **Provider:** Freemius, Inc.
+* **Terms:** https://freemius.com/terms/
+* **Privacy:** https://freemius.com/privacy/
+* **Data sent:** Site URL, plugin version, admin email (if provided), license status, and similar data required for licensing and support. See Freemius documentation for details.
+
+You can disable Google Fonts loading under WPS Team → Settings → Advance. Freemius data collection follows your choices in the Freemius opt-in/opt-out screens.
+
 = ❓ Need support? =
 ✅ We’re here to help!
-For the fastest and priority support, please use our official [WordPress Support Forum].(https://wordpress.org/support/plugin/wps-team/)
+For the fastest and priority support, please use our official [WordPress Support Forum](https://wordpress.org/support/plugin/wps-team/)
 We actively monitor the forum and provide prompt, detailed help there.
 If you prefer, you can also:
 📧 Email us at: support@wpspeedo.com
@@ -250,6 +272,18 @@ Using the [WordPress.org](https://wordpress.org/support/plugin/wps-team/) suppor
 15. Plugin Settings Panel – Configure the Team Members WordPress plugin options
 
 == Changelog ==
+
+4.1.0 - 17-05-2026
+* Added: Native drag-and-drop sorting on team and taxonomy admin lists (PRO).
+* Added: Global Order column with cross-page positioning (PRO).
+* Added: Per-term member order on filtered listings (PRO).
+* Added: Custom order when filtering for Filter layouts (PRO).
+* Removed: Legacy Sort Order admin page.
+* Fixed: Taxonomy custom order DESC issue.
+* Fixed: Term Edit link and drag-and-drop on taxonomy screens.
+* Fixed: Pro notice on native WordPress taxonomies.
+* Fixed: Social links and Free version color issues.
+* Fixed: Full Card Link not working on AJAX-loaded team members.
 
 4.0.1 - 14-05-2026
 * Fixed: Fatal error on PHP 7.x during upgrade to 4.0.0 (incorrect `mixed` type hints in namespaced code). Sites stuck in recovery mode can update to this version to complete migration safely.

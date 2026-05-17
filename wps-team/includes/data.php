@@ -294,7 +294,7 @@ class Data {
         if ( get_post_status( $post_id ) === 'auto-draft' ) {
             return $post_id;
         }
-        if ( !current_user_can( 'edit_page', $post_id ) || !current_user_can( 'edit_post', $post_id ) ) {
+        if ( !current_user_can( 'edit_post', $post_id ) ) {
             return $post_id;
         }
         /*

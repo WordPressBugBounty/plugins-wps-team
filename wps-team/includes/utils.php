@@ -298,7 +298,8 @@ class Utils {
             '_social_links',
             '_ribbon',
             '_mobile',
-            '_address'
+            '_address',
+            '_color'
         ];
         return $field_keys;
     }

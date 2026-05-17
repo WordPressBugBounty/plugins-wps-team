@@ -17,6 +17,16 @@ trait Taxonomy
         if ( empty( $taxonomy ) ) {
             return;
         }
+        // Only inject the nav/settings block on our own taxonomy pages.
+        // Without this guard the block (including the "Pro Feature" upgrade
+        // notice) would appear on every native WP taxonomy screen such as
+        // edit-tags.php?taxonomy=category.
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $post_type = ( isset( $_GET['post_type'] ) ? sanitize_key( wp_unslash( $_GET['post_type'] ) ) : '' );
+        $active_tax_list = Utils::get_active_taxonomies();
+        if ( $post_type !== Utils::post_type_name() && !in_array( $taxonomy, $active_tax_list, true ) ) {
+            return;
+        }
         $this->load_taxonomies_template( $taxonomy );
         ?>
         <script>

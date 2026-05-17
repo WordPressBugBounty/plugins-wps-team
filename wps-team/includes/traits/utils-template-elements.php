@@ -333,16 +333,31 @@ trait Utils_Template_Elements
     public static function parse_social_links( array $social_links ) {
         $links = '';
         foreach ( $social_links as $slink ) {
+            if ( !is_array( $slink ) ) {
+                continue;
+            }
+            $url = ( isset( $slink['social_link'] ) ? (string) $slink['social_link'] : '' );
+            if ( $url === '' ) {
+                continue;
+            }
+            $icon = ( isset( $slink['social_icon'] ) && is_array( $slink['social_icon'] ) ? $slink['social_icon'] : [] );
+            if ( empty( $icon['icon'] ) || empty( $icon['library'] ) ) {
+                $icon = [
+                    'library' => 'fa-solid',
+                    'icon'    => 'fas fa-link',
+                ];
+            }
+            $icon_name = ( isset( $icon['icon'] ) ? (string) $icon['icon'] : '' );
             $links .= sprintf(
                 '<li class="wps-si--%s">
 					<a href="%s" aria-label="%s"%s>%s</a>
 				</li>',
-                esc_attr( Utils::get_brand_name( $slink['social_icon']['icon'] ) ),
-                esc_url_raw( $slink['social_link'] ),
-                'Social Link',
+                esc_attr( Utils::get_brand_name( $icon_name ) ),
+                esc_url( $url ),
+                esc_attr__( 'Social Link', 'wps-team' ),
                 Utils::get_ext_url_params(),
                 // phpcs:ignore WordPress.Security.EscapeOutput
-                Icon_Manager::render_font_icon( $slink['social_icon'] )
+                Icon_Manager::render_font_icon( $icon )
             );
         }
         return $links;
@@ -367,7 +382,7 @@ trait Utils_Template_Elements
             return '';
         }
         $social_links = array_filter( (array) Utils::get_item_data( '_social_links', $post_id ) );
-        if ( empty( $social_links ) ) {
+        if ( empty( $social_links ) || self::parse_social_links( $social_links ) === '' ) {
             return;
         }
         $tag = $args['tag'];
