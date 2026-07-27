@@ -736,6 +736,8 @@ class Export_Import_Manager {
             }
         }
 
+        Utils::clear_shortcodes_cache();
+
     }
 
     private function get_existing_shortcode_id( array $shortcode, string $normalized_name ) {

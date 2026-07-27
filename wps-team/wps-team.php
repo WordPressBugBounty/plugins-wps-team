@@ -5,20 +5,20 @@
  * Plugin Name: WPS Team
  * Plugin URI: https://wpspeedo.com/wps-team-pro?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
  * Description: The Ultimate Team Plugin to Elevate Your Website
- * Version: 4.1.0
+ * Version: 4.1.1
  * Author: WPSpeedo
  * Author URI: https://wpspeedo.com?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
  * License:     GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wps-team
  * Domain Path: /languages
- * Requires PHP: 7.0
+ * Requires PHP: 7.4
  * Requires at least: 5.9
   */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'WPS_TEAM_VERSION', '4.1.0' );
+define( 'WPS_TEAM_VERSION', '4.1.1' );
 
 define( 'WPS_TEAM_FILE', __FILE__ );
 

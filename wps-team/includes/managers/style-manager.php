@@ -173,13 +173,34 @@ abstract class Style_Manager extends Attribute_Manager {
     }
 
     public function add_dimension_style( $selector, $prop, $setting_key, $device = '' ) {
-        $unit = 'px';
-        $value =  $this->get_setting( $setting_key );
+        $setting_key_resolved = $device ? $setting_key . '_' . $device : $setting_key;
+        $unit = $this->get_setting( $setting_key_resolved, 'unit' );
+        if ( empty( $unit ) ) {
+            $unit = 'px';
+        }
+        $value = $this->get_setting( $setting_key_resolved );
         if ( empty($value) || ! is_array($value) ) return;
         if ( strlen($value['top']) && strlen($value['right']) && strlen($value['bottom']) && strlen($value['left']) ) {
-            $value = sprintf( "%s$unit %s$unit %s$unit %s$unit", $value['top'], $value['right'], $value['bottom'], $value['left'] );
+            $value = sprintf(
+                '%s%s %s%s %s%s %s%s',
+                $value['top'],
+                $unit,
+                $value['right'],
+                $unit,
+                $value['bottom'],
+                $unit,
+                $value['left'],
+                $unit
+            );
             $this->add_style_row( $selector, sprintf( '%s:%s', $prop, $value ), $device );
         }
+    }
+
+    public function add_responsive_dimension_style( $selector, $prop, $setting_key ) {
+        $this->add_dimension_style( $selector, $prop, $setting_key );
+        $this->add_dimension_style( $selector, $prop, $setting_key, 'tablet' );
+        $this->add_dimension_style( $selector, $prop, $setting_key, 'small_tablet' );
+        $this->add_dimension_style( $selector, $prop, $setting_key, 'mobile' );
     }
 
     public function add_dimension_style_alt( $selector, $prop, $setting_key, $device = '' ) {

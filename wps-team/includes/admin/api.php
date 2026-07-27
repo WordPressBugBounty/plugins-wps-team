@@ -226,7 +226,7 @@ class API {
             wp_send_json_error( Utils::db_last_error_message(), 500 );
         }
 
-        wp_cache_delete( "wps_team_shortcode_{$shortcode_id}", 'wps_team' );
+        Utils::clear_shortcodes_cache( $shortcode_id );
 
         do_action( 'wps_shortcode_updated', $shortcode_id );
 
@@ -296,6 +296,7 @@ class API {
         $data['id'] = $wpdb->insert_id;
 
         wp_cache_set( "wps_team_shortcode_{$wpdb->insert_id}", $data, 'wps_team' );
+        Utils::clear_shortcodes_cache();
 
         do_action( 'wps_shortcode_created', $wpdb->insert_id );
 
@@ -331,7 +332,7 @@ class API {
             wp_send_json_error( Utils::db_last_error_message(), 500 );
         }
 
-        wp_cache_delete( "wps_team_shortcode_{$id}", 'wps_team' );
+        Utils::clear_shortcodes_cache( $id );
 
         do_action( 'wps_shortcode_deleted', $id );
 
@@ -383,6 +384,7 @@ class API {
         $data['id'] = $wpdb->insert_id;
 
         wp_cache_set( "wps_team_shortcode_{$wpdb->insert_id}", $data, 'wps_team' );
+        Utils::clear_shortcodes_cache();
 
         do_action( 'wps_shortcode_cloned', $wpdb->insert_id );
 

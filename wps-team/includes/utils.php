@@ -21,6 +21,22 @@ class Utils {
         return implode( ' ', $classes );
     }
 
+    public static function get_group_filter_style_class( $style = '' ) {
+        $allowed = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $allowed[] = 'style-' . str_pad(
+                (string) $i,
+                2,
+                '0',
+                STR_PAD_LEFT
+            );
+        }
+        if ( empty( $style ) || !in_array( $style, $allowed, true ) ) {
+            $style = 'style-01';
+        }
+        return 'wps-team--group-filter-' . $style;
+    }
+
     public static function normalize_card_action( string $card_action, int $post_id ) : string {
         if ( Utils::has_singular_page() || $card_action !== 'single-page' ) {
             return $card_action;
@@ -697,11 +713,11 @@ class Utils {
      *
      * @param object $shortcode_loader Object with get_setting().
      */
-    public static function get_group_terms_for_shortcode_filter( object $shortcode_loader ) {
+    public static function get_group_terms_for_shortcode_filter( object $shortcode_loader, bool $hide_empty = true ) {
         $args = [
             'orderby'    => $shortcode_loader->get_setting( 'group_orderby' ),
             'order'      => $shortcode_loader->get_setting( 'group_order' ),
-            'hide_empty' => true,
+            'hide_empty' => $hide_empty,
         ];
         $include = $shortcode_loader->get_setting( 'include_by_group' );
         if ( !empty( $include ) ) {
@@ -713,6 +729,128 @@ class Utils {
             // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
         }
         return self::get_group_terms( $args );
+    }
+
+    /**
+     * Child group terms for submenu rendering.
+     *
+     * @param object $shortcode_loader
+     * @param int    $parent_id
+     * @param bool   $hide_empty
+     */
+    public static function get_group_child_terms_for_submenu( object $shortcode_loader, int $parent_id, bool $hide_empty = true ) {
+        $args = [
+            'orderby'    => $shortcode_loader->get_setting( 'group_orderby' ),
+            'order'      => $shortcode_loader->get_setting( 'group_order' ),
+            'hide_empty' => $hide_empty,
+            'parent'     => $parent_id,
+        ];
+        $include = $shortcode_loader->get_setting( 'include_by_group' );
+        if ( !empty( $include ) ) {
+            $args['include'] = (array) $include;
+        }
+        $exclude = $shortcode_loader->get_setting( 'exclude_by_group' );
+        if ( !empty( $exclude ) ) {
+            $args['exclude'] = (array) $exclude;
+            // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
+        }
+        return self::get_group_terms( $args );
+    }
+
+    /**
+     * Build parent/child maps for group filter submenu UI.
+     *
+     * @param array $terms WP_Term[] from get_group_terms_for_shortcode_filter().
+     * @return array{by_id:array<int,object>,children:array<int,array>,roots:array}
+     */
+    public static function build_group_terms_tree( array $terms ) {
+        $by_id = [];
+        $children = [];
+        foreach ( $terms as $term ) {
+            $by_id[(int) $term->term_id] = $term;
+            $parent_id = (int) $term->parent;
+            if ( !isset( $children[$parent_id] ) ) {
+                $children[$parent_id] = [];
+            }
+            $children[$parent_id][] = $term;
+        }
+        $roots = [];
+        foreach ( $terms as $term ) {
+            $parent_id = (int) $term->parent;
+            if ( $parent_id === 0 || !isset( $by_id[$parent_id] ) ) {
+                $roots[] = $term;
+            }
+        }
+        return [
+            'by_id'    => $by_id,
+            'children' => $children,
+            'roots'    => $roots,
+        ];
+    }
+
+    /**
+     * Collect descendant term IDs for a group parent term.
+     *
+     * @param int   $term_id
+     * @param array $children_map
+     */
+    public static function get_group_term_descendant_ids( int $term_id, array $children_map ) : array {
+        $ids = [];
+        if ( empty( $children_map[$term_id] ) ) {
+            return $ids;
+        }
+        foreach ( $children_map[$term_id] as $child ) {
+            $ids[] = (int) $child->term_id;
+            $ids = array_merge( $ids, self::get_group_term_descendant_ids( (int) $child->term_id, $children_map ) );
+        }
+        return $ids;
+    }
+
+    /**
+     * Isotope/AJAX selector for a group term (parent includes descendants).
+     *
+     * @param object $term
+     * @param array  $children_map
+     * @param array  $by_id
+     */
+    public static function get_group_term_filter_selector( object $term, array $children_map, array $by_id ) : string {
+        $selectors = ['.' . $term->hash_id];
+        foreach ( self::get_group_term_descendant_ids( (int) $term->term_id, $children_map ) as $descendant_id ) {
+            if ( isset( $by_id[$descendant_id] ) ) {
+                $selectors[] = '.' . $by_id[$descendant_id]->hash_id;
+            }
+        }
+        return implode( ',', array_unique( $selectors ) );
+    }
+
+    /**
+     * Descendant term IDs keyed by parent term ID (for AJAX group filter).
+     *
+     * @param array $terms WP_Term[]
+     */
+    public static function get_group_term_descendants_map( array $terms ) : array {
+        $tree = self::build_group_terms_tree( $terms );
+        $map = [];
+        foreach ( $terms as $term ) {
+            $descendants = self::get_group_term_descendant_ids( (int) $term->term_id, $tree['children'] );
+            if ( !empty( $descendants ) ) {
+                $map[(int) $term->term_id] = array_values( array_unique( array_map( 'intval', $descendants ) ) );
+            }
+        }
+        return $map;
+    }
+
+    /**
+     * Whether a group filter term button should render active on first paint.
+     *
+     * @param int   $term_id
+     * @param array $gf_state From resolve_group_filter_initial_state().
+     */
+    public static function is_group_filter_term_active( int $term_id, array $gf_state ) : bool {
+        if ( !empty( $gf_state['all_active'] ) ) {
+            return false;
+        }
+        return isset( $gf_state['active_term_id'] ) && (int) $gf_state['active_term_id'] === (int) $term_id;
     }
 
     /**
@@ -732,7 +870,7 @@ class Utils {
         if ( $raw !== '*' && is_numeric( $raw ) ) {
             $raw = (int) $raw;
         }
-        $term_ids = array_map( 'intval', wp_list_pluck( $groups, 'term_id' ) );
+        $term_ids = array_values( array_map( 'intval', wp_list_pluck( $groups, 'term_id' ) ) );
         if ( empty( $term_ids ) ) {
             return [
                 'all_active'        => false,
@@ -752,6 +890,13 @@ class Utils {
                 ];
             }
             if ( $allow_deselect ) {
+                return [
+                    'all_active'        => false,
+                    'active_term_id'    => null,
+                    'ajax_tax_term_ids' => [],
+                ];
+            }
+            if ( empty( $term_ids ) ) {
                 return [
                     'all_active'        => false,
                     'active_term_id'    => null,
@@ -779,6 +924,13 @@ class Utils {
 
     public static function get_top_label_menu() {
         return 'edit.php?post_type=' . Utils::post_type_name();
+    }
+
+    public static function clear_shortcodes_cache( $shortcode_id = null ) {
+        wp_cache_delete( 'wps_team_all_shortcodes', 'wps_team' );
+        if ( null !== $shortcode_id ) {
+            wp_cache_delete( "wps_team_shortcode_{$shortcode_id}", 'wps_team' );
+        }
     }
 
     public static function string_to_array( $terms = '' ) {

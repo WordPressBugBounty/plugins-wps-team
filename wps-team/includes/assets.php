@@ -236,4 +236,44 @@ class Assets extends Assets_Manager {
         }
     }
 
+    protected function add_detail_card_action_button_styles( $close_selector, $nav_selector, $css_prefix ) {
+        $nav_token = ( $css_prefix === 'panel' ? 'arrow' : 'nav' );
+        $close_style_map = [
+            'close_color'          => '--wps-' . $css_prefix . '-close-color: {{value}}',
+            'close_color_hover'    => '--wps-' . $css_prefix . '-close-color--hover: {{value}}',
+            'close_bg_color'       => '--wps-' . $css_prefix . '-close-bg-color: {{value}}',
+            'close_bg_color_hover' => '--wps-' . $css_prefix . '-close-bg-color--hover: {{value}}',
+            'close_br_color'       => '--wps-' . $css_prefix . '-close-br-color: {{value}}',
+            'close_br_color_hover' => '--wps-' . $css_prefix . '-close-br-color--hover: {{value}}',
+        ];
+        $nav_style_map = [
+            'nav_color'          => '--wps-' . $css_prefix . '-' . $nav_token . '-color: {{value}}',
+            'nav_color_hover'    => '--wps-' . $css_prefix . '-' . $nav_token . '-color--hover: {{value}}',
+            'nav_bg_color'       => '--wps-' . $css_prefix . '-' . $nav_token . '-bg-color: {{value}}',
+            'nav_bg_color_hover' => '--wps-' . $css_prefix . '-' . $nav_token . '-bg-color--hover: {{value}}',
+            'nav_br_color'       => '--wps-' . $css_prefix . '-' . $nav_token . '-br-color: {{value}}',
+            'nav_br_color_hover' => '--wps-' . $css_prefix . '-' . $nav_token . '-br-color--hover: {{value}}',
+        ];
+        foreach ( $close_style_map as $setting_suffix => $css_property ) {
+            $this->add_style( $close_selector, $css_property, 'detail_' . $setting_suffix );
+        }
+        foreach ( $nav_style_map as $setting_suffix => $css_property ) {
+            $this->add_style( $nav_selector, $css_property, 'detail_' . $setting_suffix );
+        }
+    }
+
+    protected function add_detail_skills_styles( $selector_popup, $selector_expand, $selector_side_panel ) {
+        $bar_selectors = [$selector_popup . ' .wps--skills:not(.wps--skills--tags)', $selector_expand . ' .wps--skills:not(.wps--skills--tags)', $selector_side_panel . ' .wps--skills:not(.wps--skills--tags)'];
+        $tag_selectors = [$selector_popup . ' .wps--skills--tags', $selector_expand . ' .wps--skills--tags', $selector_side_panel . ' .wps--skills--tags'];
+        foreach ( $bar_selectors as $bar_selector ) {
+            $this->add_style( $bar_selector, '--wps-skill-color: {{value}}', 'detail_skills_color' );
+            $this->add_style( $bar_selector, '--wps-skill-bar-color-active: {{value}}', 'detail_skills_color' );
+            $this->add_style( $bar_selector, '--wps-skill-bar-color: {{value}}', 'detail_skills_bar_unfilled_color' );
+        }
+        foreach ( $tag_selectors as $tag_selector ) {
+            $this->add_style( $tag_selector, '--wps-skill-color: {{value}}', 'detail_skills_tag_color' );
+            $this->add_style( $tag_selector, '--wps-skill-tag-bg: {{value}}', 'detail_skills_tag_bg_color' );
+        }
+    }
+
 }

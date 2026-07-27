@@ -262,6 +262,8 @@ class Erase_Reset_Manager {
             return new WP_Error( 'reset_failed', sprintf( 'Failed to reset auto-increment for %s.', $table_name ) );
         }
 
+        Utils::clear_shortcodes_cache();
+
         return true;
     }
 

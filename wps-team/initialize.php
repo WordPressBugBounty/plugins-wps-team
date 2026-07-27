@@ -8,7 +8,7 @@ class Initialize {
 
     public function __construct() {
 
-        if ( ! version_compare( PHP_VERSION, '7.0', '>=' ) ) {
+        if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {
             return add_action( 'admin_notices', array( $this, 'fail_php_version' ) );
         }
         
@@ -53,7 +53,7 @@ class Initialize {
                 'Dashboard',
                 'wps-team'
             ),
-            '7.0'
+            '7.4'
         );
 
         echo wp_kses_post( sprintf( '<div class="error">%s</div>', wpautop( $message ) ) );

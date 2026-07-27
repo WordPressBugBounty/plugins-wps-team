@@ -17,7 +17,11 @@ trait Setting_Methods {
         }
 
         if ( $field == 'all' ) return $setting;
-        
+
+        if ( ! is_array( $setting ) || ! array_key_exists( $field, $setting ) ) {
+            return null;
+        }
+
         return $setting[$field];
 
     }

@@ -608,6 +608,7 @@ class Admin_Sortable {
                 'failed'        => __( 'Could not save order. Please try again.', 'wps-team' ),
                 'dragToReorder' => __( 'Drag to reorder', 'wps-team' ),
                 'lockedNotice'  => __( 'Drag-and-drop ordering is a Pro feature.', 'wps-team' ),
+                'customSort'    => __( 'Custom Sort', 'wps-team' ),
                 'crossParent'   => __( 'Child terms can only be reordered within their own parent.', 'wps-team' ),
                 'invalidNumber' => __( 'Please enter a valid order number.', 'wps-team' ),
                 'upgrade'       => __( 'Upgrade to Pro', 'wps-team' ),

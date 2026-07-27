@@ -172,15 +172,16 @@ class Shortcode_Editor extends Editor_Controls {
                 'display_type' => 'carousel',
             ],
         ] );
-        $this->add_control( 'carousel_layout', [
-            'label'       => _x( 'Carousel layout', 'Editor', 'wps-team' ),
-            'label_block' => false,
-            'type'        => Controls_Manager::SELECT,
-            'default'     => 'layout-01',
-            'render_type' => 'template',
-            'class'       => 'wps-field--arrange-2',
-            'options'     => Utils::get_control_options( 'carousel_layout' ),
-        ] );
+        // Temporarily hidden — revisit carousel layout presets later.
+        // $this->add_control( 'carousel_layout', [
+        // 	'label' => _x( 'Carousel layout', 'Editor', 'wps-team' ),
+        // 	'label_block' => false,
+        // 	'type' => Controls_Manager::SELECT,
+        // 	'default' => 'layout-01',
+        // 	'render_type' => 'template',
+        // 	'class' => 'wps-field--arrange-2',
+        // 	'options' => Utils::get_control_options( 'carousel_layout' ),
+        // ]);
         $this->add_control( 'speed', [
             'label'       => _x( 'Carousel Speed', 'Editor', 'wps-team' ),
             'label_block' => true,
@@ -475,6 +476,70 @@ class Shortcode_Editor extends Editor_Controls {
         $this->end_controls_section();
     }
 
+    protected function add_detail_skills_color_controls() {
+        $this->add_control( 'detail_skills_heading_bar', [
+            'label' => _x( 'Skills (with value)', 'Editor', 'wps-team' ),
+            'type'  => Controls_Manager::HEADING,
+        ] );
+        $this->add_control( 'detail_skills_color', [
+            'label'       => _x( 'Skills Color', 'Editor', 'wps-team' ),
+            'label_block' => false,
+            'type'        => Controls_Manager::COLOR,
+        ] );
+        $this->add_control( 'detail_skills_bar_unfilled_color', [
+            'label'       => _x( 'Skills Unfilled Bar Color', 'Editor', 'wps-team' ),
+            'label_block' => false,
+            'type'        => Controls_Manager::COLOR,
+        ] );
+        $this->add_control( 'detail_skills_heading_tag', [
+            'label' => _x( 'Skills (tags only)', 'Editor', 'wps-team' ),
+            'type'  => Controls_Manager::HEADING,
+        ] );
+        $this->add_control( 'detail_skills_tag_color', [
+            'label'       => _x( 'Skills Color', 'Editor', 'wps-team' ),
+            'label_block' => false,
+            'type'        => Controls_Manager::COLOR,
+        ] );
+        $this->add_control( 'detail_skills_tag_bg_color', [
+            'label'       => _x( 'Skills BG Color', 'Editor', 'wps-team' ),
+            'label_block' => false,
+            'type'        => Controls_Manager::COLOR,
+        ] );
+    }
+
+    protected function add_detail_button_color_controls() {
+        $close_controls = [
+            'close_color'          => _x( 'Close Button Color', 'Editor', 'wps-team' ),
+            'close_color_hover'    => _x( 'Close Button Hover Color', 'Editor', 'wps-team' ),
+            'close_bg_color'       => _x( 'Close Button BG Color', 'Editor', 'wps-team' ),
+            'close_bg_color_hover' => _x( 'Close Button BG Hover Color', 'Editor', 'wps-team' ),
+            'close_br_color'       => _x( 'Close Button Border Color', 'Editor', 'wps-team' ),
+            'close_br_color_hover' => _x( 'Close Button Border Hover Color', 'Editor', 'wps-team' ),
+        ];
+        $nav_controls = [
+            'nav_color'          => _x( 'Nav Button Color', 'Editor', 'wps-team' ),
+            'nav_color_hover'    => _x( 'Nav Button Hover Color', 'Editor', 'wps-team' ),
+            'nav_bg_color'       => _x( 'Nav Button BG Color', 'Editor', 'wps-team' ),
+            'nav_bg_color_hover' => _x( 'Nav Button BG Hover Color', 'Editor', 'wps-team' ),
+            'nav_br_color'       => _x( 'Nav Button Border Color', 'Editor', 'wps-team' ),
+            'nav_br_color_hover' => _x( 'Nav Button Border Hover Color', 'Editor', 'wps-team' ),
+        ];
+        foreach ( $close_controls as $suffix => $label ) {
+            $this->add_control( 'detail_' . $suffix, [
+                'label'       => $label,
+                'label_block' => false,
+                'type'        => Controls_Manager::COLOR,
+            ] );
+        }
+        foreach ( $nav_controls as $suffix => $label ) {
+            $this->add_control( 'detail_' . $suffix, [
+                'label'       => $label,
+                'label_block' => false,
+                'type'        => Controls_Manager::COLOR,
+            ] );
+        }
+    }
+
     // Single Item
     protected function style_item_styling_controls() {
         $this->start_controls_section( 'single_item_style', [
@@ -500,6 +565,35 @@ class Shortcode_Editor extends Editor_Controls {
             'label'       => Variables::get( 'border_radius_txt' ),
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
+        ] );
+        $this->end_controls_section();
+    }
+
+    // Detail Custom Spacing
+    protected function style_detail_custom_spacing_controls() {
+        $this->start_controls_section( 'detail_custom_spacing_styling', [
+            'label'     => _x( 'Detail Space Customization', 'Editor', 'wps-team' ),
+            'tab'       => 'style',
+            'condition' => [
+                'card_action' => ['modal', 'side-panel', 'expand'],
+            ],
+        ] );
+        $this->add_responsive_control( 'detail_content_padding', [
+            'label'         => _x( 'Modal Padding', 'Editor', 'wps-team' ),
+            'label_map'     => [
+                'modal'      => _x( 'Modal Padding', 'Editor', 'wps-team' ),
+                'side-panel' => _x( 'Panel Padding', 'Editor', 'wps-team' ),
+                'expand'     => _x( 'Expand Padding', 'Editor', 'wps-team' ),
+            ],
+            'label_map_key' => 'card_action',
+            'label_block'   => true,
+            'type'          => Controls_Manager::DIMENSIONS,
+            'size_units'    => [
+                'px',
+                'em',
+                'rem',
+                '%'
+            ],
         ] );
         $this->end_controls_section();
     }
@@ -723,7 +817,7 @@ class Shortcode_Editor extends Editor_Controls {
             'label'     => _x( 'Details Social Links', 'Editor', 'wps-team' ),
             'tab'       => 'style',
             'condition' => [
-                'card_action' => ['modal', 'side-panel'],
+                'card_action' => ['modal', 'side-panel', 'expand'],
             ],
         ] );
         $this->add_control( 'detail_heading_social_styling', [

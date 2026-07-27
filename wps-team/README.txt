@@ -3,9 +3,9 @@
 Contributors: wpspeedo, freemius
 Tags: team members, team showcase, WordPress team plugin, staff directory, team slider
 Requires at least: 5.9
-Tested up to: 6.9
-Stable tag: 4.1.0
-Requires PHP: 7.0
+Tested up to: 7.0
+Stable tag: 4.1.1
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -272,6 +272,24 @@ Using the [WordPress.org](https://wordpress.org/support/plugin/wps-team/) suppor
 15. Plugin Settings Panel – Configure the Team Members WordPress plugin options
 
 == Changelog ==
+
+4.1.1 - 26-07-2026
+* Added: Detail view background and overlay color controls for Modal, Expand, and Side Panel (PRO).
+* Added: Detail view padding controls for Modal, Expand, and Side Panel (PRO).
+* Added: Close and navigation button color controls for detail views (PRO).
+* Added: Skills color controls (bar and tags) for detail views (PRO).
+* Added: Details Social Links styling support for Expand card action (PRO).
+* Added: Modal Settings and Expand Settings sections in the shortcode editor (PRO).
+* Added: Hierarchical Group Filter submenu for parent/child groups (PRO).
+* Added: Hide Empty Sub Menu option for Group Filter (PRO).
+* Fixed: Detail view button/nav colors not applying on the frontend.
+* Fixed: Shortcodes disappearing from the admin list when object caching is enabled.
+* Fixed: Admin input field height issue on WordPress 7.
+* Fixed: PHP warning when reading missing shortcode setting fields.
+* Tweak: Moved panel background, overlay, and padding controls to the Style tab.
+* Tweak: Migrated legacy panel style settings to the new detail style keys.
+* Tweak: Updated “Tested up to” to WordPress 7.0 and required PHP to 7.4.
+* Tweak: Upgraded Freemius.
 
 4.1.0 - 17-05-2026
 * Added: Native drag-and-drop sorting on team and taxonomy admin lists (PRO).

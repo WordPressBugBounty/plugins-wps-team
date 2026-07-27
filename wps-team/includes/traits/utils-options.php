@@ -418,6 +418,36 @@ trait Utils_Options
         return $options;
     }
 
+    public static function get_options_group_filter_style() {
+        $options = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $value = 'style-' . str_pad(
+                (string) $i,
+                2,
+                '0',
+                STR_PAD_LEFT
+            );
+            $option = [
+                'label' => sprintf( 
+                    /* translators: %s: two-digit style number */
+                    _x( 'Style %s', 'Editor', 'wps-team' ),
+                    str_pad(
+                        (string) $i,
+                        2,
+                        '0',
+                        STR_PAD_LEFT
+                    )
+                 ),
+                'value' => $value,
+            ];
+            if ( $i > 1 ) {
+                $option['disabled'] = true;
+            }
+            $options[] = $option;
+        }
+        return $options;
+    }
+
     public static function get_options_aspect_ratio() {
         $options = [
             [
