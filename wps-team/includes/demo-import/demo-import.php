@@ -285,6 +285,9 @@ class Demo_Import {
 
         foreach ( $attachment_files as $file_name ) {
             $attach_id = media_sideload_image( plugin_dir_url( __FILE__ ) . 'img/' . $file_name, 0, null, 'id' );
+            if ( is_wp_error( $attach_id ) || empty( $attach_id ) ) {
+                continue;
+            }
             add_post_meta( $attach_id, self::$key . '--dummy', 1 );
         }
 

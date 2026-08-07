@@ -26,7 +26,7 @@ class Upgrader {
     }
 
     public function upgrade_paths() {
-        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.1', '3.3.1', '3.4.5', '3.4.6', '3.5.7', '4.0.0', '4.1.1' ];
+        return [ '2.4.0', '2.5.7', '2.5.8', '2.7.0', '3.1.0', '3.2.1', '3.3.1', '3.4.5', '3.4.6', '3.5.7', '4.0.0', '4.1.1', '4.1.2' ];
     }
 
     public function run() {
@@ -499,6 +499,56 @@ class Upgrader {
             $shortcode['settings']   = wp_json_encode( $decoded );
             $shortcode['updated_at'] = current_time( 'mysql' );
             $wpdb->update( "{$wpdb->prefix}wps_team", $shortcode, [ 'id' => $shortcode['id'] ], plugin()->api->db_columns_format() ); // phpcs:ignore
+        }
+    }
+
+    /**
+     * Rename member gallery meta `_gallery` → `_wps_member_gallery` to avoid collisions
+     * with themes/plugins that also use a bare `gallery` / `_gallery` field (e.g. Option Tree).
+     */
+    public function _v_4_1_2() {
+
+        global $wpdb;
+
+        $post_type   = Utils::post_type_name();
+        $old_key     = Utils::member_gallery_meta_key_legacy();
+        $new_key     = Utils::member_gallery_meta_key();
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT pm.meta_id, pm.post_id, pm.meta_value
+				FROM {$wpdb->postmeta} pm
+				INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+				WHERE pm.meta_key = %s
+				AND p.post_type = %s",
+                $old_key,
+                $post_type
+            ),
+            ARRAY_A
+        );
+
+        if ( empty( $rows ) ) {
+            return;
+        }
+
+        foreach ( $rows as $row ) {
+            $post_id = (int) $row['post_id'];
+
+            if ( metadata_exists( 'post', $post_id, $new_key ) ) {
+                delete_metadata_by_mid( 'post', (int) $row['meta_id'] );
+                continue;
+            }
+
+            $wpdb->update(
+                $wpdb->postmeta,
+                [ 'meta_key' => $new_key ],
+                [ 'meta_id' => (int) $row['meta_id'] ],
+                [ '%s' ],
+                [ '%d' ]
+            );
+
+            clean_post_cache( $post_id );
         }
     }
 

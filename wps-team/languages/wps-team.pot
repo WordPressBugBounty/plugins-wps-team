@@ -6,7 +6,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-26 10:37+0000\n"
+"POT-Creation-Date: 2026-08-07 16:18+0000\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -248,17 +248,17 @@ msgstr ""
 msgid "Team Shortcode <strong>%s</strong> not found"
 msgstr ""
 
-#: ../includes/utils.php:390
+#: ../includes/utils.php:437
 msgctxt "Dashboard"
 msgid "Template file is not found"
 msgstr ""
 
-#: ../includes/utils.php:1292
+#: ../includes/utils.php:1347
 msgid "An unexpected database error occurred."
 msgstr ""
 
 #. translators: %s: Database error message
-#: ../includes/utils.php:1294
+#: ../includes/utils.php:1349
 msgctxt "Dashboard"
 msgid "Database Error: %s"
 msgstr ""
@@ -916,22 +916,22 @@ msgctxt "Template status"
 msgid "Custom location"
 msgstr ""
 
-#: ../includes/controls/custom-image-size.php:38
+#: ../includes/controls/custom-image-size.php:67
 msgctxt "Editor: Image Size"
 msgid "Width"
 msgstr ""
 
-#: ../includes/controls/custom-image-size.php:39
+#: ../includes/controls/custom-image-size.php:68
 msgctxt "Editor: Image Size"
 msgid "Height"
 msgstr ""
 
-#: ../includes/controls/custom-image-size.php:40
+#: ../includes/controls/custom-image-size.php:69
 msgctxt "Editor: Image Size"
 msgid "Crop"
 msgstr ""
 
-#: ../includes/controls/custom-image-size.php:41
+#: ../includes/controls/custom-image-size.php:70
 msgctxt "Editor: Image Size"
 msgid "Apply"
 msgstr ""
@@ -2091,7 +2091,7 @@ msgctxt "Editor"
 msgid "Detail Typography"
 msgstr ""
 
-#: ../includes/editor/shortcode-editor.php:2841, ../includes/traits/utils-options.php:710
+#: ../includes/editor/shortcode-editor.php:2841, ../includes/traits/utils-options.php:721
 msgctxt "Editor"
 msgid "Thumbnail"
 msgstr ""
@@ -2161,7 +2161,7 @@ msgctxt "Editor"
 msgid "Small Tablet"
 msgstr ""
 
-#: ../includes/editor/strings.php:11, ../includes/traits/utils-options.php:718
+#: ../includes/editor/strings.php:11, ../includes/traits/utils-options.php:729
 msgctxt "Editor"
 msgid "Mobile"
 msgstr ""
@@ -2251,7 +2251,7 @@ msgctxt "Editor"
 msgid "Type"
 msgstr ""
 
-#: ../includes/editor/strings.php:32, ../includes/traits/utils-options.php:636
+#: ../includes/editor/strings.php:32, ../includes/traits/utils-options.php:647
 msgctxt "Editor"
 msgid "Name"
 msgstr ""
@@ -2407,7 +2407,7 @@ msgctxt "Settings: Tools"
 msgid "All cache purged successfully"
 msgstr ""
 
-#: ../includes/managers/bulk-import-manager.php:187, ../includes/managers/erase-reset-manager.php:31, ../includes/managers/export-import-manager.php:44, ../includes/managers/export-import-manager.php:300
+#: ../includes/managers/bulk-import-manager.php:187, ../includes/managers/erase-reset-manager.php:31, ../includes/managers/export-import-manager.php:44, ../includes/managers/export-import-manager.php:318
 msgid "You do not have permission to perform this action"
 msgstr ""
 
@@ -2455,7 +2455,7 @@ msgctxt "Bulk Import"
 msgid "Couldn't save post"
 msgstr ""
 
-#: ../includes/managers/bulk-import-manager.php:640, ../includes/managers/export-import-manager.php:926
+#: ../includes/managers/bulk-import-manager.php:640, ../includes/managers/export-import-manager.php:952
 msgid "No file uploaded"
 msgstr ""
 
@@ -2493,51 +2493,51 @@ msgstr ""
 msgid "No export data provided"
 msgstr ""
 
-#: ../includes/managers/export-import-manager.php:268
+#: ../includes/managers/export-import-manager.php:286
 msgid "Export file not found or inaccessible"
 msgstr ""
 
-#: ../includes/managers/export-import-manager.php:305
+#: ../includes/managers/export-import-manager.php:323
 msgid "No import file provided"
 msgstr ""
 
-#: ../includes/managers/export-import-manager.php:312
+#: ../includes/managers/export-import-manager.php:330
 msgid "Invalid file"
 msgstr ""
 
-#: ../includes/managers/export-import-manager.php:317
+#: ../includes/managers/export-import-manager.php:335
 msgid "Unable to read import file"
 msgstr ""
 
-#: ../includes/managers/export-import-manager.php:323
+#: ../includes/managers/export-import-manager.php:341
 msgid "Invalid JSON format in import file"
 msgstr ""
 
-#: ../includes/managers/export-import-manager.php:327
+#: ../includes/managers/export-import-manager.php:345
 msgid "Invalid file content"
 msgstr ""
 
-#: ../includes/managers/export-import-manager.php:348
+#: ../includes/managers/export-import-manager.php:366
 msgid "Import preview generated"
 msgstr ""
 
-#: ../includes/managers/export-import-manager.php:360
+#: ../includes/managers/export-import-manager.php:378
 msgid "Data imported successfully"
 msgstr ""
 
-#: ../includes/managers/export-import-manager.php:933
+#: ../includes/managers/export-import-manager.php:959
 msgid "Invalid file type"
 msgstr ""
 
-#: ../includes/managers/export-import-manager.php:953, ../includes/managers/export-import-manager.php:997
+#: ../includes/managers/export-import-manager.php:979, ../includes/managers/export-import-manager.php:1023
 msgid "File upload failed"
 msgstr ""
 
-#: ../includes/managers/export-import-manager.php:966
+#: ../includes/managers/export-import-manager.php:992
 msgid "Invalid archive entry"
 msgstr ""
 
-#: ../includes/managers/export-import-manager.php:978, ../includes/managers/export-import-manager.php:984
+#: ../includes/managers/export-import-manager.php:1004, ../includes/managers/export-import-manager.php:1010
 msgid "Invalid archive path"
 msgstr ""
 
@@ -3553,7 +3553,7 @@ msgctxt "Editor"
 msgid "Image"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:86, ../includes/traits/utils-options.php:381
+#: ../includes/traits/utils-options.php:86, ../includes/traits/utils-options.php:392
 msgctxt "Editor"
 msgid "Carousel"
 msgstr ""
@@ -3578,623 +3578,623 @@ msgctxt "Settings"
 msgid "Action Text"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:380
+#: ../includes/traits/utils-options.php:391
 msgctxt "Editor"
 msgid "Grid"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:382
+#: ../includes/traits/utils-options.php:393
 msgctxt "Editor"
 msgid "Ticker"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:383, ../includes/traits/utils-options.php:465
+#: ../includes/traits/utils-options.php:394, ../includes/traits/utils-options.php:476
 msgctxt "Editor"
 msgid "Masonry"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:384
+#: ../includes/traits/utils-options.php:395
 msgctxt "Editor"
 msgid "Filter"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:396
+#: ../includes/traits/utils-options.php:407
 msgctxt "Editor"
 msgid "Style 01"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:397
+#: ../includes/traits/utils-options.php:408
 msgctxt "Editor"
 msgid "Style 02"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:398
+#: ../includes/traits/utils-options.php:409
 msgctxt "Editor"
 msgid "Style 03"
 msgstr ""
 
 #. translators: %s: two-digit style number
-#: ../includes/traits/utils-options.php:416
+#: ../includes/traits/utils-options.php:427
 msgctxt "Editor"
 msgid "Style %s"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:436, ../includes/traits/utils-options.php:634
+#: ../includes/traits/utils-options.php:447, ../includes/traits/utils-options.php:645
 msgctxt "Editor"
 msgid "Default"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:437
+#: ../includes/traits/utils-options.php:448
 msgctxt "Editor"
 msgid "Square - 1:1"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:438
+#: ../includes/traits/utils-options.php:449
 msgctxt "Editor"
 msgid "Portrait - 6:7"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:439
+#: ../includes/traits/utils-options.php:450
 msgctxt "Editor"
 msgid "Portrait - 5:6"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:440
+#: ../includes/traits/utils-options.php:451
 msgctxt "Editor"
 msgid "Portrait - 4:5"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:441
+#: ../includes/traits/utils-options.php:452
 msgctxt "Editor"
 msgid "Portrait - 8.5:11"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:442
+#: ../includes/traits/utils-options.php:453
 msgctxt "Editor"
 msgid "Portrait - 3:4"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:443
+#: ../includes/traits/utils-options.php:454
 msgctxt "Editor"
 msgid "Portrait - 5:7"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:444
+#: ../includes/traits/utils-options.php:455
 msgctxt "Editor"
 msgid "Portrait - 2:3"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:445
+#: ../includes/traits/utils-options.php:456
 msgctxt "Editor"
 msgid "Portrait - 9:16"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:447
+#: ../includes/traits/utils-options.php:458
 msgctxt "Editor"
 msgid "Landscape - 5:4"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:448
+#: ../includes/traits/utils-options.php:459
 msgctxt "Editor"
 msgid "Landscape - 4:3"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:449
+#: ../includes/traits/utils-options.php:460
 msgctxt "Editor"
 msgid "Landscape - 3:2"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:450
+#: ../includes/traits/utils-options.php:461
 msgctxt "Editor"
 msgid "Landscape - 14:9"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:451
+#: ../includes/traits/utils-options.php:462
 msgctxt "Editor"
 msgid "Landscape - 16:10"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:452
+#: ../includes/traits/utils-options.php:463
 msgctxt "Editor"
 msgid "Landscape - 1.66:1"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:453
+#: ../includes/traits/utils-options.php:464
 msgctxt "Editor"
 msgid "Landscape - 1.75:1"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:454
+#: ../includes/traits/utils-options.php:465
 msgctxt "Editor"
 msgid "Landscape - 16:9"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:455
+#: ../includes/traits/utils-options.php:466
 msgctxt "Editor"
 msgid "Landscape - 1.91:1"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:456
+#: ../includes/traits/utils-options.php:467
 msgctxt "Editor"
 msgid "Landscape - 2:1"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:457
+#: ../includes/traits/utils-options.php:468
 msgctxt "Editor"
 msgid "Landscape - 21:9"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:466
+#: ../includes/traits/utils-options.php:477
 msgctxt "Editor"
 msgid "Fit Rows"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:474, ../includes/traits/utils-options.php:484
+#: ../includes/traits/utils-options.php:485, ../includes/traits/utils-options.php:495
 msgctxt "Editor"
 msgid "Left"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:475, ../includes/traits/utils-options.php:485
+#: ../includes/traits/utils-options.php:486, ../includes/traits/utils-options.php:496
 msgctxt "Editor"
 msgid "Right"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:476
+#: ../includes/traits/utils-options.php:487
 msgctxt "Editor"
 msgid "Dynamic"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:493
+#: ../includes/traits/utils-options.php:504
 msgctxt "Editor"
 msgid "Circle"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:494
+#: ../includes/traits/utils-options.php:505
 msgctxt "Editor"
 msgid "Square"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:495
+#: ../includes/traits/utils-options.php:506
 msgctxt "Editor"
 msgid "Radius"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:503
+#: ../includes/traits/utils-options.php:514
 msgctxt "Editor"
 msgid "Custom Color"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:504
+#: ../includes/traits/utils-options.php:515
 msgctxt "Editor"
 msgid "Dynamic Brand Color"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:512
+#: ../includes/traits/utils-options.php:523
 msgctxt "Editor"
 msgid "Square One"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:513
+#: ../includes/traits/utils-options.php:524
 msgctxt "Editor"
 msgid "Square Two"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:514
+#: ../includes/traits/utils-options.php:525
 msgctxt "Editor"
 msgid "Square Three"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:515
+#: ../includes/traits/utils-options.php:526
 msgctxt "Editor"
 msgid "Square Four"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:516
+#: ../includes/traits/utils-options.php:527
 msgctxt "Editor"
 msgid "Square Five"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:517
+#: ../includes/traits/utils-options.php:528
 msgctxt "Editor"
 msgid "Square Six"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:518
+#: ../includes/traits/utils-options.php:529
 msgctxt "Editor"
 msgid "Square Seven"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:519
+#: ../includes/traits/utils-options.php:530
 msgctxt "Editor"
 msgid "Square Eight"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:520
+#: ../includes/traits/utils-options.php:531
 msgctxt "Editor"
 msgid "Square Nine"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:521
+#: ../includes/traits/utils-options.php:532
 msgctxt "Editor"
 msgid "Square Ten"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:522
+#: ../includes/traits/utils-options.php:533
 msgctxt "Editor"
 msgid "Square Eleven"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:523
+#: ../includes/traits/utils-options.php:534
 msgctxt "Editor"
 msgid "Square Twelve"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:524
+#: ../includes/traits/utils-options.php:535
 msgctxt "Editor"
 msgid "Square Thirteen"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:525
+#: ../includes/traits/utils-options.php:536
 msgctxt "Editor"
 msgid "Circle One"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:526
+#: ../includes/traits/utils-options.php:537
 msgctxt "Editor"
 msgid "Circle Two"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:527
+#: ../includes/traits/utils-options.php:538
 msgctxt "Editor"
 msgid "Circle Three"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:528
+#: ../includes/traits/utils-options.php:539
 msgctxt "Editor"
 msgid "Circle Four"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:529
+#: ../includes/traits/utils-options.php:540
 msgctxt "Editor"
 msgid "Circle Five"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:530
+#: ../includes/traits/utils-options.php:541
 msgctxt "Editor"
 msgid "Circle Six"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:531
+#: ../includes/traits/utils-options.php:542
 msgctxt "Editor"
 msgid "Horiz One"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:532
+#: ../includes/traits/utils-options.php:543
 msgctxt "Editor"
 msgid "Horiz Two"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:533
+#: ../includes/traits/utils-options.php:544
 msgctxt "Editor"
 msgid "Horiz Three"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:534
+#: ../includes/traits/utils-options.php:545
 msgctxt "Editor"
 msgid "Horiz Four"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:535
+#: ../includes/traits/utils-options.php:546
 msgctxt "Editor"
 msgid "Table One"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:536
+#: ../includes/traits/utils-options.php:547
 msgctxt "Editor"
 msgid "Table Two"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:537
+#: ../includes/traits/utils-options.php:548
 msgctxt "Editor"
 msgid "Table Three"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:538
+#: ../includes/traits/utils-options.php:549
 msgctxt "Editor"
 msgid "Table Four"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:550
+#: ../includes/traits/utils-options.php:561
 msgctxt "Editor"
 msgid "Style One"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:551
+#: ../includes/traits/utils-options.php:562
 msgctxt "Editor"
 msgid "Style Two"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:563
+#: ../includes/traits/utils-options.php:574
 msgctxt "Editor"
 msgid "None"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:564
+#: ../includes/traits/utils-options.php:575
 msgctxt "Editor"
 msgid "Single Page"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:565
+#: ../includes/traits/utils-options.php:576
 msgctxt "Editor"
 msgid "Modal"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:566
+#: ../includes/traits/utils-options.php:577
 msgctxt "Editor"
 msgid "Side Panel"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:567
+#: ../includes/traits/utils-options.php:578
 msgctxt "Editor"
 msgid "Expand"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:582
+#: ../includes/traits/utils-options.php:593
 msgctxt "Editor"
 msgid "Layout 01"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:587
+#: ../includes/traits/utils-options.php:598
 msgctxt "Editor"
 msgid "Layout 02"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:592
+#: ../includes/traits/utils-options.php:603
 msgctxt "Editor"
 msgid "Layout 03"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:597
+#: ../includes/traits/utils-options.php:608
 msgctxt "Editor"
 msgid "Layout 04"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:602
+#: ../includes/traits/utils-options.php:613
 msgctxt "Editor"
 msgid "Layout 05"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:616, ../includes/traits/utils-options.php:635
+#: ../includes/traits/utils-options.php:627, ../includes/traits/utils-options.php:646
 msgctxt "Editor"
 msgid "ID"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:617
+#: ../includes/traits/utils-options.php:628
 msgctxt "Editor"
 msgid "First Name"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:618
+#: ../includes/traits/utils-options.php:629
 msgctxt "Editor"
 msgid "Last Name"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:619
+#: ../includes/traits/utils-options.php:630
 msgctxt "Editor"
 msgid "Date"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:620
+#: ../includes/traits/utils-options.php:631
 msgctxt "Editor"
 msgid "Random"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:621
+#: ../includes/traits/utils-options.php:632
 msgctxt "Editor"
 msgid "Modified"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:622, ../includes/traits/utils-options.php:639
+#: ../includes/traits/utils-options.php:633, ../includes/traits/utils-options.php:650
 msgctxt "Editor"
 msgid "Custom Order"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:637
+#: ../includes/traits/utils-options.php:648
 msgctxt "Editor"
 msgid "Slug"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:638
+#: ../includes/traits/utils-options.php:649
 msgctxt "Editor"
 msgid "Count"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:711
+#: ../includes/traits/utils-options.php:722
 msgctxt "Editor"
 msgid "Divider"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:712
+#: ../includes/traits/utils-options.php:723
 msgctxt "Editor"
 msgid "Designation"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:713
+#: ../includes/traits/utils-options.php:724
 msgctxt "Editor"
 msgid "Description"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:714
+#: ../includes/traits/utils-options.php:725
 msgctxt "Editor"
 msgid "Education"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:715
+#: ../includes/traits/utils-options.php:726
 msgctxt "Editor"
 msgid "Social"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:716
+#: ../includes/traits/utils-options.php:727
 msgctxt "Editor"
 msgid "Ribbon/Tag"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:717
+#: ../includes/traits/utils-options.php:728
 msgctxt "Editor"
 msgid "Email"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:719
+#: ../includes/traits/utils-options.php:730
 msgctxt "Editor"
 msgid "Telephone"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:720
+#: ../includes/traits/utils-options.php:731
 msgctxt "Editor"
 msgid "Fax"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:721
+#: ../includes/traits/utils-options.php:732
 msgctxt "Editor"
 msgid "Experience"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:722
+#: ../includes/traits/utils-options.php:733
 msgctxt "Editor"
 msgid "Website"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:723
+#: ../includes/traits/utils-options.php:734
 msgctxt "Editor"
 msgid "Company"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:724
+#: ../includes/traits/utils-options.php:735
 msgctxt "Editor"
 msgid "Address"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:725
+#: ../includes/traits/utils-options.php:736
 msgctxt "Editor"
 msgid "Skills"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:728
+#: ../includes/traits/utils-options.php:739
 msgctxt "Editor"
 msgid "Pricing"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:732
+#: ../includes/traits/utils-options.php:743
 msgctxt "Editor"
 msgid "Read More Link"
 msgstr ""
 
-#: ../includes/traits/utils-options.php:733
+#: ../includes/traits/utils-options.php:744
 msgctxt "Editor"
 msgid "Read More Button"
 msgstr ""
 
 #. translators: %s: Post title.
-#: ../includes/traits/utils-template-elements.php:249
+#: ../includes/traits/utils-template-elements.php:271
 msgctxt "Public"
 msgid "Read More about %s."
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:350, ../includes/traits/utils-template-elements.php:534
+#: ../includes/traits/utils-template-elements.php:372, ../includes/traits/utils-template-elements.php:556
 msgctxt "Public"
 msgid "Read More"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:401
+#: ../includes/traits/utils-template-elements.php:423
 msgctxt "Public"
 msgid "Education:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:479
+#: ../includes/traits/utils-template-elements.php:501
 msgid "Social Link"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:493
+#: ../includes/traits/utils-template-elements.php:515
 msgctxt "Public"
 msgid "Connect with me:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:538
+#: ../includes/traits/utils-template-elements.php:560
 msgctxt "Public"
 msgid "My Resume"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:542
+#: ../includes/traits/utils-template-elements.php:564
 msgctxt "Public"
 msgid "Hire Me"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:701
+#: ../includes/traits/utils-template-elements.php:723
 msgctxt "Public"
 msgid "Skills:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:872
+#: ../includes/traits/utils-template-elements.php:894
 msgctxt "Public"
 msgid "Mobile:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:875
+#: ../includes/traits/utils-template-elements.php:897
 msgctxt "Public"
 msgid "Telephone:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:878
+#: ../includes/traits/utils-template-elements.php:900
 msgctxt "Public"
 msgid "Fax:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:881
+#: ../includes/traits/utils-template-elements.php:903
 msgctxt "Public"
 msgid "Email:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:884
+#: ../includes/traits/utils-template-elements.php:906
 msgctxt "Public"
 msgid "Website:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:887
+#: ../includes/traits/utils-template-elements.php:909
 msgctxt "Public"
 msgid "Experience:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:890
+#: ../includes/traits/utils-template-elements.php:912
 msgctxt "Public"
 msgid "Company:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:893
+#: ../includes/traits/utils-template-elements.php:915
 msgctxt "Public"
 msgid "Address:"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:1083
+#: ../includes/traits/utils-template-elements.php:1105
 msgctxt "Public"
 msgid "Call on Mobile"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:1091
+#: ../includes/traits/utils-template-elements.php:1113
 msgctxt "Public"
 msgid "Call on Telephone"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:1099
+#: ../includes/traits/utils-template-elements.php:1121
 msgctxt "Public"
 msgid "Send Fax"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:1107
+#: ../includes/traits/utils-template-elements.php:1129
 msgctxt "Public"
 msgid "Send Email"
 msgstr ""
 
-#: ../includes/traits/utils-template-elements.php:1116
+#: ../includes/traits/utils-template-elements.php:1138
 msgctxt "Public"
 msgid "Visit Website"
 msgstr ""

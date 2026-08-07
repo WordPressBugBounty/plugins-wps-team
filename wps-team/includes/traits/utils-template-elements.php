@@ -100,7 +100,11 @@ trait Utils_Template_Elements
             'card_action'           => 'single-page',
             'thumbnail_type'        => 'image',
             'thumbnail_size'        => 'large',
-            'thumbnail_size_custom' => [],
+            'thumbnail_size_custom' => [
+                'width'  => '',
+                'height' => '',
+                'crop'   => false,
+            ],
             'force_show'            => false,
             'tag'                   => 'div',
             'class'                 => '',
@@ -117,6 +121,10 @@ trait Utils_Template_Elements
         $thumbnail_size = $args['thumbnail_size'];
         $gallery_html = '';
         $args['thumbnail_type'] = 'image';
+        // Fallback when custom size could not be resolved (invalid dims / free build).
+        if ( $thumbnail_size === 'custom' ) {
+            $thumbnail_size = 'full';
+        }
         $html = sprintf( '<%s class="%s">', esc_attr( $wrapper_tag ), esc_attr( Utils::join_classes( $wrapper_classes ) ) );
         $html .= sprintf( '<div class="%s">', esc_attr( Utils::join_classes( $thumbnail_container ) ) );
         if ( wps_team_fs()->can_use_premium_code__premium_only() && $args['thumbnail_type'] === 'carousel' ) {

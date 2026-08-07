@@ -152,25 +152,35 @@ class Export_Import_Manager {
 
             if ( ! empty( $thumbnail_id ) ) {
                 $thumbnail_data = $this->get_attachment_export_data($thumbnail_id);
-                $json_data['attachments'][] = $thumbnail_data;
+                if ( $thumbnail_data ) {
+                    $json_data['attachments'][] = $thumbnail_data;
+                }
             }
 
-            $gallery_ids = get_post_meta($post->ID, '_gallery', true);
+            $gallery_ids = Utils::get_member_gallery_ids( $post->ID );
 
             if ( ! empty( $gallery_ids ) ) {
-                foreach ($gallery_ids as $gallery_id) {
-                    $json_data['attachments'][] = $this->get_attachment_export_data($gallery_id);
+                foreach ( $gallery_ids as $gallery_id ) {
+                    $gallery_data = $this->get_attachment_export_data( $gallery_id );
+                    if ( $gallery_data ) {
+                        $json_data['attachments'][] = $gallery_data;
+                    }
                 }
             }
         }
 
         // Add Attachments Data to the zip file
         foreach ($json_data['attachments'] as $key => $attachment) {
+            if ( empty( $attachment['file_path'] ) ) {
+                unset( $json_data['attachments'][ $key ] );
+                continue;
+            }
             $file_name = basename($attachment['file_path']);
             $this->zip_instance->addFile($attachment['file_path'], 'attachments/' . basename($attachment['file_path']));
             $json_data['attachments'][$key]['file_name'] = $file_name;
             unset($json_data['attachments'][$key]['file_path']);
         }
+        $json_data['attachments'] = array_values( $json_data['attachments'] );
 
         // Add Terms Data to the zip file
         $json_data['terms'] = get_terms([
@@ -210,15 +220,23 @@ class Export_Import_Manager {
 
     public function get_attachment_export_data($attachment_id) {
         $attachment = get_post($attachment_id);
-        $attachment_data = array(
+        if ( ! $attachment ) {
+            return null;
+        }
+
+        $file_path = get_attached_file($attachment_id);
+        if ( empty( $file_path ) || ! file_exists( $file_path ) ) {
+            return null;
+        }
+
+        return array(
             'ID' => $attachment->ID,
             'title' => $attachment->post_title,
             'description' => $attachment->post_content,
             'caption' => $attachment->post_excerpt,
             'alt_text' => get_post_meta($attachment_id, '_wp_attachment_image_alt', true),
-            'file_path' => get_attached_file($attachment_id)
+            'file_path' => $file_path,
         );
-        return $attachment_data;
     }
 
     public function get_shortcode_list() {
@@ -537,8 +555,16 @@ class Export_Import_Manager {
                 }
             }
 
-            if ( isset( $meta_input['_gallery'] ) && ! empty( $meta_input['_gallery'] ) ) {
-                foreach ( $meta_input['_gallery'] as $meta_row_key => $gallery_value ) {
+            // Normalize legacy `_gallery` exports to the namespaced meta key.
+            $gallery_meta_key = Utils::member_gallery_meta_key();
+            $gallery_legacy   = Utils::member_gallery_meta_key_legacy();
+            if ( isset( $meta_input[ $gallery_legacy ] ) && ! isset( $meta_input[ $gallery_meta_key ] ) ) {
+                $meta_input[ $gallery_meta_key ] = $meta_input[ $gallery_legacy ];
+            }
+            unset( $meta_input[ $gallery_legacy ] );
+
+            if ( isset( $meta_input[ $gallery_meta_key ] ) && ! empty( $meta_input[ $gallery_meta_key ] ) ) {
+                foreach ( $meta_input[ $gallery_meta_key ] as $meta_row_key => $gallery_value ) {
                     $mapped_gallery_ids = [];
 
                     if ( is_array( $gallery_value ) ) {
@@ -557,18 +583,18 @@ class Export_Import_Manager {
                     }
 
                     if ( empty( $mapped_gallery_ids ) ) {
-                        unset( $meta_input['_gallery'][ $meta_row_key ] );
+                        unset( $meta_input[ $gallery_meta_key ][ $meta_row_key ] );
                     } elseif ( is_array( $gallery_value ) ) {
-                        $meta_input['_gallery'][ $meta_row_key ] = $mapped_gallery_ids;
+                        $meta_input[ $gallery_meta_key ][ $meta_row_key ] = $mapped_gallery_ids;
                     } elseif ( is_string( $gallery_value ) && str_contains( $gallery_value, ',' ) ) {
-                        $meta_input['_gallery'][ $meta_row_key ] = implode( ',', $mapped_gallery_ids );
+                        $meta_input[ $gallery_meta_key ][ $meta_row_key ] = implode( ',', $mapped_gallery_ids );
                     } else {
-                        $meta_input['_gallery'][ $meta_row_key ] = $mapped_gallery_ids[0];
+                        $meta_input[ $gallery_meta_key ][ $meta_row_key ] = $mapped_gallery_ids[0];
                     }
                 }
 
-                if ( empty( $meta_input['_gallery'] ) ) {
-                    unset( $meta_input['_gallery'] );
+                if ( empty( $meta_input[ $gallery_meta_key ] ) ) {
+                    unset( $meta_input[ $gallery_meta_key ] );
                 }
             }
 

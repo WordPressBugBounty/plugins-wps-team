@@ -298,18 +298,21 @@ class Data {
             return $post_id;
         }
         /*
-         * Save Gallery Meta Fields
+         * Save Gallery Meta Fields (only when the gallery editor is present in the request).
+         * Field name is namespaced (`wps_member_gallery`) to avoid collisions with themes
+         * that also post a bare `gallery` field (e.g. Option Tree / Fortuna).
          */
-        if ( !empty( $_POST['gallery'] ) ) {
-            $gallery_data = ( !empty( $_POST['gallery'] ) && is_array( $_POST['gallery'] ) ? array_map( 'intval', wp_unslash( $_POST['gallery'] ) ) : [] );
-            $gallery_data = array_filter( $gallery_data );
-            if ( $gallery_data ) {
-                update_post_meta( $post_id, '_gallery', $gallery_data );
+        if ( isset( $_POST['_wps_member_gallery_editor'] ) ) {
+            $gallery_post_key = Utils::member_gallery_post_key();
+            $gallery_meta_key = Utils::member_gallery_meta_key();
+            $gallery_data = ( isset( $_POST[$gallery_post_key] ) && is_array( $_POST[$gallery_post_key] ) ? array_values( array_filter( array_map( 'intval', wp_unslash( $_POST[$gallery_post_key] ) ) ) ) : [] );
+            if ( !empty( $gallery_data ) ) {
+                update_post_meta( $post_id, $gallery_meta_key, $gallery_data );
             } else {
-                delete_post_meta( $post_id, '_gallery' );
+                delete_post_meta( $post_id, $gallery_meta_key );
             }
-        } else {
-            delete_post_meta( $post_id, '_gallery' );
+            // Clean legacy key if present.
+            delete_post_meta( $post_id, Utils::member_gallery_meta_key_legacy() );
         }
         /*
          * Save Details Meta Fields

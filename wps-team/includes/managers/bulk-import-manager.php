@@ -612,7 +612,7 @@ class Bulk_Import_Manager {
         if ( in_array( 'gallery', $present_keys, true ) && isset( $row['gallery'] ) && ! $this->empty( $row['gallery'] ) ) {
             $gids = (array) $this->get_gallery_ids( $row['gallery'] );
             if ( ! empty( $gids ) ) {
-                $meta_input['_gallery'] = $gids;
+                $meta_input[ Utils::member_gallery_meta_key() ] = $gids;
             }
         }
 

@@ -199,13 +199,14 @@ final class Admin {
             WPS_TEAM_VERSION
         );
         $data = [
-            'nonce'     => wp_create_nonce( '_wpspeedo_team_nonce' ),
-            'ajaxurl'   => admin_url( 'admin-ajax.php' ),
-            'adminurl'  => admin_url(),
-            'siteurl'   => home_url(),
-            'action'    => 'wpspeedo_team_ajax_handler',
-            'fields'    => Utils::get_meta_box_controls(),
-            'icon_data' => Icon_Manager::get_icon_manager_tabs_config(),
+            'nonce'                   => wp_create_nonce( '_wpspeedo_team_nonce' ),
+            'ajaxurl'                 => admin_url( 'admin-ajax.php' ),
+            'adminurl'                => admin_url(),
+            'siteurl'                 => home_url(),
+            'action'                  => 'wpspeedo_team_ajax_handler',
+            'fields'                  => Utils::get_meta_box_controls(),
+            'icon_data'               => Icon_Manager::get_icon_manager_tabs_config(),
+            'member_gallery_post_key' => Utils::member_gallery_post_key(),
         ];
         wp_register_script(
             'wpspeedo-team--meta-box',

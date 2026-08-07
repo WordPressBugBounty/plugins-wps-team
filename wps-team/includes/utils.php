@@ -320,6 +320,50 @@ class Utils {
         return $field_keys;
     }
 
+    /**
+     * Post meta key for member gallery attachment IDs (namespaced to avoid theme/plugin POST collisions).
+     */
+    public static function member_gallery_meta_key() {
+        return '_wps_member_gallery';
+    }
+
+    /**
+     * Legacy gallery meta key (pre-4.1.2).
+     */
+    public static function member_gallery_meta_key_legacy() {
+        return '_gallery';
+    }
+
+    /**
+     * Admin form field name for member gallery IDs (must not be bare "gallery").
+     */
+    public static function member_gallery_post_key() {
+        return 'wps_member_gallery';
+    }
+
+    /**
+     * Get member gallery attachment IDs, with legacy `_gallery` fallback.
+     *
+     * @param int $post_id Member post ID.
+     * @return int[]
+     */
+    public static function get_member_gallery_ids( $post_id ) {
+        $post_id = (int) $post_id;
+        if ( $post_id <= 0 ) {
+            return [];
+        }
+        // Prefer the namespaced key whenever it exists (even if empty after a clear).
+        if ( metadata_exists( 'post', $post_id, self::member_gallery_meta_key() ) ) {
+            $ids = get_post_meta( $post_id, self::member_gallery_meta_key(), true );
+        } else {
+            $ids = get_post_meta( $post_id, self::member_gallery_meta_key_legacy(), true );
+        }
+        if ( !is_array( $ids ) ) {
+            return [];
+        }
+        return array_values( array_filter( array_map( 'intval', $ids ) ) );
+    }
+
     public static function get_item_data( string $data_key, $post_id = null, $shortcode_id = null ) {
         if ( empty( $post_id ) ) {
             $post_id = get_the_ID();
@@ -565,9 +609,17 @@ class Utils {
             'archive_page'                 => false,
             'archive_page_link'            => $archive_page_link,
             'thumbnail_size'               => 'full',
-            'thumbnail_size_custom'        => [],
+            'thumbnail_size_custom'        => [
+                'width'  => '',
+                'height' => '',
+                'crop'   => false,
+            ],
             'detail_thumbnail_size'        => 'full',
-            'detail_thumbnail_size_custom' => [],
+            'detail_thumbnail_size_custom' => [
+                'width'  => '',
+                'height' => '',
+                'crop'   => false,
+            ],
             'detail_thumbnail_type'        => 'image',
             'enable_archive'               => true,
             'enable_singular_page'         => true,

@@ -134,6 +134,16 @@ trait Utils_Options
                 $settings[$field] = $defaults[$field];
             }
         }
+        // Custom image size must be an object; older saves may be "" or [].
+        foreach ( ['thumbnail_size_custom', 'detail_thumbnail_size_custom'] as $image_size_key ) {
+            $raw = $settings[$image_size_key] ?? null;
+            if ( !is_array( $raw ) || array_values( $raw ) === $raw ) {
+                $settings[$image_size_key] = $defaults[$image_size_key];
+                continue;
+            }
+            $settings[$image_size_key] = array_merge( $defaults[$image_size_key], $raw );
+            $settings[$image_size_key]['crop'] = !empty( $settings[$image_size_key]['crop'] );
+        }
         return $settings;
     }
 

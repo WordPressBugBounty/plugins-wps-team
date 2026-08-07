@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team members, team showcase, WordPress team plugin, staff directory, team slider
 Requires at least: 5.9
 Tested up to: 7.0
-Stable tag: 4.1.1
+Stable tag: 4.1.2
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -272,6 +272,13 @@ Using the [WordPress.org](https://wordpress.org/support/plugin/wps-team/) suppor
 15. Plugin Settings Panel – Configure the Team Members WordPress plugin options
 
 == Changelog ==
+
+4.1.2 - 07-08-2026
+* Fixed: Member gallery field name collision with themes/plugins that also use a `gallery` POST field (could cause a critical error on Update under PHP 8+).
+* Fixed: Gallery IDs not persisted due to missing echo on hidden inputs.
+* Fixed: Free/unrelated member saves no longer wipe gallery meta.
+* Tweak: Renamed gallery post meta `_gallery` → `_wps_member_gallery` (auto-migrated on upgrade; legacy reads still supported).
+* Tweak: Slimmed custom image size helper (removed unused global image-editor overrides).
 
 4.1.1 - 26-07-2026
 * Added: Detail view background and overlay color controls for Modal, Expand, and Side Panel (PRO).

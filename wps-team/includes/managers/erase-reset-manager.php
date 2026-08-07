@@ -148,10 +148,13 @@ class Erase_Reset_Manager {
 
         $post_ids_placeholders = implode( ',', array_map( 'absint', $post_ids ) );
 
-        // Step 2: Get all featured image IDs (_thumbnail_id)
+        $gallery_meta_key = Utils::member_gallery_meta_key();
+        $gallery_legacy   = Utils::member_gallery_meta_key_legacy();
+
+        // Step 2: Get all featured image IDs + gallery attachment IDs
         $attachment_ids = $wpdb->get_col(
             "SELECT meta_value FROM {$wpdb->postmeta} 
-            WHERE meta_key IN ('_thumbnail_id', '_gallery') 
+            WHERE meta_key IN ('_thumbnail_id', '{$gallery_meta_key}', '{$gallery_legacy}') 
             AND post_id IN ($post_ids_placeholders)"
         );
 
@@ -180,11 +183,15 @@ class Erase_Reset_Manager {
             }
         }
 
-        // Step 4: Delete _gallery meta to prevent broken images
+        // Step 4: Delete gallery meta to prevent broken images
         $wpdb->query(
-            "DELETE FROM {$wpdb->postmeta} 
-            WHERE meta_key = '_gallery' 
-            AND post_id IN ($post_ids_placeholders)"
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->postmeta} 
+                WHERE meta_key IN (%s, %s) 
+                AND post_id IN ($post_ids_placeholders)",
+                $gallery_meta_key,
+                $gallery_legacy
+            )
         );
 
         // Step 5: Clear cache for affected posts
