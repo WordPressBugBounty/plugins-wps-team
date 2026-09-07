@@ -3,8 +3,8 @@
 Contributors: wpspeedo, freemius
 Tags: team members, team showcase, WordPress team plugin, staff directory, team slider
 Requires at least: 5.9
-Tested up to: 7.0
-Stable tag: 4.1.2
+Tested up to: 7.1
+Stable tag: 4.1.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -134,12 +134,12 @@ Our plugin is fully compatible and integrates seamlessly with popular page build
 * Allows you to select created shortcodes directly via the widget.
 * Fully compatible with all block-based layouts.
 
-✅ **Divi - Team Module**
+✅ **Divi - Team Module (Divi 4 & Divi 5)**
 
-* Integrates with Divi Builder’s modules and sections.
-* Supports Divi layouts and visual editing.
-* Allows you to select created shortcodes directly via the widget.
-* Fully functional with the Divi theme and standalone builder.
+* Native Divi 4 module and native Divi 5 module for the Visual Builder.
+* Supports Divi layouts, visual editing, and Divi 5 Migrator conversion from legacy modules.
+* Allows you to select created shortcodes directly via the module.
+* Fully functional with the Divi theme and standalone Divi Builder.
 
 == ✅ Who Can Use the WPS Team WordPress Plugin? ==
 
@@ -272,6 +272,25 @@ Using the [WordPress.org](https://wordpress.org/support/plugin/wps-team/) suppor
 15. Plugin Settings Panel – Configure the Team Members WordPress plugin options
 
 == Changelog ==
+
+4.1.3 - 08-09-2026
+* Added: Native Divi 5 Team module with Visual Builder shortcode preview (Divi 4 module retained for dual support).
+* Added: Divi 5 Migrator conversion for legacy `wps_team_divi` modules.
+* Fixed: Divi 5 Visual Builder preview staying hidden until a manual refresh/trigger.
+* Fixed: Divi 5 shortcode dropdown options/labels not resolving correctly in the Visual Builder.
+* Fixed: Shortcode Include/Exclude so selected terms actually filter members (multi-select IDs preserved on save).
+* Fixed: Gutenberg preview not re-initializing when changing the shortcode inside the editor iframe.
+* Fixed: AJAX filter briefly mixing old and new members (old items are now removed from the DOM before the new results load).
+* Fixed: Filter and Load More loaders activating together (each loader now shows only in its own context).
+* Fixed: Filter dropdown not closing when clicking the trigger a second time.
+* Tweak: Divi 4 Visual Builder assets are skipped when Divi 5 is active.
+* Tweak: Divi theme detection for frontend Divi CSS compatibility styles.
+* Tweak: Release build excludes Divi 5 Visual Builder source/dev files and ships only the compiled bundle.
+* Tweak: Gutenberg blocks declare Block API v3 and editor styles load inside the always-iframed post editor (WordPress 7.1).
+* Tweak: Updated “Tested up to” to WordPress 7.1.
+* Tweak: Group Filter child terms overlay as a dropdown instead of stretching the filter row (PRO).
+* Tweak: Group Filter submenus flip when they would overflow, and parent terms show a dropdown arrow (PRO).
+* Tweak: Group Filter submenu restyled as a compact hover-only menu (PRO).
 
 4.1.2 - 07-08-2026
 * Fixed: Member gallery field name collision with themes/plugins that also use a `gallery` POST field (could cause a critical error on Update under PHP 8+).

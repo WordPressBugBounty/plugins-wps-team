@@ -14,8 +14,19 @@ class Integrations {
     }
 
     function is_divi_active() {
-        if ( ! defined('ET_BUILDER_PLUGIN_ACTIVE') || ! ET_BUILDER_PLUGIN_ACTIVE ) return false;
-        return et_core_is_builder_used_on_current_request();
+        // Divi Builder plugin.
+        if ( defined( 'ET_BUILDER_PLUGIN_ACTIVE' ) && ET_BUILDER_PLUGIN_ACTIVE ) {
+            return function_exists( 'et_core_is_builder_used_on_current_request' )
+                && et_core_is_builder_used_on_current_request();
+        }
+
+        // Divi / Extra theme (builder bundled with theme).
+        if ( defined( 'ET_BUILDER_THEME' ) && ET_BUILDER_THEME ) {
+            return function_exists( 'et_core_is_builder_used_on_current_request' )
+                && et_core_is_builder_used_on_current_request();
+        }
+
+        return false;
     }
 
 }

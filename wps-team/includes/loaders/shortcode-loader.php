@@ -286,22 +286,24 @@ class Shortcode_Loader extends Attribute_Manager {
         $taxonomies = Utils::get_active_taxonomies();
         foreach ( $taxonomies as $taxonomy ) {
             $tax_root_key = Utils::get_taxonomy_root( $taxonomy, true );
-            $include = (array) $this->get_setting( 'include_by_' . $tax_root_key );
+            $include = Utils::normalize_term_ids( $this->get_setting( 'include_by_' . $tax_root_key ) );
             if ( !empty( $include ) ) {
                 $tax_query[] = [
-                    'taxonomy' => $taxonomy,
-                    'field'    => 'term_id',
-                    'terms'    => $include,
+                    'taxonomy'         => $taxonomy,
+                    'field'            => 'term_id',
+                    'terms'            => $include,
+                    'include_children' => true,
                 ];
             }
-            $exclude = (array) $this->get_setting( 'exclude_by_' . $tax_root_key );
-            $exclude = array_diff( $exclude, $include );
+            $exclude = Utils::normalize_term_ids( $this->get_setting( 'exclude_by_' . $tax_root_key ) );
+            $exclude = array_values( array_diff( $exclude, $include ) );
             if ( !empty( $exclude ) ) {
                 $tax_query[] = [
-                    'taxonomy' => $taxonomy,
-                    'field'    => 'term_id',
-                    'terms'    => $exclude,
-                    'operator' => 'NOT IN',
+                    'taxonomy'         => $taxonomy,
+                    'field'            => 'term_id',
+                    'terms'            => $exclude,
+                    'operator'         => 'NOT IN',
+                    'include_children' => true,
                 ];
             }
         }

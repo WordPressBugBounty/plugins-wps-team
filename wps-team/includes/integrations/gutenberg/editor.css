@@ -1,0 +1,31 @@
+/* Editor-only styles for the WPS Team shortcode block (injected into the iframed canvas). */
+.wps-team--toolbar {
+    padding: 20px;
+    border: 1px solid #3a3a42;
+    border-radius: 2px;
+}
+
+.wps-team--toolbar label {
+    display: block;
+    margin-bottom: 6px;
+    margin-top: -6px;
+}
+
+.wps-team--toolbar select {
+    width: 260px;
+    max-width: 100% !important;
+    line-height: 38px !important;
+    height: 38px;
+}
+
+.wps-team--block .wps-widget--team .wps-team--member-title a {
+    color: inherit;
+}
+
+.wps-team--block .wps-widget--edit-link {
+    position: relative;
+    -webkit-transform: none;
+    transform: none;
+    width: 39px;
+    margin-top: 14px;
+}

@@ -1,0 +1,84 @@
+{
+  "name": "wpspeedo/team",
+  "d4Shortcode": "wps_team_divi",
+  "title": "WPS Team",
+  "titles": "WPS Team",
+  "category": "module",
+  "moduleClassName": "wps_team_divi",
+  "moduleOrderClassName": "wps_team_divi",
+  "attributes": {
+    "module": {
+      "type": "object",
+      "selector": "{{selector}}",
+      "default": {
+        "meta": {
+          "adminLabel": {
+            "desktop": {
+              "value": "WPS Team"
+            }
+          }
+        }
+      },
+      "settings": {
+        "meta": {
+          "adminLabel": {}
+        },
+        "decoration": {
+          "background": {},
+          "sizing": {},
+          "spacing": {},
+          "border": {},
+          "boxShadow": {},
+          "filters": {},
+          "transform": {},
+          "animation": {},
+          "overflow": {},
+          "disabledOn": {},
+          "transition": {},
+          "position": {},
+          "zIndex": {},
+          "scroll": {},
+          "sticky": {}
+        }
+      }
+    },
+    "shortcodeId": {
+      "type": "object",
+      "selector": "{{selector}} .wps_team_divi",
+      "settings": {
+        "innerContent": {
+          "groupType": "group-item",
+          "item": {
+            "groupName": "mainContent",
+            "priority": 10,
+            "render": true,
+            "attrName": "shortcodeId.innerContent",
+            "label": "Select Shortcode",
+            "description": "Display Team Members",
+            "features": {
+              "dynamicContent": false,
+              "sticky": false
+            },
+            "component": {
+              "name": "divi/select",
+              "type": "field",
+              "props": {
+                "defaultValue": "0",
+                "options": {
+                  "0": {
+                    "label": "Select a Shortcode"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "settings": {
+    "content": "auto",
+    "design": "auto",
+    "advanced": "auto"
+  }
+}

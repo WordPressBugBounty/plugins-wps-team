@@ -730,6 +730,94 @@ class Utils {
         return implode( $separator, $terms );
     }
 
+    /**
+     * Normalize saved include/exclude term values to unique positive IDs.
+     *
+     * Multi-select settings may arrive as '', null, a scalar ID, option objects,
+     * or an array of numeric strings. Casting those with (array) is unsafe:
+     * (array) '' === [''], which WP_Query treats as a real tax_query and matches
+     * nothing.
+     *
+     * @param mixed $ids Raw setting value.
+     * @return int[]
+     */
+    public static function normalize_term_ids( $ids ) {
+        if ( $ids === null || $ids === '' || $ids === false ) {
+            return [];
+        }
+        if ( !is_array( $ids ) ) {
+            $ids = [$ids];
+        }
+        $normalized = [];
+        foreach ( $ids as $id ) {
+            if ( is_array( $id ) && array_key_exists( 'value', $id ) ) {
+                $id = $id['value'];
+            }
+            if ( is_bool( $id ) || is_array( $id ) || is_object( $id ) ) {
+                continue;
+            }
+            $term_id = (int) $id;
+            if ( $term_id > 0 ) {
+                $normalized[] = $term_id;
+            }
+        }
+        return array_values( array_unique( $normalized ) );
+    }
+
+    /**
+     * Include descendant term IDs so get_terms() include/exclude matches
+     * WP_Query tax_query include_children (hierarchical team taxonomies).
+     *
+     * @param int[]  $term_ids
+     * @param string $taxonomy
+     * @return int[]
+     */
+    public static function expand_term_ids_with_descendants( array $term_ids, string $taxonomy ) {
+        $term_ids = self::normalize_term_ids( $term_ids );
+        if ( empty( $term_ids ) || !taxonomy_exists( $taxonomy ) ) {
+            return $term_ids;
+        }
+        $all = $term_ids;
+        foreach ( $term_ids as $term_id ) {
+            $children = get_term_children( $term_id, $taxonomy );
+            if ( is_wp_error( $children ) || empty( $children ) ) {
+                continue;
+            }
+            $all = array_merge( $all, array_map( 'intval', $children ) );
+        }
+        return array_values( array_unique( array_filter( $all ) ) );
+    }
+
+    /**
+     * Apply shortcode Include / Exclude settings to get_terms() args.
+     *
+     * @param array  $args     get_terms args.
+     * @param mixed  $include  Raw include setting.
+     * @param mixed  $exclude  Raw exclude setting.
+     * @param string $taxonomy Taxonomy name.
+     * @return array
+     */
+    public static function apply_include_exclude_to_term_args(
+        array $args,
+        $include,
+        $exclude,
+        string $taxonomy
+    ) {
+        $include = self::expand_term_ids_with_descendants( self::normalize_term_ids( $include ), $taxonomy );
+        $exclude = self::expand_term_ids_with_descendants( self::normalize_term_ids( $exclude ), $taxonomy );
+        if ( !empty( $include ) ) {
+            $args['include'] = $include;
+        }
+        if ( !empty( $exclude ) ) {
+            $exclude = array_values( array_diff( $exclude, $include ) );
+            if ( !empty( $exclude ) ) {
+                $args['exclude'] = $exclude;
+                // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
+            }
+        }
+        return $args;
+    }
+
     public static function get_terms( string $taxonomy, $args = [] ) {
         $args = array_merge( [
             'taxonomy'   => $taxonomy,
@@ -766,20 +854,18 @@ class Utils {
      * @param object $shortcode_loader Object with get_setting().
      */
     public static function get_group_terms_for_shortcode_filter( object $shortcode_loader, bool $hide_empty = true ) {
+        $taxonomy = self::get_taxonomy_name( 'group' );
         $args = [
             'orderby'    => $shortcode_loader->get_setting( 'group_orderby' ),
             'order'      => $shortcode_loader->get_setting( 'group_order' ),
             'hide_empty' => $hide_empty,
         ];
-        $include = $shortcode_loader->get_setting( 'include_by_group' );
-        if ( !empty( $include ) ) {
-            $args['include'] = (array) $include;
-        }
-        $exclude = $shortcode_loader->get_setting( 'exclude_by_group' );
-        if ( !empty( $exclude ) ) {
-            $args['exclude'] = (array) $exclude;
-            // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
-        }
+        $args = self::apply_include_exclude_to_term_args(
+            $args,
+            $shortcode_loader->get_setting( 'include_by_group' ),
+            $shortcode_loader->get_setting( 'exclude_by_group' ),
+            $taxonomy
+        );
         return self::get_group_terms( $args );
     }
 
@@ -791,21 +877,19 @@ class Utils {
      * @param bool   $hide_empty
      */
     public static function get_group_child_terms_for_submenu( object $shortcode_loader, int $parent_id, bool $hide_empty = true ) {
+        $taxonomy = self::get_taxonomy_name( 'group' );
         $args = [
             'orderby'    => $shortcode_loader->get_setting( 'group_orderby' ),
             'order'      => $shortcode_loader->get_setting( 'group_order' ),
             'hide_empty' => $hide_empty,
             'parent'     => $parent_id,
         ];
-        $include = $shortcode_loader->get_setting( 'include_by_group' );
-        if ( !empty( $include ) ) {
-            $args['include'] = (array) $include;
-        }
-        $exclude = $shortcode_loader->get_setting( 'exclude_by_group' );
-        if ( !empty( $exclude ) ) {
-            $args['exclude'] = (array) $exclude;
-            // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_exclude
-        }
+        $args = self::apply_include_exclude_to_term_args(
+            $args,
+            $shortcode_loader->get_setting( 'include_by_group' ),
+            $shortcode_loader->get_setting( 'exclude_by_group' ),
+            $taxonomy
+        );
         return self::get_group_terms( $args );
     }
 

@@ -1,4 +1,5 @@
 {
+    "apiVersion": 3,
     "name": "wpspeedo-team/shortcodes",
     "title": "WPS Team",
     "category": "layout",
@@ -17,5 +18,6 @@
     },
     "supports": {
         "align": ["wide", "full"]
-    }
+    },
+    "editorStyle": "file:./editor.css"
 }

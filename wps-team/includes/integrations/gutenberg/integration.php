@@ -14,8 +14,18 @@ class Integration_Gutenberg extends Integration {
 
     public function initialize() {
 
+        $editor_style = plugin()->assets->asset_handler() . '-block-editor';
+
+        wp_register_style(
+            $editor_style,
+            plugin_dir_url( __FILE__ ) . 'editor.css',
+            [],
+            WPS_TEAM_VERSION
+        );
+
         register_block_type( dirname(__FILE__) . '/block.json', array(
             'editor_script' => plugin()->assets->asset_handler() . '-block',
+            'editor_style'  => $editor_style,
             'render_callback' => [$this, 'render_wpspeedo_block']
         ));
 
@@ -50,7 +60,8 @@ class Integration_Gutenberg extends Integration {
         
         wp_enqueue_script( $asset_handler, plugin_dir_url( __FILE__ ) . 'block.min.js', ['wp-blocks', 'wp-server-side-render', 'jquery'], WPS_TEAM_VERSION, true );
 
-        wp_add_inline_style( 'wp-block-editor', $this->get_block_css() );
+        // editor.css is registered as editor_style so WP 7.1 copies it into the canvas iframe.
+        wp_enqueue_style( plugin()->assets->asset_handler() . '-block-editor' );
 
         $wps_widget_block_data = array(
             'title' => __( 'WPS Team Members', 'wps-team' ),
