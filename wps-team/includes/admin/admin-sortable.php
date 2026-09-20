@@ -57,12 +57,14 @@ class Admin_Sortable {
      *
      * Shape: [
      *   'post' => [ post_id => rank, ... ] | null,
-     *   'term' => [ taxonomy => [ term_id => rank, ... ], ... ],
+     *   'term' => [ taxonomy => [ term_id => sibling_rank, ... ], ... ],
+     *   'term_sibling_total' => [ taxonomy => [ term_id => sibling_count, ... ], ... ],
      * ]
      */
     private $rank_cache = [
         'post' => null,
         'term' => [],
+        'term_sibling_total' => [],
     ];
 
     /**
@@ -97,10 +99,10 @@ class Admin_Sortable {
         add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'ajax_save_order' ] );
 
         // ── Native-style default ordering ────────────────────────────────
-        // When the user visits the CPT or taxonomy listing page without an
-        // explicit orderby/order in the URL we redirect once to apply the
-        // plugin's default ordering key. This mirrors how core handles
-        // column-header sorts and avoids permanently hijacking WP_Query.
+        // Posts: redirect once to menu_order ASC so the Order column is the
+        // active sort. Terms: hierarchical taxonomies cannot use that
+        // redirect — WP only walks the parent/child tree when orderby is
+        // absent — so we apply term_order as the sibling sort instead.
         add_action( 'load-edit.php',      [ $this, 'maybe_redirect_to_default_post_order' ] );
         add_action( 'load-edit-tags.php', [ $this, 'maybe_redirect_to_default_term_order' ] );
 
@@ -285,7 +287,7 @@ class Admin_Sortable {
         $term_id  = (int) $term_id;
         $taxonomy = $this->current_taxonomy();
         $rank     = $this->get_term_rank( $term_id, $taxonomy );
-        $total    = $this->get_total_terms( $taxonomy );
+        $total    = $this->get_term_sibling_total( $term_id, $taxonomy );
 
         return $this->build_order_input_html( 'term', $term_id, $rank, $total );
     }
@@ -358,8 +360,8 @@ class Admin_Sortable {
      *
      * @param string $type      'post' or 'term'.
      * @param int    $object_id Post ID or term ID.
-     * @param int    $rank      Current global rank (1..N).
-     * @param int    $total     Total number of items in scope.
+     * @param int    $rank      Current rank (1..N) in the item's ordering scope.
+     * @param int    $total     Total items in that scope (siblings for terms).
      */
     protected function build_order_input_html( $type, $object_id, $rank, $total ) {
 
@@ -391,8 +393,12 @@ class Admin_Sortable {
             'data-wps-current'  => $rank,
             'data-wps-total'    => $total,
             'aria-label'        => $is_pro
-                ? __( 'Global order position', 'wps-team' )
-                : __( 'Global order position (Pro feature)', 'wps-team' ),
+                ? ( 'term' === $type
+                    ? __( 'Order among siblings', 'wps-team' )
+                    : __( 'Global order position', 'wps-team' ) )
+                : ( 'term' === $type
+                    ? __( 'Order among siblings (Pro feature)', 'wps-team' )
+                    : __( 'Global order position (Pro feature)', 'wps-team' ) ),
             'inputmode'         => 'numeric',
             'autocomplete'      => 'off',
         ];
@@ -402,7 +408,9 @@ class Admin_Sortable {
             $input_attrs['class']   .= ' wps-team--order-input-locked';
             $input_attrs['title']    = __( 'Editing the order is a Pro feature', 'wps-team' );
         } else {
-            $input_attrs['title'] = __( 'Type a number and press Enter to move this item to that global position', 'wps-team' );
+            $input_attrs['title'] = 'term' === $type
+                ? __( 'Type a number and press Enter to move this item within its parent group', 'wps-team' )
+                : __( 'Type a number and press Enter to move this item to that global position', 'wps-team' );
         }
 
         $attr_html = '';
@@ -453,16 +461,14 @@ class Admin_Sortable {
     }
 
     /**
-     * Get the global 1-indexed rank of a term in the given taxonomy,
-     * ordered by term_order ASC, term_id ASC. Cached per request.
+     * Sibling rank (1..N among terms that share the same parent) of a term.
+     * Cached per request.
      */
     public function get_term_rank( $term_id, $taxonomy ) {
 
         if ( ! $taxonomy ) return 0;
 
-        if ( ! isset( $this->rank_cache['term'][ $taxonomy ] ) ) {
-            $this->rank_cache['term'][ $taxonomy ] = $this->compute_term_ranks( $taxonomy );
-        }
+        $this->ensure_term_rank_data( $taxonomy );
 
         return isset( $this->rank_cache['term'][ $taxonomy ][ (int) $term_id ] )
             ? (int) $this->rank_cache['term'][ $taxonomy ][ (int) $term_id ]
@@ -470,15 +476,28 @@ class Admin_Sortable {
     }
 
     /**
-     * Total number of terms in scope.
+     * How many siblings (including itself) a term has under the same parent.
+     */
+    public function get_term_sibling_total( $term_id, $taxonomy ) {
+
+        if ( ! $taxonomy ) return 0;
+
+        $this->ensure_term_rank_data( $taxonomy );
+
+        return isset( $this->rank_cache['term_sibling_total'][ $taxonomy ][ (int) $term_id ] )
+            ? (int) $this->rank_cache['term_sibling_total'][ $taxonomy ][ (int) $term_id ]
+            : 0;
+    }
+
+    /**
+     * Total number of terms in the taxonomy (all parents). Used for screen
+     * context, not for the Order input max.
      */
     public function get_total_terms( $taxonomy ) {
 
         if ( ! $taxonomy ) return 0;
 
-        if ( ! isset( $this->rank_cache['term'][ $taxonomy ] ) ) {
-            $this->rank_cache['term'][ $taxonomy ] = $this->compute_term_ranks( $taxonomy );
-        }
+        $this->ensure_term_rank_data( $taxonomy );
 
         return count( $this->rank_cache['term'][ $taxonomy ] );
     }
@@ -521,9 +540,72 @@ class Admin_Sortable {
     }
 
     /**
-     * Same as compute_post_ranks() but for terms in a single taxonomy.
+     * Rank every term among its siblings (same parent), ordered by
+     * term_order ASC, term_id ASC. Top-level terms are 1..N; each child
+     * group is a separate 1..N. Also fills term_sibling_total.
      */
     protected function compute_term_ranks( $taxonomy ) {
+
+        $this->ensure_term_rank_data( $taxonomy );
+
+        return $this->rank_cache['term'][ $taxonomy ];
+    }
+
+    /**
+     * Load sibling ranks and sibling totals for a taxonomy into the
+     * per-request cache.
+     */
+    protected function ensure_term_rank_data( $taxonomy ) {
+
+        if ( isset( $this->rank_cache['term'][ $taxonomy ] ) ) {
+            return;
+        }
+
+        global $wpdb;
+
+        // phpcs:disable WordPress.DB.DirectDatabaseQuery
+        $rows = $wpdb->get_results( $wpdb->prepare(
+            "SELECT t.term_id, tt.parent
+             FROM {$wpdb->terms} AS t
+             INNER JOIN {$wpdb->term_taxonomy} AS tt ON t.term_id = tt.term_id
+             WHERE tt.taxonomy = %s
+             ORDER BY t.term_order ASC, t.term_id ASC",
+            $taxonomy
+        ) );
+        // phpcs:enable
+
+        $groups = [];
+        foreach ( (array) $rows as $row ) {
+            $groups[ (int) $row->parent ][] = (int) $row->term_id;
+        }
+
+        $ranks  = [];
+        $totals = [];
+
+        foreach ( $groups as $ids ) {
+            $count = count( $ids );
+            foreach ( $ids as $i => $id ) {
+                $ranks[ $id ]  = $i + 1;
+                $totals[ $id ] = $count;
+            }
+        }
+
+        $this->rank_cache['term'][ $taxonomy ]                = $ranks;
+        $this->rank_cache['term_sibling_total'][ $taxonomy ]  = $totals;
+    }
+
+    /**
+     * 1..N rank map for terms that share the moved term's parent. Used by
+     * the move algorithm so a child is reordered only among its siblings.
+     *
+     * @return array<int,int> term_id => sibling rank
+     */
+    protected function compute_term_sibling_rank_map( $term_id, $taxonomy ) {
+
+        $term_id  = (int) $term_id;
+        $taxonomy = (string) $taxonomy;
+        $term     = get_term( $term_id, $taxonomy );
+        $parent   = ( $term && ! is_wp_error( $term ) ) ? (int) $term->parent : 0;
 
         global $wpdb;
 
@@ -533,8 +615,10 @@ class Admin_Sortable {
              FROM {$wpdb->terms} AS t
              INNER JOIN {$wpdb->term_taxonomy} AS tt ON t.term_id = tt.term_id
              WHERE tt.taxonomy = %s
+               AND tt.parent = %d
              ORDER BY t.term_order ASC, t.term_id ASC",
-            $taxonomy
+            $taxonomy,
+            $parent
         ) );
         // phpcs:enable
 
@@ -542,6 +626,7 @@ class Admin_Sortable {
         foreach ( (array) $ids as $i => $id ) {
             $ranks[ (int) $id ] = $i + 1;
         }
+
         return $ranks;
     }
 
@@ -796,6 +881,7 @@ class Admin_Sortable {
 
         wp_send_json_success( [
             'message'      => __( 'Order saved successfully.', 'wps-team' ),
+            'id'           => $object_id,
             'new_position' => $result['new_position'],
             'old_position' => $result['old_position'],
             'total'        => $result['total'],
@@ -848,11 +934,14 @@ class Admin_Sortable {
 
         $object_id = (int) $object_id;
 
-        // 1) Build the canonical ordered list of all IDs in scope.
+        // 1) Build the canonical ordered list of IDs in scope.
+        //    Posts: the full CPT (or the term-scoped subset).
+        //    Terms: only siblings that share this term's parent, so a
+        //    child is numbered 1..N within its parent, not the global list.
         if ( 'post' === $scope['type'] ) {
             $rank_map = $this->compute_post_ranks();
         } else {
-            $rank_map = $this->compute_term_ranks( $scope['taxonomy'] );
+            $rank_map = $this->compute_term_sibling_rank_map( $object_id, $scope['taxonomy'] );
         }
 
         $total = count( $rank_map );
@@ -913,8 +1002,9 @@ class Admin_Sortable {
 
         // Invalidate per-request rank cache so subsequent calls in the
         // same request see the fresh data.
-        $this->rank_cache['post'] = null;
-        $this->rank_cache['term'] = [];
+        $this->rank_cache['post']               = null;
+        $this->rank_cache['term']               = [];
+        $this->rank_cache['term_sibling_total'] = [];
 
         do_action( 'wpspeedo_team/sortable/global_move', $scope, $object_id, $old_pos, $new_pos );
 
@@ -1121,11 +1211,17 @@ class Admin_Sortable {
     }
 
     /**
-     * Same redirect logic for taxonomy listing pages.
-     * Redirects to orderby=term_order&order=asc, which is handled by the
-     * existing get_terms_orderby__premium_only and
-     * modify_terms_order_in_admin__premium_only hooks in Data / taxonomy
-     * traits — no new query logic is needed.
+     * Default ordering for taxonomy listing pages.
+     *
+     * Hierarchical taxonomies (all team taxonomies) must NOT redirect to
+     * ?orderby=term_order. WP_Terms_List_Table only walks the parent/child
+     * tree — printing the em-dash prefix on children — when orderby is
+     * absent from its callback args. Forcing term_order in the URL flattened
+     * the list, so a child like "Project Manager" no longer appeared under
+     * its parent "Manager".
+     *
+     * Instead we keep the tree and sort siblings by term_order via
+     * get_terms_defaults. Non-hierarchical taxonomies still redirect.
      *
      * IMPORTANT: WordPress core fires `load-edit-tags.php` on BOTH the term
      * listing (edit-tags.php) AND the single-term edit screen (term.php),
@@ -1150,11 +1246,17 @@ class Admin_Sortable {
         $taxonomy = isset( $_GET['taxonomy'] ) ? sanitize_key( wp_unslash( $_GET['taxonomy'] ) ) : '';
         if ( ! in_array( $taxonomy, Utils::get_active_taxonomies(), true ) ) return;
 
+        if ( ! current_user_can( 'manage_categories' ) ) return;
+
+        $taxonomy_obj = get_taxonomy( $taxonomy );
+        if ( $taxonomy_obj && ! empty( $taxonomy_obj->hierarchical ) ) {
+            $this->preserve_term_list_hierarchy();
+            return;
+        }
+
         // Already sorted by the user — respect their choice.
         // phpcs:ignore WordPress.Security.NonceVerification
         if ( isset( $_GET['orderby'] ) ) return;
-
-        if ( ! current_user_can( 'manage_categories' ) ) return;
 
         // phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
         parse_str( isset( $_SERVER['QUERY_STRING'] ) ? wp_unslash( $_SERVER['QUERY_STRING'] ) : '', $args );
@@ -1168,6 +1270,55 @@ class Admin_Sortable {
 
         wp_safe_redirect( add_query_arg( $args, admin_url( 'edit-tags.php' ) ) );
         exit;
+    }
+
+    /**
+     * Keep WP's hierarchical term list (child rows nested under parents
+     * with a dash prefix) while still sorting siblings by term_order.
+     *
+     * When the URL already has orderby=term_order — from the previous
+     * redirect, or from clicking the Order column — strip it from
+     * $_REQUEST so the list table walker runs. Leave $_GET['orderby']
+     * alone so the Order header can stay highlighted.
+     *
+     * Other column sorts (Name, Slug, Count, …) are left intact and
+     * remain a flat list, matching core Categories behaviour.
+     */
+    protected function preserve_term_list_hierarchy() {
+
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $orderby = isset( $_REQUEST['orderby'] ) ? sanitize_key( wp_unslash( $_REQUEST['orderby'] ) ) : '';
+
+        if ( 'term_order' === $orderby ) {
+            unset( $_REQUEST['orderby'] );
+        }
+
+        // Default visit (no column sort) and Order-column sort both keep
+        // the tree and order siblings by term_order.
+        if ( '' === $orderby || 'term_order' === $orderby ) {
+            add_filter( 'get_terms_defaults', [ $this, 'default_term_list_orderby' ], 10, 2 );
+        }
+    }
+
+    /**
+     * Sort terms by the custom term_order column on the taxonomy listing
+     * unless a different orderby was passed explicitly to get_terms().
+     *
+     * @param array    $defaults   WP_Term_Query defaults.
+     * @param string[] $taxonomies Taxonomies being queried.
+     * @return array
+     */
+    public function default_term_list_orderby( $defaults, $taxonomies ) {
+
+        $taxonomies = (array) $taxonomies;
+
+        if ( empty( array_intersect( $taxonomies, Utils::get_active_taxonomies() ) ) ) {
+            return $defaults;
+        }
+
+        $defaults['orderby'] = 'term_order';
+
+        return $defaults;
     }
 
     /* =================================================================

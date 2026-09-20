@@ -348,13 +348,16 @@ class Data {
      */
     public function get_sanitize_meta_data( $data = [] ) {
         foreach ( $data as $meta_key => $meta_val ) {
+            if ( $meta_key == '_color' ) {
+                $data[$meta_key] = Utils::normalize_css_color( sanitize_text_field( $meta_val ) );
+                continue;
+            }
             if ( in_array( $meta_key, [
                 '_first_name',
                 '_last_name',
                 '_designation',
                 '_company',
                 '_ribbon',
-                '_color',
                 '_experience',
                 '_mobile',
                 '_telephone',

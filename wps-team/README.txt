@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team members, team showcase, WordPress team plugin, staff directory, team slider
 Requires at least: 5.9
 Tested up to: 7.1
-Stable tag: 4.1.3
+Stable tag: 4.2.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -272,6 +272,25 @@ Using the [WordPress.org](https://wordpress.org/support/plugin/wps-team/) suppor
 15. Plugin Settings Panel – Configure the Team Members WordPress plugin options
 
 == Changelog ==
+
+4.2.0 - 20-09-2026
+* Added: Include Child option in Group Filter Config to show child groups in the filter dropdown (PRO).
+* Added: Child Group / Child Item color controls and Parent (Child Active) styles for Group Filter (PRO).
+* Added: Auto thumbnail aspect ratio option (relayouts Isotope when changed).
+* Added: Dynamic table columns with Theme Layout placement controls.
+* Added: Editable table column widths with live editor preview.
+* Added: Translatable public labels for table column headers.
+* Added: Filled, Outlined, and Flat button types for Resume and Hire actions.
+* Added: Read More button type controls under the Buttons section.
+* Fixed: Member color picker typing/paste so hex and RGB/A values save as CSS-safe colors and stick in the editor.
+* Fixed: Hierarchical term order on taxonomy screens (children stay under parents; sibling sorting preserved).
+* Fixed: Dimension inputs no longer change on mouse wheel unless focused.
+* Fixed: Masonry Load More inserts items through Isotope and relayouts after images load.
+* Fixed: Square-05 card shadows clipped inside ticker overflow.
+* Tweak: Elementor widget registration uses `elementor/widgets/register` (ready for Elementor 4.3).
+* Fixed: Table Contact column now uses Info Icon / Text / Link colors and Contact Display Format defaults (PRO).
+* Tweak: Read More button style settings are applied in generated CSS.
+* Tweak: Flat action buttons use zero padding.
 
 4.1.3 - 08-09-2026
 * Added: Native Divi 5 Team module with Visual Builder shortcode preview (Divi 4 module retained for dual support).

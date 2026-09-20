@@ -215,6 +215,15 @@ class Assets extends Assets_Manager {
         $this->add_responsive_style( $selector, '--wps-item-col-gap-vert: calc({{value}}px)', 'gap_vertical' );
         $this->add_responsive_style( $selector, '--wps-item-col-gap-vert-alt: calc(-{{value}}px)', 'gap_vertical' );
         $this->add_responsive_style( $selector, '--wps-item-col-width: calc(100%/{{value}}*0.9999999)', 'columns' );
+        $this->add_style( $selector, '--wps-table-col-thumbnail: {{value}}%', 'table_col_width_thumbnail' );
+        $this->add_style( $selector, '--wps-table-col-name: {{value}}%', 'table_col_width_name' );
+        $this->add_style( $selector, '--wps-table-col-designation: {{value}}%', 'table_col_width_designation' );
+        $this->add_style( $selector, '--wps-table-col-details: {{value}}%', 'table_col_width_details' );
+        $this->add_style( $selector, '--wps-table-col-skills: {{value}}%', 'table_col_width_skills' );
+        $this->add_style( $selector, '--wps-table-col-contact: {{value}}%', 'table_col_width_contact' );
+        $this->add_style( $selector, '--wps-table-col-taxonomy: {{value}}%', 'table_col_width_taxonomy' );
+        $this->add_style( $selector, '--wps-table-col-links: {{value}}%', 'table_col_width_links' );
+        $this->add_style( $selector, '--wps-table-col-social: {{value}}%', 'table_col_width_social' );
         $this->add_background_style( $selector, 'item_background_', '--wps-item-bg-color' );
         $this->add_background_style( $selector, 'item_background_hover_', '--wps-item-bg-color-hover' );
         $this->add_style( $selector, '--wps-title-color: {{value}}', 'title_color' );

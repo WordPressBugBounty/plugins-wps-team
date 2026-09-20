@@ -645,7 +645,7 @@ class Shortcode_Editor extends Editor_Controls {
     // Buttons
     protected function style_buttons_controls() {
         $this->start_controls_section( 'buttons_styling', [
-            'label' => _x( 'Resume & Hire Buttons', 'Editor', 'wps-team' ),
+            'label' => _x( 'Buttons', 'Editor', 'wps-team' ),
             'tab'   => 'style',
         ] );
         $this->add_control( 'heading_resume_button_style', [
@@ -655,6 +655,11 @@ class Shortcode_Editor extends Editor_Controls {
         ] );
         $this->add_control( 'heading_hire_button_style', [
             'label'       => Variables::get( 'hire_button_style_txt' ),
+            'label_block' => true,
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+        ] );
+        $this->add_control( 'heading_read_more_button_style', [
+            'label'       => Variables::get( 'read_more_button_style_txt' ),
             'label_block' => true,
             'type'        => Controls_Manager::UPGRADE_NOTICE,
         ] );

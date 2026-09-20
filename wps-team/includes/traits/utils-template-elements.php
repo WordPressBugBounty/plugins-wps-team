@@ -371,6 +371,491 @@ trait Utils_Template_Elements
         return $links;
     }
 
+    /**
+     * Whether the table "Links" column should render (link_1 and/or link_2).
+     */
+    public static function should_show_table_links_column( string $context = 'general' ) {
+        return self::is_allowed_render_alt( 'link_1', $context ) || self::is_allowed_render_alt( 'link_2', $context );
+    }
+
+    /**
+     * Whether the table "Contact" column should render.
+     */
+    public static function should_show_table_contact_column( string $context = 'general' ) {
+        foreach ( [
+            'email',
+            'mobile',
+            'telephone',
+            'fax'
+        ] as $element ) {
+            if ( self::is_allowed_render_alt( $element, $context ) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Contact fields shown inside the table Contact column (visibility order).
+     *
+     * @return string[]
+     */
+    public static function get_table_contact_fields( string $context = 'general' ) {
+        $fields = [];
+        foreach ( [
+            'email',
+            'mobile',
+            'telephone',
+            'fax'
+        ] as $element ) {
+            if ( self::is_allowed_render_alt( $element, $context ) ) {
+                $fields[] = $element;
+            }
+        }
+        return $fields;
+    }
+
+    /**
+     * Table-only designation placement setting.
+     */
+    public static function get_table_designation_position() {
+        $pos = Utils::shortcode_loader()->get_setting( 'table_designation_position' );
+        return ( in_array( $pos, ['table_column', 'below_name', 'above_name'], true ) ? $pos : 'table_column' );
+    }
+
+    /**
+     * Table-only social links placement setting.
+     */
+    public static function get_table_social_links_position() {
+        $pos = Utils::shortcode_loader()->get_setting( 'table_social_links_position' );
+        return ( in_array( $pos, ['table_column', 'below_name', 'below_designation'], true ) ? $pos : 'table_column' );
+    }
+
+    /**
+     * Table-only skills placement setting.
+     */
+    public static function get_table_skills_position() {
+        $pos = Utils::shortcode_loader()->get_setting( 'table_skills_position' );
+        return ( in_array( $pos, ['table_column', 'below_details'], true ) ? $pos : 'table_column' );
+    }
+
+    /**
+     * Table-only skills display style: bars with value vs tag chips.
+     */
+    public static function get_table_skills_display() {
+        $display = Utils::shortcode_loader()->get_setting( 'table_skills_display' );
+        return ( in_array( $display, ['with_value', 'without_value'], true ) ? $display : 'with_value' );
+    }
+
+    /**
+     * Whether the Details column should render (description and/or nested skills).
+     */
+    public static function should_show_table_details_column( string $context = 'general' ) {
+        if ( self::is_allowed_render( 'description', $context ) ) {
+            return true;
+        }
+        return self::get_table_skills_position() === 'below_details' && self::is_allowed_render( 'skills', $context );
+    }
+
+    /**
+     * Table column definitions: headers + visibility rules.
+     *
+     * @return array<int, array{class: string, label: string, element: ?string, visibility: string}>
+     */
+    public static function get_table_columns( string $context = 'general' ) {
+        $desig_pos = self::get_table_designation_position();
+        $social_pos = self::get_table_social_links_position();
+        $skills_pos = self::get_table_skills_position();
+        $columns = [[
+            'class'      => 'wps-th-thumbnail',
+            'label'      => plugin()->translations->get( 'table_header_thumbnail', _x( 'Thumbnail', 'Public: Table', 'wps-team' ) ),
+            'element'    => 'thumbnail',
+            'visibility' => 'default',
+        ], [
+            'class'      => 'wps-th-name',
+            'label'      => plugin()->translations->get( 'table_header_name', _x( 'Name', 'Public: Table', 'wps-team' ) ),
+            'element'    => null,
+            'visibility' => 'always',
+        ]];
+        if ( $desig_pos === 'table_column' ) {
+            $columns[] = [
+                'class'      => 'wps-th-designation',
+                'label'      => plugin()->translations->get( 'table_header_designation', _x( 'Designation', 'Public: Table', 'wps-team' ) ),
+                'element'    => 'designation',
+                'visibility' => 'default',
+            ];
+        }
+        if ( self::should_show_table_details_column( $context ) ) {
+            $columns[] = [
+                'class'      => 'wps-th-details',
+                'label'      => plugin()->translations->get( 'table_header_details', _x( 'Details', 'Public: Table', 'wps-team' ) ),
+                'element'    => 'description',
+                'visibility' => 'always',
+            ];
+        }
+        if ( $skills_pos === 'table_column' ) {
+            $columns[] = [
+                'class'      => 'wps-th-skills',
+                'label'      => plugin()->translations->get( 'table_header_skills', _x( 'Skills', 'Public: Table', 'wps-team' ) ),
+                'element'    => 'skills',
+                'visibility' => 'default',
+            ];
+        }
+        $columns[] = [
+            'class'      => 'wps-th-contact',
+            'label'      => plugin()->translations->get( 'table_header_contact', _x( 'Contact', 'Public: Table', 'wps-team' ) ),
+            'element'    => 'contact',
+            'visibility' => 'contact',
+        ];
+        foreach ( self::get_table_taxonomy_column_defs() as $tax_column ) {
+            $columns[] = $tax_column;
+        }
+        $columns[] = [
+            'class'      => 'wps-th-links',
+            'label'      => plugin()->translations->get( 'table_header_links', _x( 'Links', 'Public: Table', 'wps-team' ) ),
+            'element'    => 'links',
+            'visibility' => 'links',
+        ];
+        if ( $social_pos === 'table_column' ) {
+            $columns[] = [
+                'class'      => 'wps-th-social',
+                'label'      => plugin()->translations->get( 'table_header_social', _x( 'Social Links', 'Public: Table', 'wps-team' ) ),
+                'element'    => 'social',
+                'visibility' => 'default',
+            ];
+        }
+        $visible = [];
+        foreach ( $columns as $column ) {
+            if ( !self::is_table_column_visible( $column, $context ) ) {
+                continue;
+            }
+            $visible[] = $column;
+        }
+        return $visible;
+    }
+
+    /**
+     * Active taxonomy column defs for table layout.
+     *
+     * @return array<int, array{class: string, label: string, element: string, visibility: string, tax_root: string}>
+     */
+    public static function get_table_taxonomy_column_defs() {
+        $columns = [];
+        foreach ( Utils::get_active_taxonomies() as $taxonomy ) {
+            $tax_root = Utils::get_taxonomy_root( $taxonomy );
+            $field_key = Utils::get_taxonomy_name( $tax_root, true );
+            $label = trim( (string) Utils::get_setting( Utils::to_field_key( $tax_root ) . '_single_name' ) );
+            if ( $label === '' ) {
+                $label = ucwords( str_replace( '-', ' ', $tax_root ) );
+            }
+            $label = rtrim( $label, ':' );
+            $columns[] = [
+                'class'      => 'wps-th-taxonomy wps-th-taxonomy-' . sanitize_html_class( $tax_root ),
+                'label'      => $label,
+                'element'    => $field_key,
+                'visibility' => 'alt',
+                'tax_root'   => $tax_root,
+            ];
+        }
+        return $columns;
+    }
+
+    /**
+     * @param array{element: ?string, visibility: string} $column
+     */
+    public static function is_table_column_visible( array $column, string $context = 'general' ) {
+        switch ( $column['visibility'] ) {
+            case 'always':
+                return true;
+            case 'alt':
+                return self::is_allowed_render_alt( (string) $column['element'], $context );
+            case 'contact':
+                return self::should_show_table_contact_column( $context );
+            case 'links':
+                return self::should_show_table_links_column( $context );
+            case 'default':
+            default:
+                return $column['element'] === null || self::is_allowed_render( (string) $column['element'], $context );
+        }
+    }
+
+    /**
+     * Table layout column headers — shown only for visible elements.
+     */
+    public static function get_the_table_column_headers( $args = [] ) {
+        $args = shortcode_atts( [
+            'context' => 'general',
+        ], $args );
+        echo '<div class="wps-team--column-headers">';
+        foreach ( self::get_table_columns( $args['context'] ) as $column ) {
+            printf( '<div class="%1$s">%2$s</div>', esc_attr( $column['class'] ), esc_html( $column['label'] ) );
+        }
+        echo '</div>';
+    }
+
+    /**
+     * Name cell for table rows — may nest designation / social based on position settings.
+     */
+    public static function get_the_table_name_cell( int $post_id, $args = [] ) {
+        $args = shortcode_atts( [
+            'card_action' => 'single-page',
+        ], $args );
+        $desig_pos = self::get_table_designation_position();
+        $social_pos = self::get_table_social_links_position();
+        $desig_in_name = in_array( $desig_pos, ['below_name', 'above_name'], true );
+        $social_in_name = $social_pos === 'below_name' || $social_pos === 'below_designation' && $desig_in_name;
+        if ( !$desig_in_name && !$social_in_name ) {
+            self::get_the_title( $post_id, [
+                'card_action' => $args['card_action'],
+            ] );
+            return;
+        }
+        echo '<div class="wps-team--member-name-cell wps-team--member-element">';
+        if ( $desig_pos === 'above_name' ) {
+            self::get_the_designation( $post_id );
+            if ( $social_pos === 'below_designation' ) {
+                self::get_the_social_links( $post_id );
+            }
+        }
+        self::get_the_title( $post_id, [
+            'card_action' => $args['card_action'],
+        ] );
+        if ( $social_pos === 'below_name' ) {
+            self::get_the_social_links( $post_id );
+        }
+        if ( $desig_pos === 'below_name' ) {
+            self::get_the_designation( $post_id );
+            if ( $social_pos === 'below_designation' ) {
+                self::get_the_social_links( $post_id );
+            }
+        }
+        echo '</div>';
+    }
+
+    /**
+     * Designation as its own table column (optional nested social).
+     */
+    public static function get_the_table_designation_column( int $post_id, $args = [] ) {
+        $args = shortcode_atts( [
+            'context' => 'general',
+        ], $args );
+        if ( self::get_table_designation_position() !== 'table_column' ) {
+            return;
+        }
+        if ( !self::is_allowed_render( 'designation', $args['context'] ) ) {
+            return;
+        }
+        $social_here = self::get_table_social_links_position() === 'below_designation';
+        if ( $social_here ) {
+            echo '<div class="wps-team--member-desig-cell wps-team--member-element">';
+            self::get_the_designation( $post_id, [
+                'context' => $args['context'],
+            ] );
+            self::get_the_social_links( $post_id, [
+                'context' => $args['context'],
+            ] );
+            echo '</div>';
+            return;
+        }
+        self::get_the_designation( $post_id, [
+            'context' => $args['context'],
+        ] );
+    }
+
+    /**
+     * Social links as its own table column.
+     */
+    public static function get_the_table_social_column( int $post_id, $args = [] ) {
+        $args = shortcode_atts( [
+            'context' => 'general',
+        ], $args );
+        if ( self::get_table_social_links_position() !== 'table_column' ) {
+            return;
+        }
+        self::get_the_social_links( $post_id, [
+            'context' => $args['context'],
+        ] );
+    }
+
+    /**
+     * Details column — may nest skills when position is Below Details.
+     */
+    public static function get_the_table_details_column( int $post_id, $args = [] ) {
+        $args = shortcode_atts( [
+            'context'             => 'general',
+            'description_length'  => 110,
+            'show_read_more_link' => false,
+            'card_action'         => 'single-page',
+        ], $args );
+        if ( !self::should_show_table_details_column( $args['context'] ) ) {
+            return;
+        }
+        $skills_below = self::get_table_skills_position() === 'below_details' && self::is_allowed_render( 'skills', $args['context'] );
+        if ( $skills_below ) {
+            echo '<div class="wps-team--member-details-cell wps-team--member-element">';
+            self::get_the_excerpt( $post_id, [
+                'context'             => $args['context'],
+                'description_length'  => $args['description_length'],
+                'show_read_more_link' => $args['show_read_more_link'],
+                'card_action'         => $args['card_action'],
+            ] );
+            self::get_the_skills( $post_id, [
+                'context'    => $args['context'],
+                'with_value' => self::get_table_skills_display() === 'with_value',
+            ] );
+            echo '</div>';
+            return;
+        }
+        self::get_the_excerpt( $post_id, [
+            'context'             => $args['context'],
+            'description_length'  => $args['description_length'],
+            'show_read_more_link' => $args['show_read_more_link'],
+            'card_action'         => $args['card_action'],
+        ] );
+    }
+
+    /**
+     * Skills as its own table column.
+     */
+    public static function get_the_table_skills_column( int $post_id, $args = [] ) {
+        $args = shortcode_atts( [
+            'context' => 'general',
+        ], $args );
+        if ( self::get_table_skills_position() !== 'table_column' ) {
+            return;
+        }
+        self::get_the_skills( $post_id, [
+            'context'    => $args['context'],
+            'with_value' => self::get_table_skills_display() === 'with_value',
+        ] );
+    }
+
+    /**
+     * Combined Contact column (email / mobile / telephone / fax).
+     * Wrapper is always printed when the column is visible so columns stay aligned.
+     * Uses the same contact markup/classes as card themes so Info Icon/Text/Link colors apply.
+     */
+    public static function get_the_table_contact_column( int $post_id, $args = [] ) {
+        $args = shortcode_atts( [
+            'context' => 'general',
+        ], $args );
+        $fields = self::get_table_contact_fields( $args['context'] );
+        if ( empty( $fields ) ) {
+            return;
+        }
+        $fields_html = '';
+        foreach ( $fields as $element ) {
+            $field = '_' . $element;
+            $val = Utils::get_item_data( $field, $post_id );
+            if ( empty( $val ) ) {
+                continue;
+            }
+            $field_label_html = wp_kses_post( Utils::get_the_field_label( $field, 'icon' ) );
+            switch ( $field ) {
+                case '_mobile':
+                    $fields_html .= self::render_contact_field(
+                        $field,
+                        $val,
+                        $field_label_html,
+                        Utils::get_setting( 'mobile_display_format' ),
+                        'tel:',
+                        'mobile_link_text',
+                        _x( 'Call on Mobile', 'Public', 'wps-team' )
+                    );
+                    break;
+                case '_telephone':
+                    $fields_html .= self::render_contact_field(
+                        $field,
+                        $val,
+                        $field_label_html,
+                        Utils::get_setting( 'telephone_display_format' ),
+                        'tel:',
+                        'phone_link_text',
+                        _x( 'Call on Telephone', 'Public', 'wps-team' )
+                    );
+                    break;
+                case '_fax':
+                    $fields_html .= self::render_contact_field(
+                        $field,
+                        $val,
+                        $field_label_html,
+                        Utils::get_setting( 'fax_display_format' ),
+                        'fax:',
+                        'fax_link_text',
+                        _x( 'Send Fax', 'Public', 'wps-team' )
+                    );
+                    break;
+                case '_email':
+                    $fields_html .= self::render_contact_field(
+                        $field,
+                        $val,
+                        $field_label_html,
+                        Utils::get_setting( 'email_display_format' ),
+                        'mailto:',
+                        'email_link_text',
+                        _x( 'Send Email', 'Public', 'wps-team' )
+                    );
+                    break;
+            }
+        }
+        printf( '<div class="wps-team--member-contact wps-team--member-element"><ul class="wps--member-info">%s</ul></div>', $fields_html );
+    }
+
+    /**
+     * All visible taxonomy columns for a table row.
+     */
+    public static function get_the_table_taxonomy_columns( int $post_id, $args = [] ) {
+        $args = shortcode_atts( [
+            'context' => 'general',
+        ], $args );
+        foreach ( self::get_table_taxonomy_column_defs() as $column ) {
+            self::get_the_table_taxonomy_column( $post_id, $column['tax_root'], $args );
+        }
+    }
+
+    /**
+     * Single taxonomy as a table column cell.
+     * Wrapper is always printed when the column is visible so columns stay aligned.
+     */
+    public static function get_the_table_taxonomy_column( int $post_id, string $tax_root, $args = [] ) {
+        $args = shortcode_atts( [
+            'context' => 'general',
+        ], $args );
+        $field_key = Utils::get_taxonomy_name( $tax_root, true );
+        if ( !self::is_allowed_render_alt( $field_key, $args['context'] ) ) {
+            return;
+        }
+        $taxonomy = Utils::get_taxonomy_name( $tax_root );
+        if ( !in_array( $taxonomy, Utils::get_active_taxonomies(), true ) ) {
+            return;
+        }
+        $val = Utils::get_item_data( $field_key, $post_id );
+        printf( '<div class="wps-team--member-taxonomy wps-team--member-taxonomy-%1$s wps-team--member-element">', esc_attr( sanitize_html_class( $tax_root ) ) );
+        if ( !empty( $val ) && !is_wp_error( $val ) && is_array( $val ) ) {
+            echo '<span class="wps--info-text">' . wp_kses_post( self::get_the_taxonomy_values( wp_list_pluck( $val, 'name' ) ) ) . '</span>';
+        }
+        echo '</div>';
+    }
+
+    /**
+     * Action links as a table column cell. Empty wrapper keeps column alignment.
+     */
+    public static function get_the_table_action_links( int $post_id, $args = [] ) {
+        $args = shortcode_atts( [
+            'context'     => 'general',
+            'card_action' => 'single-page',
+        ], $args );
+        if ( !self::should_show_table_links_column( $args['context'] ) ) {
+            return;
+        }
+        echo '<div class="wps-team--member-links wps-team--member-element">';
+        self::get_the_action_links( $post_id, [
+            'context'     => $args['context'],
+            'card_action' => $args['card_action'],
+        ] );
+        echo '</div>';
+    }
+
     public static function get_the_social_links_title( $args = [] ) {
         $args = shortcode_atts( [
             'title_tag' => 'h4',
@@ -572,6 +1057,7 @@ trait Utils_Template_Elements
             'context'    => 'general',
             'title_tag'  => 'h4',
             'show_title' => false,
+            'with_value' => null,
         ], $args );
         if ( !self::is_allowed_render( 'skills', $args['context'] ) ) {
             return '';
@@ -580,7 +1066,11 @@ trait Utils_Template_Elements
         if ( empty( $skills ) ) {
             return;
         }
-        $skills_with_values = self::member_skills_with_values( $post_id );
+        if ( $args['with_value'] === null || $args['with_value'] === '' ) {
+            $skills_with_values = self::member_skills_with_values( $post_id );
+        } else {
+            $skills_with_values = wp_validate_boolean( $args['with_value'] );
+        }
         if ( !$skills_with_values ) {
             $skills_inner = self::parse_skills_tags( $skills );
             if ( $skills_inner === '' ) {

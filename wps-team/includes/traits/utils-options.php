@@ -458,11 +458,74 @@ trait Utils_Options
         return $options;
     }
 
+    public static function get_options_table_designation_position() {
+        return [[
+            'label' => _x( 'Table Column', 'Editor', 'wps-team' ),
+            'value' => 'table_column',
+        ], [
+            'label' => _x( 'Below Name', 'Editor', 'wps-team' ),
+            'value' => 'below_name',
+        ], [
+            'label' => _x( 'Above Name', 'Editor', 'wps-team' ),
+            'value' => 'above_name',
+        ]];
+    }
+
+    public static function get_options_table_social_links_position() {
+        return [[
+            'label' => _x( 'Table Column', 'Editor', 'wps-team' ),
+            'value' => 'table_column',
+        ], [
+            'label' => _x( 'Below Name', 'Editor', 'wps-team' ),
+            'value' => 'below_name',
+        ], [
+            'label' => _x( 'Below Designation', 'Editor', 'wps-team' ),
+            'value' => 'below_designation',
+        ]];
+    }
+
+    public static function get_options_table_skills_position() {
+        return [[
+            'label' => _x( 'Table Column', 'Editor', 'wps-team' ),
+            'value' => 'table_column',
+        ], [
+            'label' => _x( 'Below Details', 'Editor', 'wps-team' ),
+            'value' => 'below_details',
+        ]];
+    }
+
+    public static function get_options_table_skills_display() {
+        return [[
+            'label' => _x( 'With Value', 'Editor', 'wps-team' ),
+            'value' => 'with_value',
+        ], [
+            'label' => _x( 'Without Value', 'Editor', 'wps-team' ),
+            'value' => 'without_value',
+        ]];
+    }
+
+    public static function get_options_button_type() {
+        return [[
+            'label' => _x( 'Filled Button', 'Editor', 'wps-team' ),
+            'value' => 'filled',
+        ], [
+            'label' => _x( 'Outlined Button', 'Editor', 'wps-team' ),
+            'value' => 'outlined',
+        ], [
+            'label' => _x( 'Flat Button', 'Editor', 'wps-team' ),
+            'value' => 'flat',
+        ]];
+    }
+
     public static function get_options_aspect_ratio() {
         $options = [
             [
                 'label' => _x( 'Default', 'Editor', 'wps-team' ),
                 'value' => 'default',
+            ],
+            [
+                'label' => _x( 'Auto', 'Editor', 'wps-team' ),
+                'value' => 'auto',
             ],
             [
                 'label' => _x( 'Square - 1:1', 'Editor', 'wps-team' ),

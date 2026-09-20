@@ -548,6 +548,87 @@ class Settings_Editor extends Editor_Controls {
                 'enable_multilingual' => false,
             ],
         ] );
+        $this->add_control( 'table_headers_title', [
+            'label'       => 'Public: Table Headers',
+            'label_block' => false,
+            'separator'   => 'before',
+            'type'        => Controls_Manager::HEADING,
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
+        $this->add_control( 'table_header_thumbnail', [
+            'label'       => 'Thumbnail Header',
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
+        $this->add_control( 'table_header_name', [
+            'label'       => 'Name Header',
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
+        $this->add_control( 'table_header_designation', [
+            'label'       => 'Designation Header',
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
+        $this->add_control( 'table_header_details', [
+            'label'       => 'Details Header',
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
+        $this->add_control( 'table_header_skills', [
+            'label'       => 'Skills Header',
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
+        $this->add_control( 'table_header_contact', [
+            'label'       => 'Contact Header',
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
+        $this->add_control( 'table_header_links', [
+            'label'       => 'Links Header',
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
+        $this->add_control( 'table_header_social', [
+            'label'       => 'Social Links Header',
+            'label_block' => false,
+            'separator'   => 'none',
+            'type'        => Controls_Manager::UPGRADE_NOTICE,
+            'condition'   => [
+                'enable_multilingual' => false,
+            ],
+        ] );
         $this->add_control( 'other_translations', [
             'label'       => 'Public: Others',
             'label_block' => false,

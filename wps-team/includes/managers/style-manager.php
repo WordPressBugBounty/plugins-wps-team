@@ -49,13 +49,16 @@ abstract class Style_Manager extends Attribute_Manager {
 
         try {
 
-            $out_css_props = preg_replace_callback( '/{{([^}| ]*)}}/', function( $matches ) use ($setting, $has_value) {
+            $out_css_props = preg_replace_callback( '/{{([^}| ]*)}}/', function( $matches ) use ($setting, $has_value, $css_property) {
 
                 global $has_value;
                 $parsed_value = '';
     
                 if ( $matches[1] && isset( $setting[ $matches[1] ] ) ) {
                     $parsed_value = $setting[ $matches[1] ];
+                    if ( is_string( $parsed_value ) && stripos( $css_property, 'color' ) !== false ) {
+                        $parsed_value = Utils::normalize_css_color( $parsed_value );
+                    }
                 }
 
                 if ( $parsed_value !== '' ) $has_value = true;

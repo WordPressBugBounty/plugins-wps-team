@@ -364,6 +364,44 @@ class Utils {
         return array_values( array_filter( array_map( 'intval', $ids ) ) );
     }
 
+    /**
+     * Normalize a stored color into a CSS-safe rgb()/rgba() value.
+     * Accepts #hex, hex without #, rgb/rgba, and leaves other values untouched.
+     */
+    public static function normalize_css_color( $color ) {
+        if ( !is_string( $color ) ) {
+            return $color;
+        }
+        $color = trim( $color );
+        if ( $color === '' ) {
+            return $color;
+        }
+        if ( preg_match( '/^(rgb|rgba|hsl|hsla)\\(/i', $color ) ) {
+            return $color;
+        }
+        $hex = ltrim( $color, '#' );
+        if ( preg_match( '/^[0-9a-f]{3}$/i', $hex ) ) {
+            $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+        }
+        if ( preg_match( '/^[0-9a-f]{6}$/i', $hex ) ) {
+            $r = hexdec( substr( $hex, 0, 2 ) );
+            $g = hexdec( substr( $hex, 2, 2 ) );
+            $b = hexdec( substr( $hex, 4, 2 ) );
+            return "rgb({$r}, {$g}, {$b})";
+        }
+        if ( preg_match( '/^[0-9a-f]{8}$/i', $hex ) ) {
+            $r = hexdec( substr( $hex, 0, 2 ) );
+            $g = hexdec( substr( $hex, 2, 2 ) );
+            $b = hexdec( substr( $hex, 4, 2 ) );
+            $a = round( hexdec( substr( $hex, 6, 2 ) ) / 255, 2 );
+            if ( $a >= 1 ) {
+                return "rgb({$r}, {$g}, {$b})";
+            }
+            return "rgba({$r}, {$g}, {$b}, {$a})";
+        }
+        return $color;
+    }
+
     public static function get_item_data( string $data_key, $post_id = null, $shortcode_id = null ) {
         if ( empty( $post_id ) ) {
             $post_id = get_the_ID();
@@ -387,6 +425,9 @@ class Utils {
                 $post_id,
                 $wps_team_id
             );
+        }
+        if ( $data_key === '_color' && is_string( $value ) && $value !== '' ) {
+            $value = self::normalize_css_color( $value );
         }
         if ( !empty( $value ) ) {
             return $value;
@@ -597,6 +638,14 @@ class Utils {
             'load_more_text'               => 'Load More',
             'return_to_archive_text'       => 'Back to Team Page',
             'no_results_found_text'        => 'No Results Found',
+            'table_header_thumbnail'       => 'Thumbnail',
+            'table_header_name'            => 'Name',
+            'table_header_designation'     => 'Designation',
+            'table_header_details'         => 'Details',
+            'table_header_skills'          => 'Skills',
+            'table_header_contact'         => 'Contact',
+            'table_header_links'           => 'Links',
+            'table_header_social'          => 'Social Links',
             'website_display_format'       => 'linked_raw',
             'email_display_format'         => 'linked_raw',
             'mobile_display_format'        => 'linked_raw',
@@ -987,6 +1036,25 @@ class Utils {
             return false;
         }
         return isset( $gf_state['active_term_id'] ) && (int) $gf_state['active_term_id'] === (int) $term_id;
+    }
+
+    /**
+     * Whether a parent group filter has an active descendant on first paint.
+     *
+     * @param int   $term_id
+     * @param array $children_map
+     * @param array $gf_state From resolve_group_filter_initial_state().
+     */
+    public static function is_group_filter_parent_of_active_child( int $term_id, array $children_map, array $gf_state ) : bool {
+        if ( empty( $gf_state['active_term_id'] ) || !empty( $gf_state['all_active'] ) ) {
+            return false;
+        }
+        $active_id = (int) $gf_state['active_term_id'];
+        if ( $active_id === $term_id ) {
+            return false;
+        }
+        $descendants = self::get_group_term_descendant_ids( $term_id, $children_map );
+        return in_array( $active_id, $descendants, true );
     }
 
     /**

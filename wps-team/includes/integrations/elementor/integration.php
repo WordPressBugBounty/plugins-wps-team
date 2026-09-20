@@ -7,15 +7,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class Integration_Elementor extends Integration {
 
     public function __construct() {
-        add_action( 'elementor/widgets/widgets_registered', [ $this, 'register_widget' ] );
+        add_action( 'elementor/widgets/register', [ $this, 'register_widget' ] );
         add_action( 'elementor/elements/categories_registered', [$this, 'add_widget_category'] );
         add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'print_editor_styles' ] );
         add_action( 'elementor/preview/enqueue_styles', [ $this, 'print_preview_styles' ] );
         add_action( 'elementor/preview/enqueue_scripts', [ $this, 'print_preview_scripts' ] );
     }
 
-    public function register_widget() {
-        \Elementor\Plugin::instance()->widgets_manager->register( new Elementor_Widget() );
+    public function register_widget( $widgets_manager ) {
+        $widgets_manager->register( new Elementor_Widget() );
     }
 
     public function add_widget_category( $elements_manager ) {
