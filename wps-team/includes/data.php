@@ -212,11 +212,10 @@ class Data {
         global $post;
         $meta_data = $this->get_validated_meta_data( $post->ID );
         // Sanitization & Validation Done
-        $meta_json = wp_json_encode( $meta_data );
-        if ( !is_string( $meta_json ) ) {
-            $meta_json = '{}';
-        }
-        // Double-quoted attribute + esc_attr so JSON is safe; single-quoted attrs break on apostrophes in values (e.g. social/education text).
+        $meta_json = self::encode_metabox_attribute( $meta_data );
+        // Attribute + esc_attr. encode_metabox_attribute hex-escapes quotes and
+        // ampersands so stored HTML entities (for example &quot; in education)
+        // are not decoded by the browser before Vue parses the prop.
         printf( '<div id="wps-meta-boxes"><meta-box meta_data="%s"></meta-box></div>', esc_attr( $meta_json ) );
         $this->print_education_meta_fields( $meta_data );
         $this->print_nonce();
@@ -278,6 +277,28 @@ class Data {
         <?php 
     }
 
+    /**
+     * JSON for the member-details Vue prop.
+     *
+     * The value is placed in an HTML attribute. esc_attr() does not double-encode
+     * existing entities, so a stored `&quot;` or `&#34;` is decoded by the browser
+     * into a raw quote and JSON.parse fails. The metabox then loads blank, and the
+     * next save (including a body-text edit) writes those blanks over the real details.
+     *
+     * Hex-escaping quotes, ampersands, and tags keeps entities inside JSON strings
+     * until JSON.parse restores them.
+     *
+     * @param array $meta_data Sanitized member meta.
+     * @return string
+     */
+    public static function encode_metabox_attribute( $meta_data ) {
+        $json = wp_json_encode( $meta_data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE );
+        if ( !is_string( $json ) ) {
+            return '{}';
+        }
+        return $json;
+    }
+
     /*
      * Handle Meta Fields Saving
      */
@@ -321,6 +342,11 @@ class Data {
             $meta_data_raw = wp_unslash( $_POST['_wps_member_meta_data'] );
             // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
             $meta_data = json_decode( $meta_data_raw, true );
+            // Corrupt JSON must not fall through to a DB re-read that then
+            // rewrites every key. Leave the stored details untouched.
+            if ( !is_array( $meta_data ) ) {
+                return $post_id;
+            }
             $meta_data = $this->get_validated_meta_data( $post_id, $meta_data );
             // Sanitization & Validation Done
             // First Name & Last Name
