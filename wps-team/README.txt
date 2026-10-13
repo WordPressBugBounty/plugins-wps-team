@@ -4,7 +4,7 @@ Contributors: wpspeedo, freemius
 Tags: team members, team showcase, WordPress team plugin, staff directory, team slider
 Requires at least: 5.9
 Tested up to: 7.1
-Stable tag: 4.2.1
+Stable tag: 4.2.2
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -272,6 +272,9 @@ Using the [WordPress.org](https://wordpress.org/support/plugin/wps-team/) suppor
 15. Plugin Settings Panel – Configure the Team Members WordPress plugin options
 
 == Changelog ==
+
+4.2.2 - 13-10-2026
+* Security: Emergency Freemius SDK upgrade to 2.13.5. Admin notices now escape untrusted output, and only administrators can opt in.
 
 4.2.1 - 30-09-2026
 * Fixed: Member details no longer fail to save or disappear after editing the bio when stored values contain HTML quote entities.
